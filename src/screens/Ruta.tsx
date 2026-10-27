@@ -1,76 +1,67 @@
 import { useNav } from '../App';
 import {
   actividadId,
-  getAsignatura,
   getAsignaturas,
   getCursoActivoId,
   getModulos,
   getProgreso,
   getRegistros,
+  type AsignaturaRow,
   type ModuloFull,
   type RegistroRow,
 } from '../db/queries';
 import { NOTA_APROBACION } from '../data/tipos';
 import { ProgressBar } from '../components/ui';
 
-type EstadoModulo = 'aprobado' | 'reprobado' | 'encurso';
+type EstadoModulo = 'aprobado' | 'reprobado' | 'encurso' | 'pendiente';
 
-function progresoModulo(m: ModuloFull, progreso: Record<string, string>): { c: number; t: number } {
-  let c = 0;
-  let t = 0;
-  for (const act of m.actividades) {
-    t += 1;
-    if (progreso[actividadId(m.id, act.tipo)] === 'completada') c += 1;
-  }
-  return { c, t };
-}
-
-function estadoDeModulo(ultimaNota: number | null): EstadoModulo {
-  if (ultimaNota == null) return 'encurso';
-  return ultimaNota >= NOTA_APROBACION ? 'aprobado' : 'reprobado';
-}
-
-function FilaModulo({
-  m,
-  progreso,
-  estado,
-}: {
-  m: ModuloFull;
-  progreso: Record<string, string>;
+interface ItemRuta {
+  modulo: ModuloFull;
+  asignatura: AsignaturaRow;
   estado: EstadoModulo;
-}): JSX.Element {
-  const { go } = useNav();
-  const { c, t } = progresoModulo(m, progreso);
-  const badge =
-    estado === 'aprobado' ? (
-      <span className="modulo-check completo" title="Aprobado">🎉</span>
-    ) : estado === 'reprobado' ? (
-      <span className="modulo-check reprobado" title="Reprobado, a repasar">🔁</span>
-    ) : (
-      <span className="modulo-check">{`${c}/${t}`}</span>
-    );
-
-  return (
-    <button className="tarjeta fila fila-modulo" onClick={() => go({ name: 'modulo', moduloId: m.id })}>
-      {badge}
-      <div className="fila-cuerpo">
-        <div className="fila-titulo">
-          <span className="codigo">{m.codigo}</span> {m.titulo}
-          {m.eje ? <span className="eje">{m.eje}</span> : null}
-        </div>
-        <div className="fila-sub">{m.descripcion.slice(0, 90)}…</div>
-      </div>
-      <span className="fila-flecha">›</span>
-    </button>
-  );
+  posicion: number;
 }
+
+function ordenRecomendado(asignaturas: AsignaturaRow[]): ItemRuta[] {
+  const porAsignatura = asignaturas.map((a) => ({ asig: a, modulos: getModulos(a.id) }));
+  const max = porAsignatura.reduce((m, p) => Math.max(m, p.modulos.length), 0);
+  const out: ItemRuta[] = [];
+  for (let i = 0; i < max; i++) {
+    for (const p of porAsignatura) {
+      if (p.modulos[i]) {
+        out.push({ modulo: p.modulos[i], asignatura: p.asig, estado: 'pendiente', posicion: 0 });
+      }
+    }
+  }
+  return out;
+}
+
+function estadoDe(
+  moduloId: string,
+  ultimaNota: number | null,
+  progreso: Record<string, string>,
+): EstadoModulo {
+  if (ultimaNota != null) return ultimaNota >= NOTA_APROBACION ? 'aprobado' : 'reprobado';
+  const conProgreso = (['estudiar', 'evaluar', 'apuntes'] as const).some(
+    (t) => progreso[actividadId(moduloId, t)] === 'completada',
+  );
+  return conProgreso ? 'encurso' : 'pendiente';
+}
+
+const ETIQUETA_ESTADO: Record<EstadoModulo, string> = {
+  aprobado: '🎉 Aprobado',
+  reprobado: '🔁 Repasar',
+  encurso: '⏳ En curso',
+  pendiente: 'Pendiente',
+};
 
 export default function Ruta(): JSX.Element {
   const { nav, go } = useNav();
   const cursoId = getCursoActivoId();
   const progreso = getProgreso();
+  const asignaturas = getAsignaturas(cursoId);
 
-  // Última nota de evaluación por módulo (los registros vienen ordenados por fecha descendente).
+  // Última nota de evaluación por módulo.
   const ultimaNotaPorModulo = new Map<string, number | null>();
   const registros: RegistroRow[] = getRegistros(cursoId);
   for (const r of registros) {
@@ -79,83 +70,123 @@ export default function Ruta(): JSX.Element {
     }
   }
 
-  const asignaturaSel = nav.name === 'ruta' ? nav.asignaturaId : undefined;
-  const asignaturas = getAsignaturas(cursoId);
+  const items = ordenRecomendado(asignaturas).map((it, i) => ({
+    ...it,
+    posicion: i + 1,
+    estado: estadoDe(it.modulo.id, ultimaNotaPorModulo.get(it.modulo.id) ?? null, progreso),
+  }));
 
-  if (asignaturaSel) {
-    const asig = getAsignatura(asignaturaSel);
-    if (!asig) return <div className="pantalla" />;
-    const modulos = getModulos(asig.id);
-    const total = modulos.reduce((s, m) => s + m.actividades.length, 0);
-    const hechas = modulos.reduce((s, m) => s + progresoModulo(m, progreso).c, 0);
-    return (
-      <div className="pantalla">
-        <button className="btn-volver" onClick={() => go({ name: 'ruta' })}>
-          ← Todas las asignaturas
-        </button>
-        <header className="cabecera cabecera-asig">
-          <div className="asig-icono grande" style={{ background: asig.color }}>
-            {asig.icono}
-          </div>
-          <div>
-            <h1>{asig.nombre}</h1>
-            <p className="cabecera-sub">
-              {asig.ejes.join(' · ')} · {hechas}/{total} pasos
-            </p>
-            <ProgressBar pct={total ? (hechas / total) * 100 : 0} color={asig.color} alto={8} />
-          </div>
-        </header>
-        <div className="lista">
-          {modulos.map((m) => (
-            <FilaModulo
-              key={m.id}
-              m={m}
-              progreso={progreso}
-              estado={estadoDeModulo(ultimaNotaPorModulo.get(m.id) ?? null)}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const filtro = nav.name === 'ruta' ? nav.asignaturaId : undefined;
+  const visibles = filtro ? items.filter((it) => it.asignatura.id === filtro) : items;
+
+  const aprobados = items.filter((it) => it.estado === 'aprobado').length;
+  const encurso = items.filter((it) => it.estado === 'encurso').length;
+  const reprobados = items.filter((it) => it.estado === 'reprobado').length;
+  const siguiente = items.find((it) => it.estado !== 'aprobado');
+
+  const pctAprobados = items.length ? (aprobados / items.length) * 100 : 0;
 
   return (
     <div className="pantalla">
       <header className="cabecera">
         <h1>Mi ruta 🗺️</h1>
         <p className="cabecera-sub">
-          Elige una asignatura y luego un módulo. En cada módulo: estudia → evalúate → apuntes.
+          Un camino sugerido que mezcla las materias para que no sea todo de una. Toca un módulo para
+          estudiar.
         </p>
       </header>
-      <div className="lista">
-        {asignaturas.map((a) => {
-          const modulos = getModulos(a.id);
-          const total = modulos.reduce((s, m) => s + m.actividades.length, 0);
-          const hechas = modulos.reduce((s, m) => s + progresoModulo(m, progreso).c, 0);
-          const aprobados = modulos.filter(
-            (m) => estadoDeModulo(ultimaNotaPorModulo.get(m.id) ?? null) === 'aprobado',
-          ).length;
-          return (
-            <button
-              key={a.id}
-              className="tarjeta fila fila-asig"
-              onClick={() => go({ name: 'ruta', asignaturaId: a.id })}
-            >
-              <span className="asig-icono" style={{ background: a.color }}>
-                {a.icono}
-              </span>
-              <div className="fila-cuerpo">
-                <div className="fila-titulo">{a.nombre}</div>
-                <div className="fila-sub">
-                  {modulos.length} módulos · {aprobados} aprobados · {hechas}/{total} pasos
-                </div>
-                <ProgressBar pct={total ? (hechas / total) * 100 : 0} color={a.color} alto={6} />
-              </div>
-              <span className="fila-flecha">›</span>
-            </button>
-          );
-        })}
+
+      <section className="tarjeta resumen-global">
+        <div className="resumen-texto">
+          <div className="resumen-cifra">{aprobados}/{items.length}</div>
+          <div className="resumen-etiqueta">
+            módulos aprobados · {encurso} en curso · {reprobados} por repasar
+          </div>
+        </div>
+        <ProgressBar pct={pctAprobados} alto={12} />
+      </section>
+
+      <div className="tabs scroll">
+        <button className={`tab ${!filtro ? 'activo' : ''}`} onClick={() => go({ name: 'ruta' })}>
+          Todos
+        </button>
+        {asignaturas.map((a) => (
+          <button
+            key={a.id}
+            className={`tab ${filtro === a.id ? 'activo' : ''}`}
+            onClick={() => go({ name: 'ruta', asignaturaId: a.id })}
+          >
+            {a.icono} {a.codigo}
+          </button>
+        ))}
       </div>
+
+      {siguiente && !filtro ? (
+        <div className="siguiente-hero">
+          <div className="siguiente-cuerpo">
+            <span className="siguiente-etiqueta">👉 Te recomiendo estudiar ahora</span>
+            <div className="siguiente-titulo">
+              {siguiente.asignatura.icono} {siguiente.modulo.codigo} — {siguiente.modulo.titulo}
+            </div>
+            <div className="siguiente-sub">
+              {siguiente.asignatura.nombre}
+              {siguiente.modulo.eje ? ` · ${siguiente.modulo.eje}` : ''}
+            </div>
+          </div>
+          <button className="btn btn-primario" onClick={() => go({ name: 'modulo', moduloId: siguiente.modulo.id })}>
+            Estudiar ahora →
+          </button>
+        </div>
+      ) : null}
+
+      {visibles.length === 0 ? (
+        <div className="empty">
+          <div className="empty-icono">🎉</div>
+          <div className="empty-titulo">¡Todo listo!</div>
+          <div className="empty-texto">No hay módulos pendientes en esta vista.</div>
+        </div>
+      ) : (
+        <div className="roadmap">
+          {visibles.map((it, i) => {
+            const esSiguiente = !filtro && it.modulo.id === siguiente?.modulo.id;
+            const dotBg =
+              it.estado === 'aprobado'
+                ? 'var(--exito)'
+                : it.estado === 'reprobado'
+                  ? 'var(--amarillo)'
+                  : it.asignatura.color;
+            const dotContenido =
+              it.estado === 'aprobado' ? '✓' : it.estado === 'reprobado' ? '!' : String(it.posicion);
+            return (
+              <div key={it.modulo.id} className="roadmap-item">
+                <div className="roadmap-track">
+                  <span className={`roadmap-dot ${esSiguiente ? 'actual' : ''}`} style={{ background: dotBg }}>
+                    {dotContenido}
+                  </span>
+                  {i < visibles.length - 1 ? <span className="roadmap-line" /> : null}
+                </div>
+                <button
+                  className={`tarjeta roadmap-card ${esSiguiente ? 'siguiente' : ''}`}
+                  onClick={() => go({ name: 'modulo', moduloId: it.modulo.id })}
+                >
+                  <span className="roadmap-icono" style={{ background: it.asignatura.color }}>
+                    {it.asignatura.icono}
+                  </span>
+                  <div className="fila-cuerpo">
+                    <div className="fila-titulo">
+                      <span className="codigo">{it.modulo.codigo}</span> {it.modulo.titulo}
+                      {it.modulo.eje ? <span className="eje">{it.modulo.eje}</span> : null}
+                    </div>
+                    <div className="fila-sub">{it.asignatura.nombre}</div>
+                  </div>
+                  <span className={`roadmap-badge estado-${it.estado}`}>{ETIQUETA_ESTADO[it.estado]}</span>
+                  {esSiguiente ? <span className="roadmap-sig">👉</span> : null}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

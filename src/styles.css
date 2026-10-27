@@ -1317,3 +1317,153 @@ input:not([type]) {
   font-weight: 600;
   color: var(--amarillo);
 }
+
+/* — Roadmap (ruta recomendada) — */
+.roadmap {
+  display: flex;
+  flex-direction: column;
+}
+
+.roadmap-item {
+  display: flex;
+  gap: 14px;
+}
+
+.roadmap-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 32px;
+  flex-shrink: 0;
+}
+
+.roadmap-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+  transition: box-shadow 0.15s;
+}
+
+.roadmap-dot.actual {
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.25);
+}
+
+.roadmap-line {
+  width: 2px;
+  flex: 1;
+  background: var(--borde);
+  margin: 5px 0;
+  border-radius: 2px;
+}
+
+.roadmap-card {
+  flex: 1;
+  margin-bottom: 12px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.roadmap-card.siguiente {
+  border: 2px solid var(--violeta);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+}
+
+.roadmap-icono {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.roadmap-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.estado-aprobado {
+  background: #eafaf0;
+  color: var(--exito);
+}
+
+.estado-reprobado {
+  background: #fff7ed;
+  color: var(--amarillo);
+}
+
+.estado-encurso {
+  background: var(--violeta-suave);
+  color: var(--violeta);
+}
+
+.estado-pendiente {
+  background: #f4f1fb;
+  color: var(--texto-suave);
+}
+
+.roadmap-sig {
+  font-size: 1.1rem;
+  color: var(--violeta);
+}
+
+/* Siguiente recomendado */
+.siguiente-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  border-radius: var(--radio);
+  background: linear-gradient(135deg, var(--violeta-suave), var(--rosa-suave));
+  border: 1px solid var(--borde);
+}
+
+.siguiente-cuerpo {
+  min-width: 0;
+}
+
+.siguiente-etiqueta {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--violeta);
+}
+
+.siguiente-titulo {
+  font-size: 1.15rem;
+  font-weight: 750;
+  margin-top: 4px;
+}
+
+.siguiente-sub {
+  color: var(--texto-suave);
+  font-size: 0.84rem;
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .siguiente-hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
