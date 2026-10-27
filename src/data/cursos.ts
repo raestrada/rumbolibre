@@ -44,7 +44,7 @@ export const asignaturas: Asignatura[] = [
     id: 'm1-his',
     cursoId: 'm1',
     codigo: 'HIS',
-    nombre: 'Historia, Geografía y Cs. Sociales',
+    nombre: 'Historia, Geografía y Ciencias Sociales',
     color: '#f59e0b',
     icono: '🏛️',
     ejes: ['Historia', 'Geografía', 'Formación Ciudadana'],

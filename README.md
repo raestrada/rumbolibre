@@ -43,7 +43,7 @@ npm run preview  # servir el build compilado
 ## Contenido curricular
 
 La app incluye el **temario oficial de 1° medio** (40 Objetivos de Aprendizaje en 5 asignaturas:
-Lengua y Literatura, Matemática, Ciencias Naturales, Historia, Geografía y Cs. Sociales, e Inglés).
+Lengua y Literatura, Matemática, Ciencias Naturales, Historia, Geografía y Ciencias Sociales, e Inglés).
 Ver `docs/01-temario-1medio.md`.
 
 ## Documentación para agentes de IA

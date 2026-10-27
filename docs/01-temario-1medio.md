@@ -16,7 +16,7 @@
 | Lengua y Literatura | Lectura, Escritura | 3, 5, 8, 9, 10, 14 | 6 |
 | Matemática | Números y Operaciones · Álgebra y Funciones · Geometría · Probabilidad y Estadística | 1, 2, 3, 4, 8, 10, 14 | 7 |
 | Ciencias Naturales | Biología · Física · Química | B: 2,4,6,8 · F: 10,11,14,16 · Q: 17,20 | 10 |
-| Historia, Geografía y Cs. Sociales | Historia · Geografía · Formación Ciudadana | 1,3,7,8,10,12,14,15,18,20,23,24,25 | 13 |
+| Historia, Geografía y Ciencias Sociales | Historia · Geografía · Formación Ciudadana | 1,3,7,8,10,12,14,15,18,20,23,24,25 | 13 |
 | Inglés | Reading · Writing | 9, 10, 13, 16 | 4 |
 
 **Total: 40 módulos (OA).**

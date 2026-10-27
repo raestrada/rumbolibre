@@ -25,7 +25,7 @@ Para **1° medio** se rinden **5 asignaturas, cada una con su prueba separada**
 | Lengua y Literatura | Lectura, Escritura |
 | Matemática | Números y Operaciones · Álgebra y Funciones · Geometría · Probabilidad y Estadística |
 | Ciencias Naturales | Biología · Física · Química |
-| Historia, Geografía y Cs. Sociales | Historia · Geografía · Formación Ciudadana |
+| Historia, Geografía y Ciencias Sociales | Historia · Geografía · Formación Ciudadana |
 | Inglés | Comprensión de lectura (reading) · Expresión escrita (writing) |
 
 ### Reglas clave
