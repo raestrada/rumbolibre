@@ -60,16 +60,19 @@ Para **1° medio** se rinden **5 asignaturas, cada una con su prueba separada**
 Explorar (aprender) → Practicar → Evaluar → Resumir (apuntes)
 ```
 
-Cada actividad tiene **prompts listos para copiar** (autocontenidos, en español). Los prompts de
-evaluación y resumen terminan pidiendo al agente un **bloque JSON** que la app **parsea** y guarda.
+Cada actividad tiene **prompts listos para copiar** (autocontenidos, en español). Las actividades
+que generan un resultado guardable (Practicar, Evaluar, Crear apuntes) tienen además un **prompt de
+resultados** aparte: se pega **al terminar, en el mismo chat**, y devuelve un **bloque JSON** que la
+app **parsea** y guarda.
 
 Flujo de evaluación:
-1. Abre la ficha del módulo y copia el prompt.
-2. Pega el prompt en su agente de IA.
-3. El agente evalúa y, al final, rellena la plantilla JSON.
-4. Copia la respuesta completa y la pega en la app.
-5. La app **extrae y parsea el JSON** (tolerante), valida y guarda estructurado + texto crudo.
-6. La app actualiza el roadmap (módulo, temas a reforzar, siguiente paso).
+1. Abre la ficha del módulo y copia el **prompt de actividad** (estudiar o ser evaluada).
+2. Lo pega en su agente de IA y realiza la actividad (conversación libre).
+3. Al terminar, copia el **prompt de resultados** y lo pega en el **mismo chat**.
+4. El agente devuelve un **bloque JSON** con los resultados (nota, temas a reforzar, apuntes…).
+5. Copia esa respuesta y la pega en la app.
+6. La app **extrae y parsea el JSON** (tolerante), valida y guarda estructurado + texto crudo.
+7. La app actualiza el roadmap (módulo, temas a reforzar, siguiente paso).
 
 Detalles en [`03-sistema-de-prompts.md`](./03-sistema-de-prompts.md) y
 [`04-parser.md`](./04-parser.md).

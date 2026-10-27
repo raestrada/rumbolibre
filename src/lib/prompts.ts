@@ -46,7 +46,7 @@ function jsonResumen(codigo: string): string {
 
 function encabezado(modulo: DatosModulo, asignatura: string): string {
   const eje = modulo.eje ? ` (${modulo.eje})` : '';
-  const partes = [
+  return [
     `Tema: ${modulo.codigo} — ${modulo.titulo}${eje} (asignatura: ${asignatura}).`,
     '',
     'Objetivo de Aprendizaje:',
@@ -54,17 +54,11 @@ function encabezado(modulo: DatosModulo, asignatura: string): string {
     '',
     'Para lograrlo, debo ser capaz de:',
     bullets(modulo.indicadores),
-  ];
-  return partes.join('\n');
-}
-
-function reglasNota(): string {
-  return [
-    'Reglas: `nota` en escala 1 a 7 con un decimal (ej. 5.5).',
-    '`temas_dominados` y `temas_a_reforzar` son listas de frases cortas.',
-    'Mantén el formato JSON exacto.',
   ].join('\n');
 }
+
+// — Prompts de actividad (estudio / evaluación / apuntes), sin JSON —
+// El resultado estructurado se obtiene con un prompt aparte (getPromptResultado).
 
 export function buildPromptBusqueda(modulo: DatosModulo, asignatura: string): string {
   return [
@@ -87,12 +81,6 @@ export function buildPromptPracticar(modulo: DatosModulo, asignatura: string): s
     '',
     'Hazme 5 preguntas (tipo examen: opción múltiple y respuestas cortas), una por una, y corrige',
     'cada respuesta al momento. Sé exigente pero amable.',
-    '',
-    'AL TERMINAR, RESPONDE SOLO CON ESTE BLOQUE JSON, rellenando cada campo y SIN texto fuera de él:',
-    '',
-    fence(jsonEvaluacion(modulo.codigo)),
-    '',
-    reglasNota(),
   ].join('\n');
 }
 
@@ -104,12 +92,6 @@ export function buildPromptEvaluar(modulo: DatosModulo, asignatura: string): str
     '',
     'Hazme un examen de 25 preguntas, como el real: opción múltiple, verdadero o falso y respuesta',
     'corta. Hazlo por secciones y al final corrígeme todo. Sé justa y detalla qué debo repasar.',
-    '',
-    'AL TERMINAR, RESPONDE SOLO CON ESTE BLOQUE JSON, rellenando cada campo y SIN texto fuera de él:',
-    '',
-    fence(jsonEvaluacion(modulo.codigo)),
-    '',
-    reglasNota(),
   ].join('\n');
 }
 
@@ -119,13 +101,35 @@ export function buildPromptResumir(modulo: DatosModulo, asignatura: string): str
     encabezado(modulo, asignatura),
     '',
     'Pídeme que te explique con mis palabras lo que aprendí y ayúdame a organizar mis apuntes.',
+  ].join('\n');
+}
+
+// — Prompts de "resultados": se copian AL TERMINAR, en el MISMO chat —
+// Son cortos y autocontenidos: devuelven un bloque JSON parseable por la app.
+
+export function buildPromptResultadoEvaluacion(modulo: DatosModulo): string {
+  return [
+    'Ya terminamos la evaluación de este módulo. Ahora resume mis resultados en un formato simple.',
     '',
-    'AL TERMINAR, RESPONDE SOLO CON ESTE BLOQUE JSON, rellenando cada campo y SIN texto fuera de él:',
+    'RESPONDE SOLO CON ESTE BLOQUE JSON, rellenando cada campo y SIN texto fuera de él:',
+    '',
+    fence(jsonEvaluacion(modulo.codigo)),
+    '',
+    'Reglas: `nota` en escala 1 a 7 con un decimal (ej. 5.5). `temas_dominados` y `temas_a_reforzar`',
+    'son listas de frases cortas. Usa la información de la evaluación que acabamos de hacer.',
+  ].join('\n');
+}
+
+export function buildPromptResultadoResumen(modulo: DatosModulo): string {
+  return [
+    'Ya terminamos de repasar este módulo. Ahora resume mis apuntes en un formato simple.',
+    '',
+    'RESPONDE SOLO CON ESTE BLOQUE JSON, rellenando cada campo y SIN texto fuera de él:',
     '',
     fence(jsonResumen(modulo.codigo)),
     '',
     'Reglas: `ideas_clave` y `conceptos` son listas de frases cortas. `dudas` son preguntas que me',
-    'quedaron. Mantén el formato JSON exacto.',
+    'quedaron. Usa lo que conversamos recién.',
   ].join('\n');
 }
 
@@ -143,5 +147,17 @@ export function getPrompt(
       return buildPromptEvaluar(modulo, asignatura);
     case 'resumir':
       return buildPromptResumir(modulo, asignatura);
+  }
+}
+
+export function getPromptResultado(tipo: TipoActividad, modulo: DatosModulo): string | null {
+  switch (tipo) {
+    case 'practicar':
+    case 'evaluar':
+      return buildPromptResultadoEvaluacion(modulo);
+    case 'resumir':
+      return buildPromptResultadoResumen(modulo);
+    default:
+      return null;
   }
 }

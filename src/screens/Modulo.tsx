@@ -13,7 +13,7 @@ import {
   type AsignaturaRow,
 } from '../db/queries';
 import type { Actividad } from '../data/tipos';
-import { getPrompt } from '../lib/prompts';
+import { getPrompt, getPromptResultado } from '../lib/prompts';
 import { parsearRegistro, notaColor } from '../lib/parser';
 import { CopyButton, Modal, Chip, EmptyState } from '../components/ui';
 
@@ -52,6 +52,7 @@ function ActividadCard({
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null);
 
   const prompt = getPrompt(actividad.tipo, modulo, asig.nombre);
+  const promptResultado = getPromptResultado(actividad.tipo, modulo);
   const esPegable = actividad.tipo === 'practicar' || actividad.tipo === 'evaluar' || actividad.tipo === 'resumir';
   const tipoDefault = actividad.tipo === 'resumir' ? ('resumen' as const) : ('evaluacion' as const);
 
@@ -125,8 +126,13 @@ function ActividadCard({
       {esPegable && panelAbierto ? (
         <div className="pegar-panel">
           <p className="pegar-instruccion">
-            Pega aquí la respuesta completa de tu IA (con el bloque JSON al final). También puedes
-            llenar la nota a mano si el bloque no se leyó.
+            1. Cuando termines, pega este prompt en el <strong>mismo chat</strong> para obtener tus
+            resultados en un formato simple:
+          </p>
+          <CopyButton text={promptResultado ?? ''} label="Copiar prompt de resultados" icono="🧾" />
+          <p className="pegar-instruccion">
+            2. Pega aquí la respuesta (el bloque JSON que te devuelve tu IA). Si no lo lee, completa la
+            nota a mano.
           </p>
           <textarea
             value={texto}
