@@ -3,6 +3,7 @@ import {
   actividadId,
   getAsignaturas,
   getCursoActivoId,
+  getEnsayoNota,
   getModulos,
   getProgreso,
   getRegistros,
@@ -86,6 +87,8 @@ export default function Ruta(): JSX.Element {
   const encurso = items.filter((it) => it.estado === 'encurso').length;
   const reprobados = items.filter((it) => it.estado === 'reprobado').length;
   const siguiente = items.find((it) => it.estado !== 'aprobado');
+  const ensayoAsig = filtro ? asignaturas.find((a) => a.id === filtro) : undefined;
+  const ensayoNota = ensayoAsig ? getEnsayoNota(ensayoAsig.id) : null;
 
   const pctAprobados = items.length ? (aprobados / items.length) * 100 : 0;
 
@@ -123,6 +126,21 @@ export default function Ruta(): JSX.Element {
           </button>
         ))}
       </div>
+
+      {ensayoAsig ? (
+        <div className="tarjeta ensayo-cta">
+          <div className="fila-cuerpo">
+            <div className="fila-titulo">🎯 Ensayo general de {ensayoAsig.nombre}</div>
+            <div className="fila-sub">
+              Mezcla todos los temas en 25 preguntas, como el examen real.
+              {ensayoNota != null ? ` · última nota: ${ensayoNota.toFixed(1)}` : ''}
+            </div>
+          </div>
+          <button className="btn btn-primario" onClick={() => go({ name: 'ensayo', asignaturaId: ensayoAsig.id })}>
+            Hacer ensayo
+          </button>
+        </div>
+      ) : null}
 
       {siguiente && !filtro ? (
         <div className="siguiente-hero">

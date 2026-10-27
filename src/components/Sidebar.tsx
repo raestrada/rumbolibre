@@ -5,6 +5,7 @@ import { getConfig } from '../db/queries';
 const items: { name: string; label: string; icon: string }[] = [
   { name: 'dashboard', label: 'Inicio', icon: '🏠' },
   { name: 'ruta', label: 'Mi ruta', icon: '🗺️' },
+  { name: 'repaso', label: 'Repasar', icon: '🔁' },
   { name: 'registro', label: 'Registro', icon: '⭐' },
   { name: 'biblioteca', label: 'Biblioteca', icon: '📚' },
   { name: 'padres', label: 'Para papás', icon: '👨‍👩‍👧' },

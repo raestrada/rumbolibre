@@ -181,8 +181,16 @@ quedaron. Usa lo que conversamos recién.
 Los builders viven en `src/lib/prompts.ts`:
 - `buildPromptBusqueda` (`estudiar`), `buildPromptEvaluar`, `buildPromptResumir` (`apuntes`),
   `buildPromptRepasar`.
+- `buildPromptEnsayo` (ensayo general por asignatura) y `buildPromptRepasarAsignatura`.
 - `buildPromptResultadoEvaluacion`, `buildPromptResultadoResumen` (prompt de resultados).
-- `getPrompt(tipo, modulo, asignatura)` y `getPromptResultado(tipo, modulo)`.
+- `datosEnsayo(asignatura)` (datos sintéticos para el ensayo) y `getPrompt` / `getPromptResultado`.
 
 Los pasos y el umbral de aprobación viven en `src/data/tipos.ts` (`ACTIVIDADES`,
 `NOTA_APROBACION = 4.0`).
+
+## Ensayo general (por asignatura)
+
+Además de evaluar cada módulo, existe un **ensayo general por asignatura** que mezcla **todos los
+OA** de la materia en 25 preguntas (igual al examen real). Se sugiere hacerlo cuando todos los
+módulos de la asignatura están aprobados. El resultado se guarda como un registro con
+`modulo_id = <asignatura>:ensayo` (ver `src/db/queries.ts` → `ensayoId` / `getEnsayoNota`).

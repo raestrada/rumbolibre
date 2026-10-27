@@ -1467,3 +1467,125 @@ input:not([type]) {
     align-items: stretch;
   }
 }
+
+/* — Plazos (dashboard) — */
+.plazos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.plazos-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.plazos-icono {
+  font-size: 1.6rem;
+}
+
+.plazos-titulo {
+  font-weight: 750;
+}
+
+.plazos-sub {
+  color: var(--texto-suave);
+  font-size: 0.82rem;
+}
+
+.plazos-hitos {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.plazos-hito {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+}
+
+.plazos-check {
+  color: var(--gris);
+}
+
+.plazos-check.ok {
+  color: var(--exito);
+}
+
+.plazos-fecha {
+  color: var(--texto-suave);
+  font-size: 0.76rem;
+}
+
+/* — Checklist "lista para el examen" — */
+.lista-chipo {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--violeta-suave);
+  color: var(--violeta);
+}
+
+.lista-chipo.ok {
+  background: #eafaf0;
+  color: var(--exito);
+}
+
+.lista-chipo.mal {
+  background: #fff7ed;
+  color: var(--amarillo);
+}
+
+.btn-chico {
+  padding: 7px 12px;
+  font-size: 0.8rem;
+}
+
+/* — Ensayo general (CTA) — */
+.ensayo-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--violeta-suave);
+  background: linear-gradient(135deg, #ffffff, var(--violeta-suave));
+}
+
+.ensayo-cta .btn {
+  flex-shrink: 0;
+}
+
+.banner-info {
+  background: #eef2ff;
+  color: var(--azul);
+}
+
+/* — Repasar — */
+.repaso-resumen {
+  margin: 0 0 12px;
+}
+
+.repaso-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.repaso-cabecera h3 {
+  font-size: 1rem;
+}
+
+.repaso-temas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}

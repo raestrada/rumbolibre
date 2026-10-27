@@ -8,6 +8,17 @@ export interface DatosModulo {
   eje?: string | null;
 }
 
+// Datos sintéticos para el "ensayo general" de una asignatura (no corresponde a un OA puntual).
+export function datosEnsayo(asignatura: { id: string; codigo: string; nombre: string }): DatosModulo {
+  const nivel = asignatura.id.split('-')[0].toUpperCase();
+  return {
+    codigo: `${nivel}-${asignatura.codigo}-GENERAL`,
+    titulo: 'Ensayo general',
+    descripcion: asignatura.nombre,
+    indicadores: [],
+  };
+}
+
 function bullets(items: string[]): string {
   return items.map((i) => `- ${i}`).join('\n');
 }
@@ -127,8 +138,47 @@ export function buildPromptRepasar(modulo: DatosModulo, temas: string[]): string
   ].join('\n');
 }
 
+// — Ensayo general (por asignatura) y repaso por asignatura —
+
+export function buildPromptEnsayo(
+  asignatura: string,
+  ejes: string[],
+  modulos: DatosModulo[],
+): string {
+  const lista = modulos.map((m) => `- ${m.codigo} — ${m.titulo}: ${m.descripcion}`).join('\n');
+  return [
+    'Actúa como mi profesora examinadora de 1° medio. Vamos a hacer el ENSAYO GENERAL de la',
+    `asignatura ${asignatura} (${ejes.join(' · ') || 'asignatura'}), igual al examen libre del MINEDUC.`,
+    '',
+    'Estos son todos los temas de la asignatura que debo dominar:',
+    lista,
+    '',
+    'FORMATO (igual al real): opción múltiple con 4 alternativas (a, b, c, d), verdadero/falso,',
+    'respuesta corta o emparejamiento. 25 preguntas en total, MEZCLANDO todos los temas.',
+    '',
+    'CÓMO TRABAJAR:',
+    '1. Hazme UNA sola pregunta por mensaje y espera mi respuesta; corrígela y recién pasa a la',
+    '   siguiente. NO me des todas las preguntas de una vez.',
+    '2. Mezcla los temas: no preguntes todo de un tema seguido.',
+    '3. Lleva la cuenta de correctas e incorrectas.',
+    '4. Al final, NO me des la nota ni el resumen todavía: te lo pediré en el siguiente mensaje.',
+  ].join('\n');
+}
+
+export function buildPromptRepasarAsignatura(asignatura: string, temas: string[]): string {
+  return [
+    'Actúa como mi profesora de 1° medio. Antes del examen libre, debo reforzar estos temas de',
+    `${asignatura}:`,
+    bullets(temas),
+    '',
+    'CÓMO TRABAJAR (ve de a poco):',
+    '1. Explícame SOLO el primer tema en un párrafo corto, como si tuviera 14 años, con un ejemplo.',
+    '2. Hazme UNA pregunta para comprobar que entendí y corrige si hace falta.',
+    '3. Pregúntame si sigo con el siguiente tema. NO lo expliques todo de una vez.',
+  ].join('\n');
+}
+
 // — Prompts de "resultados": se copian AL TERMINAR, en el MISMO chat —
-// Son cortos y autocontenidos: devuelven un bloque JSON parseable por la app.
 
 export function buildPromptResultadoEvaluacion(modulo: DatosModulo): string {
   return [

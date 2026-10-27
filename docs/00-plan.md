@@ -89,6 +89,10 @@ Detalles en [`03-sistema-de-prompts.md`](./03-sistema-de-prompts.md) y
 3. **Ruta (roadmap)**: los 40 módulos en un **orden recomendado** (por dependencia y con las
    materias intercaladas como un horario de colegio), con estados visibles, "siguiente recomendado"
    y clic directo a cada módulo.
+4. **Ensayo general (por asignatura)**: mezcla todos los OA de una materia en 25 preguntas, como el
+   examen real. Se sugiere al aprobar todos sus módulos.
+5. **Repasar**: reúne por asignatura los módulos reprobados y los temas a reforzar, con prompt de
+   repaso.
 4. **Ficha de módulo**: qué se evalúa (indicadores), copiar prompts, checklist, pegar evaluación/apuntes.
 5. **Registro**: historial de evaluaciones y apuntes, marcar verificadas.
 6. **Biblioteca**: lecturas recomendadas (ciencia, fantasía, historia, divulgación).

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { dbAll } from '../db/database';
 import {
   deleteRegistro,
+  getAsignaturas,
   getCursoActivoId,
   getRegistros,
   setRegistroVerificado,
@@ -82,6 +83,17 @@ export default function Registro(): JSX.Element {
   const mapa = new Map<string, string>();
   for (const r of dbAll('SELECT id, codigo FROM modulos')) mapa.set(r.id as string, r.codigo as string);
 
+  const nombreAsig = new Map<string, string>();
+  for (const a of getAsignaturas(cursoId)) nombreAsig.set(a.id, a.nombre);
+
+  function etiquetaModulo(id: string): string {
+    if (id.endsWith(':ensayo')) {
+      const asigId = id.slice(0, -':ensayo'.length);
+      return `Ensayo general · ${nombreAsig.get(asigId) ?? 'Asignatura'}`;
+    }
+    return mapa.get(id) ?? id;
+  }
+
   const registros = getRegistros(cursoId).filter((r) => filtro === 'todas' || r.tipo === filtro);
 
   const evaluaciones = getRegistros(cursoId).filter((r) => r.tipo === 'evaluacion');
@@ -130,7 +142,7 @@ export default function Registro(): JSX.Element {
                 </span>
                 <div className="fila-cuerpo">
                   <div className="fila-titulo">
-                    {mapa.get(r.modulo_id) ?? r.modulo_id}
+                    {etiquetaModulo(r.modulo_id)}
                     {r.estado_parseo !== 'ok' ? (
                       <Chip tono="suave">{r.estado_parseo === 'manual' ? 'a mano' : 'sin leer'}</Chip>
                     ) : null}

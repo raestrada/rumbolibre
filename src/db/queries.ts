@@ -294,6 +294,19 @@ export function deleteRegistro(id: string): void {
   dbRun('DELETE FROM registros WHERE id = ?', [id]);
 }
 
+// ---- Ensayo general (por asignatura) ----
+export function ensayoId(asignaturaId: string): string {
+  return `${asignaturaId}:ensayo`;
+}
+
+export function getEnsayoNota(asignaturaId: string): number | null {
+  const r = dbGet(
+    'SELECT nota FROM registros WHERE modulo_id = ? AND tipo = ? ORDER BY fecha DESC LIMIT 1',
+    [ensayoId(asignaturaId), 'evaluacion'],
+  );
+  return r?.nota ?? null;
+}
+
 // ---- Lecturas ----
 export function getLecturas(): LecturaRow[] {
   const rows = dbAll('SELECT * FROM lecturas ORDER BY genero, titulo');
