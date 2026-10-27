@@ -1,6 +1,6 @@
 import { useNav } from '../App';
 import Logo from './Logo';
-import { getConfig } from '../db/queries';
+import { getConfig, getCursos, setConfig } from '../db/queries';
 
 const items: { name: string; label: string; icon: string }[] = [
   { name: 'dashboard', label: 'Inicio', icon: '🏠' },
@@ -14,7 +14,10 @@ const items: { name: string; label: string; icon: string }[] = [
 
 export default function Sidebar(): JSX.Element {
   const { nav, go } = useNav();
-  const nombre = getConfig().nombre || '';
+  const config = getConfig();
+  const nombre = config.nombre || '';
+  const cursos = getCursos();
+  const cursoActivo = config.curso_activo || 'm1';
 
   return (
     <aside className="sidebar">
@@ -37,7 +40,19 @@ export default function Sidebar(): JSX.Element {
           </button>
         ))}
       </nav>
-      <div className="sidebar-pie">1° medio · Exámenes libres</div>
+      <div className="sidebar-pie">
+        <label className="sidebar-curso">
+          <span>Curso</span>
+          <select value={cursoActivo} onChange={(e) => setConfig('curso_activo', e.target.value)} aria-label="Curso">
+            {cursos.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+        <span className="sidebar-pie-texto">Exámenes libres</span>
+      </div>
     </aside>
   );
 }

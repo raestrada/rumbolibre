@@ -101,6 +101,19 @@ export function getCursoActivoId(): string {
   return getConfig().curso_activo || 'm1';
 }
 
+export interface CursoRow {
+  id: string;
+  codigo: string;
+  nombre: string;
+  orden: number;
+  decreto: string;
+  descripcion: string;
+}
+
+export function getCursos(): CursoRow[] {
+  return dbAll('SELECT * FROM cursos ORDER BY orden') as CursoRow[];
+}
+
 export function getAsignaturas(cursoId: string): AsignaturaRow[] {
   const rows = dbAll('SELECT * FROM asignaturas WHERE curso_id = ? ORDER BY id', [cursoId]);
   return rows.map((r) => ({ ...r, ejes: parseArray(r.ejes) })) as AsignaturaRow[];

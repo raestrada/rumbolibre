@@ -148,9 +148,34 @@ h3 {
 .sidebar-pie {
   margin-top: 12px;
   padding: 12px 8px 0;
+  border-top: 1px solid var(--borde);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-curso {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.68rem;
+  color: var(--texto-suave);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sidebar-curso select {
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.sidebar-pie-texto {
   font-size: 0.72rem;
   color: var(--texto-suave);
-  border-top: 1px solid var(--borde);
 }
 
 /* — Cabecera — */
@@ -751,6 +776,17 @@ input:not([type]) {
   padding: 11px 13px;
   font-family: inherit;
   font-size: 0.95rem;
+  width: 100%;
+}
+
+select {
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 11px 13px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--texto);
   width: 100%;
 }
 

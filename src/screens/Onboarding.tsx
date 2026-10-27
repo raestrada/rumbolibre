@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
-import { setConfig } from '../db/queries';
+import { getCursos, setConfig } from '../db/queries';
 import { hashPin } from '../lib/auth';
 import Logo from '../components/Logo';
 
 export default function Onboarding(): JSX.Element {
+  const cursos = getCursos();
   const [nombre, setNombre] = useState('');
+  const [curso, setCurso] = useState(() => cursos[0]?.id ?? 'm1');
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
 
@@ -15,6 +17,7 @@ export default function Onboarding(): JSX.Element {
       return;
     }
     setConfig('nombre', nombre.trim());
+    setConfig('curso_activo', curso);
     if (pin.trim()) {
       setConfig('pin_hash', await hashPin(pin.trim()));
     }
@@ -40,6 +43,17 @@ export default function Onboarding(): JSX.Element {
               placeholder="Tu nombre"
               autoFocus
             />
+          </label>
+          <label className="campo">
+            <span>Curso</span>
+            <select value={curso} onChange={(e) => setCurso(e.target.value)}>
+              {cursos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+            <small>Por ahora está disponible 1° medio.</small>
           </label>
           <label className="campo">
             <span>PIN para papás (opcional)</span>

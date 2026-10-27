@@ -7,6 +7,7 @@ import {
   deleteBitacora,
   getConfig,
   getCursoActivoId,
+  getCursos,
   getHitos,
   setConfig,
   setHitoCompletado,
@@ -120,6 +121,25 @@ export default function Ajustes(): JSX.Element {
       {msg ? <div className="msg-ok">{msg}</div> : null}
 
       <div className="grid-ajustes">
+        <section className="tarjeta">
+          <h2 className="seccion-titulo">Curso</h2>
+          <p className="cabecera-sub">Elige el curso que estás preparando.</p>
+          <label className="campo">
+            <span>Curso activo</span>
+            <select
+              value={config.curso_activo || 'm1'}
+              onChange={(e) => setConfig('curso_activo', e.target.value)}
+            >
+              {getCursos().map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+            <small>Por ahora solo está disponible 1° medio.</small>
+          </label>
+        </section>
+
         <section className="tarjeta">
           <h2 className="seccion-titulo">Perfil</h2>
           <form onSubmit={guardarPerfil} className="form-col">
