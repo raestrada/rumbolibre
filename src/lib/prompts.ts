@@ -58,18 +58,22 @@ function encabezado(modulo: DatosModulo, asignatura: string): string {
 }
 
 // — Prompts de actividad (estudio / evaluación / apuntes), sin JSON —
-// El resultado estructurado se obtiene con un prompt aparte (getPromptResultado).
+// Todos van "de a poco": el agente avanza tema por tema o pregunta por pregunta,
+// y consulta antes de seguir, para no chocar con el límite de tokens de salida.
 
 export function buildPromptBusqueda(modulo: DatosModulo, asignatura: string): string {
   return [
     'Actúa como una profesora chilena de 1° medio, cercana, paciente y clara.',
+    'Voy a estudiar sola para el examen libre del MINEDUC.',
     '',
-    'Voy a estudiar sola para el examen libre del MINEDUC. Hoy me toca:',
     encabezado(modulo, asignatura),
     '',
-    'Explícamelo como si tuviera 14 años, paso a paso, con ejemplos de Chile y de mi vida diaria.',
-    'Usa un lenguaje simple y entretenido. Al final, hazme 3 preguntas cortas para comprobar que',
-    'entendí y dime si las respondí bien.',
+    'CÓMO TRABAJAR (muy importante, ve de a poco):',
+    '1. Empieza explicando SOLO el primer punto o subtema, en un párrafo corto, como si tuviera 14',
+    '   años, con un ejemplo de Chile o de mi vida diaria.',
+    '2. Después hazme UNA pregunta de comprensión y espera mi respuesta; corrígela si hace falta.',
+    '3. Recién entonces pregúntame si quiero: seguir con el siguiente tema, profundizar este o ver',
+    '   otro ejemplo. NO me expliques todo de una vez ni en una sola respuesta.',
   ].join('\n');
 }
 
@@ -79,8 +83,18 @@ export function buildPromptEvaluar(modulo: DatosModulo, asignatura: string): str
     '',
     encabezado(modulo, asignatura),
     '',
-    'Hazme un examen de 25 preguntas, como el real: opción múltiple, verdadero o falso y respuesta',
-    'corta. Hazlo por secciones y al final corrígeme todo. Sé justa y detalla qué debo repasar.',
+    'FORMATO DEL EXAMEN (igual al real):',
+    '- Preguntas de opción múltiple con 4 alternativas (a, b, c, d), verdadero/falso, respuesta',
+    '  corta o emparejamiento, como los exámenes libres del MINEDUC.',
+    '- Me harás hasta 25 preguntas en total, pero de a UNA por vez.',
+    '',
+    'CÓMO TRABAJAR (muy importante):',
+    '1. Hazme UNA sola pregunta por mensaje y espera mi respuesta. NO me des varias preguntas a la',
+    '   vez ni en una sola respuesta.',
+    '2. Cuando responda, dime si está correcta o no, explica brevemente por qué, y recién entonces',
+    '   hazme la siguiente pregunta.',
+    '3. Lleva la cuenta de cuántas correctas e incorrectas llevo.',
+    '4. Al final, NO me des la nota ni el resumen todavía: te lo pediré en el siguiente mensaje.',
   ].join('\n');
 }
 
@@ -89,7 +103,10 @@ export function buildPromptResumir(modulo: DatosModulo, asignatura: string): str
     'Actúa como mi tutora. Terminé de estudiar:',
     encabezado(modulo, asignatura),
     '',
-    'Pídeme que te explique con mis palabras lo que aprendí y ayúdame a organizar mis apuntes.',
+    'CÓMO TRABAJAR (ve de a poco):',
+    '1. Pregúntame qué aprendí y escucha mi explicación.',
+    '2. Sugiere UNA idea clave o concepto por mensaje, y pregúntame si quiero seguir con el',
+    '   siguiente. NO intentes resumir todo de una vez.',
   ].join('\n');
 }
 
@@ -103,8 +120,10 @@ export function buildPromptRepasar(modulo: DatosModulo, temas: string[]): string
     temas.length ? 'Estos son los temas que debo reforzar:' : 'Repasemos el objetivo completo:',
     enfoque,
     '',
-    'Explícamelos de nuevo como si tuviera 14 años, con ejemplos de Chile, y al final hazme 3',
-    'preguntas para asegurarte de que ahora sí los entiendo.',
+    'CÓMO TRABAJAR (ve de a poco):',
+    '1. Explícame SOLO el primer tema en un párrafo corto, como si tuviera 14 años, con un ejemplo.',
+    '2. Hazme UNA pregunta para comprobar que entendí y corrige si hace falta.',
+    '3. Pregúntame si sigo con el siguiente tema. NO lo expliques todo de una vez.',
   ].join('\n');
 }
 
@@ -114,13 +133,15 @@ export function buildPromptRepasar(modulo: DatosModulo, temas: string[]): string
 export function buildPromptResultadoEvaluacion(modulo: DatosModulo): string {
   return [
     'Ya terminamos la evaluación de este módulo. Ahora resume mis resultados en un formato simple.',
+    'Usa la cuenta de correctas e incorrectas que llevamos en esta conversación.',
     '',
     'RESPONDE SOLO CON ESTE BLOQUE JSON, rellenando cada campo y SIN texto fuera de él:',
     '',
     fence(jsonEvaluacion(modulo.codigo)),
     '',
-    'Reglas: `nota` en escala 1 a 7 con un decimal (ej. 5.5). `temas_dominados` y `temas_a_reforzar`',
-    'son listas de frases cortas. Usa la información de la evaluación que acabamos de hacer.',
+    'Reglas: `nota` en escala 1 a 7 con un decimal (ej. 5.5). `preguntas_totales` es el total de',
+    'preguntas que alcanzamos a hacer. `temas_dominados` y `temas_a_reforzar` son listas de frases',
+    'cortas.',
   ].join('\n');
 }
 

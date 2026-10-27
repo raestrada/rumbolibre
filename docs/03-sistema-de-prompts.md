@@ -27,6 +27,22 @@ repasa los **temas a reforzar** obtenidos de la evaluación fallida y vuelve a b
   código del módulo precargado (`"modulo": "M1-LEN-OA3"`), por lo que la salida siempre se puede
   asociar al módulo correcto.
 
+## Por qué de a poco (incremental)
+
+Pedirle al LLM "todo en una sola respuesta" choca con el límite de tokens de salida y queda cortado
+a medias. Por eso todos los prompts de actividad instruyen al agente a **avanzar de a poco**:
+
+- **Estudiar / Repasar:** explica un tema por mensaje, hace UNA pregunta de comprobación y pregunta
+  si seguir, profundizar o ver otro ejemplo.
+- **Evaluar:** hace UNA pregunta por mensaje, corrige, y recién pasa a la siguiente; lleva la cuenta
+  de correctas/incorrectas y NO entrega nota ni resumen hasta que se lo piden (eso lo hace el prompt
+  de resultados).
+- **Apuntes:** sugiere UNA idea clave o concepto por mensaje.
+
+El formato del examen imita al real (opción múltiple con 4 alternativas, verdadero/falso, respuesta
+corta o emparejamiento). Las preguntas de ejemplo oficiales (modalidad adultos) están en
+`docs/06-fuentes-oficiales.md`.
+
 ## Flujo completo (p. ej. `evaluar`)
 
 1. Copia el **prompt de actividad** y pégalo en tu agente (puede ser un **chat nuevo**). El agente
@@ -72,21 +88,16 @@ lo que ya está en el temario.
 ### Prompt de actividad — `estudiar`
 ```
 Actúa como una profesora chilena de 1° medio, cercana, paciente y clara.
+Voy a estudiar sola para el examen libre del MINEDUC.
 
-Voy a estudiar sola para el examen libre del MINEDUC. Hoy me toca:
-{codigo} — {titulo} (asignatura: {asignatura}).
+{cabecera con código, título, objetivo e indicadores}
 
-Objetivo de Aprendizaje:
-{descripcion}
-
-Para lograrlo, debo ser capaz de:
-- {indicador 1}
-- {indicador 2}
-- ...
-
-Explícamelo como si tuviera 14 años, paso a paso, con ejemplos de Chile y de mi vida diaria.
-Usa un lenguaje simple y entretenido. Al final, hazme 3 preguntas cortas para comprobar que
-entendí y dime si las respondí bien.
+CÓMO TRABAJAR (muy importante, ve de a poco):
+1. Empieza explicando SOLO el primer punto o subtema, en un párrafo corto, como si tuviera 14
+   años, con un ejemplo de Chile o de mi vida diaria.
+2. Después hazme UNA pregunta de comprensión y espera mi respuesta; corrígela si hace falta.
+3. Recién entonces pregúntame si quiero: seguir con el siguiente tema, profundizar este o ver
+   otro ejemplo. NO me expliques todo de una vez ni en una sola respuesta.
 ```
 
 ### Prompt de actividad — `evaluar`
@@ -95,15 +106,28 @@ Actúa como mi profesora examinadora de 1° medio. Vamos a simular el examen lib
 
 {cabecera con código, título, objetivo e indicadores}
 
-Hazme un examen de 25 preguntas, como el real: opción múltiple, verdadero o falso y respuesta
-corta. Hazlo por secciones y al final corrígeme todo. Sé justa y detalla qué debo repasar.
+FORMATO DEL EXAMEN (igual al real):
+- Preguntas de opción múltiple con 4 alternativas (a, b, c, d), verdadero/falso, respuesta
+  corta o emparejamiento, como los exámenes libres del MINEDUC.
+- Me harás hasta 25 preguntas en total, pero de a UNA por vez.
+
+CÓMO TRABAJAR (muy importante):
+1. Hazme UNA sola pregunta por mensaje y espera mi respuesta. NO me des varias preguntas a la
+   vez ni en una sola respuesta.
+2. Cuando responda, dime si está correcta o no, explica brevemente por qué, y recién entonces
+   hazme la siguiente pregunta.
+3. Lleva la cuenta de cuántas correctas e incorrectas llevo.
+4. Al final, NO me des la nota ni el resumen todavía: te lo pediré en el siguiente mensaje.
 ```
 
 ### Prompt de actividad — `apuntes`
 ```
 Actúa como mi tutora. Terminé de estudiar: {cabecera}.
 
-Pídeme que te explique con mis palabras lo que aprendí y ayúdame a organizar mis apuntes.
+CÓMO TRABAJAR (ve de a poco):
+1. Pregúntame qué aprendí y escucha mi explicación.
+2. Sugiere UNA idea clave o concepto por mensaje, y pregúntame si quiero seguir con el
+   siguiente. NO intentes resumir todo de una vez.
 ```
 
 ### Prompt de repasar (tras reprobar)
@@ -116,8 +140,10 @@ Estos son los temas que debo reforzar:
 - {tema a reforzar 1}
 - {tema a reforzar 2}
 
-Explícamelos de nuevo como si tuviera 14 años, con ejemplos de Chile, y al final hazme 3
-preguntas para asegurarte de que ahora sí los entiendo.
+CÓMO TRABAJAR (ve de a poco):
+1. Explícame SOLO el primer tema en un párrafo corto, como si tuviera 14 años, con un ejemplo.
+2. Hazme UNA pregunta para comprobar que entendí y corrige si hace falta.
+3. Pregúntame si sigo con el siguiente tema. NO lo expliques todo de una vez.
 ```
 
 ### Prompt de resultados — evaluación

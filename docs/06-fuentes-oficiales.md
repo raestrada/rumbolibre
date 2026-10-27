@@ -33,6 +33,31 @@
 - Promoción (Decreto 67/2018): todas ≥ 4,0; o 1 reprobada con promedio ≥ 4,5; o 2 reprobadas con
   promedio ≥ 5,0.
 
+## Preguntas de ejemplo (referencia de formato)
+
+**Importante:** para **menores de 18** el MINEDUC publica **solo temarios**, no pruebas de ensayo
+ni preguntas de ejemplo. Las siguientes son las **preguntas de ejemplo oficiales de la modalidad
+adultos** ("Nivel Medio 1", equivalente a 1° y 2° medio), útiles como **referencia de formato**
+(opción múltiple, etc.) y de estilo. Se listan por asignatura:
+
+- Lengua y Literatura:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NM1-lenguaje-2026_DS10.pdf`
+- Matemática:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/ejemplos-de-preguntas-_NM1-matematica-2025_DS257-uv.pdf`
+- Historia, Geografía y Ciencias Sociales:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-nivel-medio-1-D10-VE-2026.pdf`
+- Ciencias Naturales:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NM1-C-Naturales-2026_DS10.pdf`
+- Inglés:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2020/09/PREGUNTAS-PARA-LIBERAR-INGLES-VE257_NM1.pdf`
+
+También hay **"Sitios web para apoyar el estudio"** por asignatura (mismo sitio, tabla inferior).
+
+### Formato del examen (menores de 18)
+Según "¿Cómo se evalúa?": pruebas en papel con **opción múltiple, respuestas cortas, verdadero o
+falso y/o emparejamiento**. Cada prueba: 25 preguntas, 90 minutos, máx. 2 por día. Este es el
+formato que imitan los prompts de evaluación de la app.
+
 ## Cómo agregar otro curso sin alucinar
 1. Descargar el **temario oficial** del curso desde la lista de temarios del MINEDUC.
 2. Transcribir **fielmente** OA, títulos, descripciones e indicadores (ver
