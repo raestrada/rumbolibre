@@ -16,7 +16,7 @@ export const lecturas: Lectura[] = [
     edadMinima: 13,
     rating: 4.3,
     porQue:
-      'Un astronauta sobrevive usando ciencia real: química (cultivos), física y cálculo. Refuerza Ciencias Naturales de forma entretenida.',
+      'Un astronauta queda solo en Marte y debe sobrevivir usando ciencia real: química para cultivar, física para calcular y mucha creatividad. Es una de las formas más entretenidas de ver la ciencia aplicada a problemas concretos.',
   },
   {
     id: 'lec-proyecto-hail-mary',
@@ -29,7 +29,7 @@ export const lecturas: Lectura[] = [
     edadMinima: 14,
     rating: 4.5,
     porQue:
-      'Del mismo autor de El marciano: ciencia, astronomía y resolución de problemas con mucho corazón. De lo mejor reciente.',
+      'Un profesor despierta solo en una nave con la misión de salvar a la humanidad. Mezcla astronomía, biología y resolución de problemas con un tono divertido y emotivo; de lo mejor de la ciencia ficción reciente.',
   },
   {
     id: 'lec-fundacion',
@@ -42,7 +42,7 @@ export const lecturas: Lectura[] = [
     edadMinima: 13,
     rating: 4.2,
     porQue:
-      'Enseña a pensar en procesos largos: cómo las sociedades cambian, caen y renacen. Complementa Historia y el pensamiento crítico.',
+      'Un matemático predice la caída de un imperio galáctico y diseña un plan para acortar la edad oscura. Enseña a pensar en procesos históricos largos y en cómo las sociedades cambian, caen y renacen.',
   },
   {
     id: 'lec-yo-robot',
@@ -54,7 +54,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Las "tres leyes de la robótica" son un ejercicio de lógica y de dilemas éticos: perfecto para razonar.',
+    porQue:
+      'Nueve relatos sobre robots y las "tres leyes de la robótica", que se ponen a prueba con dilemas ingeniosos. Es un ejercicio de lógica y ética que se lee como un puzzle.',
   },
   {
     id: 'lec-contacto',
@@ -66,7 +67,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.1,
-    porQue: 'Une astronomía con el método científico y la pregunta por el lugar del ser humano en el universo.',
+    porQue:
+      'Una científica busca señales de vida extraterrestre y debe defender el método científico frente a la política y la fe. Une astronomía, escepticismo y la gran pregunta por nuestro lugar en el universo.',
   },
   {
     id: 'lec-2001',
@@ -78,7 +80,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Ciencia ficción clásica sobre evolución, inteligencia artificial y el espacio.',
+    porQue:
+      'De un misterioso monolito a la inteligencia artificial HAL 9000, la novela explora evolución, tecnología y el espacio. Un clásico que definió la ciencia ficción moderna.',
   },
   {
     id: 'lec-exhalacion',
@@ -90,7 +93,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.2,
-    porQue: 'Cuentos cortos que exploran física y grandes preguntas con rigor y emoción.',
+    porQue:
+      'Cuentos breves que juegan con la física, el tiempo y la conciencia, siempre con rigor y emoción. Ideales para descubrir que la ciencia también puede ser literatura.',
   },
   {
     id: 'lec-historia-de-tu-vida',
@@ -102,7 +106,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.3,
-    porQue: 'Relatos que unen ciencia, lenguaje y tiempo. Ideal para pensar distinto.',
+    porQue:
+      'El relato que inspiró "La llegada": una lingüista aprende el idioma de unos visitantes y cambia su forma de ver el tiempo. Une lenguaje, física y filosofía en una historia inolvidable.',
   },
   {
     id: 'lec-tres-cuerpos',
@@ -114,7 +119,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.0,
-    porQue: 'Física (el problema de los tres cuerpos) dentro de una historia fascinante.',
+    porQue:
+      'Un físico se ve envuelto en un misterio que conecta un videojuego, una revolución y una civilización alienígena. Física y astronomía reales dentro de una trama adictiva.',
   },
   {
     id: 'lec-parque-jurasico',
@@ -126,7 +132,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.1,
-    porQue: 'Genética y ADN explicados a través de dinosaurios. Refuerza Biología y evolución.',
+    porQue:
+      'Un parque con dinosaurios clonados sale terriblemente mal. A través del ADN, la genética y la evolución, plantea preguntas éticas sobre la ciencia y sus límites.',
   },
   {
     id: 'lec-long-way',
@@ -139,7 +146,7 @@ export const lecturas: Lectura[] = [
     edadMinima: 13,
     rating: 4.4,
     porQue:
-      'Ciencia ficción cálida sobre una tripulación diversa: culturas, empatía y cómo convivir. Muy entretenida y tierna.',
+      'Una tripulación muy diversa (humanos y aliens) viaja en una nave para abrir un túnel espacial. Es una historia cálida sobre empatía, culturas y convivencia, con ciencia ficción de fondo.',
   },
   // — Fantasía con sistemas consistentes (lógica, ética, sociedad) —
   {
@@ -152,7 +159,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.5,
-    porQue: 'Sistemas de "magia dura" con reglas claras: entrena lógica, consecuencias y ética.',
+    porQue:
+      'En un imperio oscuro, una ladrona descubre que puede usar metales para obtener poderes. El "sistema de magia" tiene reglas claras, así que entrena lógica, consecuencias y ética.',
   },
   {
     id: 'lec-elantris',
@@ -164,7 +172,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Novela autocontenida para empezar con Sanderson: política, fe y resiliencia.',
+    porQue:
+      'Una ciudad entera queda maldita y sus habitantes se vuelven sombras; un príncipe y una princesa intentan salvarla. Novela autocontenida de Sanderson sobre fe, política y resiliencia.',
   },
   {
     id: 'lec-camino-de-los-reyes',
@@ -176,7 +185,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 15,
     rating: 4.6,
-    porQue: 'Fantasía épica sobre honor, liderazgo y decisiones difíciles. Muy bien escrita.',
+    porQue:
+      'En un mundo azotado por tormentas, varios personajes luchan por sobrevivir, liderar y encontrar su honor. Fantasía épica muy bien escrita sobre decisiones difíciles y liderazgo.',
   },
   {
     id: 'lec-rithmatista',
@@ -188,7 +198,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 12,
     rating: 4.2,
-    porQue: 'Fantasía para jóvenes donde la "magia" usa geometría y figuras. Ideal a tu edad.',
+    porQue:
+      'En una escuela donde la "magia" se dibuja con geometría, un estudiante investiga desapariciones. Ideal a tu edad: lógica, figuras geométricas y misterio.',
   },
   {
     id: 'lec-warbreaker',
@@ -200,7 +211,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.3,
-    porQue: 'Otra novela autocontenida de Sanderson, con intrigas políticas y religión.',
+    porQue:
+      'Dos reinos y una princesa que debe casarse con un dios; intrigas políticas y religión en un mundo donde el aliento da poder. Otra novela autocontenida de Sanderson.',
   },
   {
     id: 'lec-nombre-del-viento',
@@ -212,7 +224,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.6,
-    porQue: 'Una de las fantasías mejor escritas de nuestra época: música, relato y misterio.',
+    porQue:
+      'Kvothe cuenta su vida: música, magia y un misterio en una posada. Una de las fantasías mejor escritas de los últimos años, con una prosa que atrapa.',
   },
   {
     id: 'lec-mundodisco',
@@ -224,7 +237,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Humor e ideas profundas: sátira de la sociedad, la política y la ciencia.',
+    porQue:
+      'Un mundo plano sobre una tortuga, lleno de magos, brujas y humor inteligente. Sátira de la sociedad, la política y la ciencia; cada libro se puede leer por separado.',
   },
   {
     id: 'lec-hobbit',
@@ -236,7 +250,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 12,
     rating: 4.3,
-    porQue: 'Clásico de aventuras muy bien escrito: coraje, amistad y un mundo enorme.',
+    porQue:
+      'Bilbo Bolsón deja su cómoda vida para acompañar a un grupo de enanos en busca de un tesoro. Un clásico de aventuras sobre coraje y amistad, ideal para empezar la fantasía.',
   },
   {
     id: 'lec-princesa-prometida',
@@ -248,7 +263,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Divertidísima, romántica y llena de aventuras. Un clásico para amar la lectura.',
+    porQue:
+      'Aventuras, amor, humor y piratas en una historia contada con ironía y cariño. Divertidísima y perfecta para enamorarse de la lectura.',
   },
   {
     id: 'lec-historia-interminable',
@@ -260,7 +276,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 12,
     rating: 4.2,
-    porQue: 'Una celebración de la imaginación y de los libros. Muy recomendable a tu edad.',
+    porQue:
+      'Bastian encuentra un libro que lo absorbe en un mundo de fantasía que se está apagando. Una celebración de la imaginación y de los libros.',
   },
   {
     id: 'lec-coraline',
@@ -272,7 +289,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 12,
     rating: 4.1,
-    porQue: 'Fantasía oscura pero tierna sobre el valor y la familia. Se lee rapidísimo.',
+    porQue:
+      'Coraline encuentra una puerta a un mundo "mejor"… pero con secretos oscuros. Fantasía breve y tensa sobre el valor y la familia; se lee rapidísimo.',
   },
   // — Distopía, sociedad e historia en ficción —
   {
@@ -285,7 +303,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.2,
-    porQue: 'Crítica del totalitarismo y la manipulación de la verdad. Complementa Historia del siglo XX.',
+    porQue:
+      'Winston vive en un régimen que controla la verdad, el lenguaje y hasta los pensamientos. Una crítica al totalitarismo que ayuda a entender la Historia del siglo XX y el valor de la libertad.',
   },
   {
     id: 'lec-rebelion-granja',
@@ -297,7 +316,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.0,
-    porQue: 'Alegoría de la Revolución Rusa y del poder: corta, directa y muy útil para Historia.',
+    porQue:
+      'Los animales de una granja expulsan a su dueño y crean su propia sociedad… que termina traicionando sus ideales. Alegoría de la Revolución Rusa: corta, directa y muy útil para Historia.',
   },
   {
     id: 'lec-mundo-feliz',
@@ -309,7 +329,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.0,
-    porQue: 'Una sociedad controlada por el placer y el consumo: invita a pensar en libertad y conformismo.',
+    porQue:
+      'Una sociedad futura mantiene a todos felices con placer, consumo y control. Invita a pensar en la libertad, el conformismo y qué significa ser humano.',
   },
   {
     id: 'lec-fahrenheit',
@@ -321,7 +342,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.0,
-    porQue: 'Sobre la censura y el valor de los libros. Conecta con Lengua y Literatura.',
+    porQue:
+      'En un mundo donde los bomberos queman libros, un bombero empieza a dudar. Una defensa de la lectura y de la libertad de pensar.',
   },
   {
     id: 'lec-el-dador',
@@ -333,7 +355,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 12,
     rating: 4.1,
-    porQue: 'Una comunidad "perfecta" sin dolor ni memoria: qué nos hace humanos. Muy buena para conversar.',
+    porQue:
+      'Jonás vive en una comunidad "perfecta" sin dolor ni memoria, hasta que descubre la verdad. Una distopía breve y profunda sobre la memoria y la elección.',
   },
   {
     id: 'lec-ensayo-ceguera',
@@ -345,7 +368,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.0,
-    porQue: 'Qué pasa con las personas cuando la sociedad colapsa: un experimento sobre la naturaleza humana.',
+    porQue:
+      'Una epidemia de ceguera blanca hace colapsar la sociedad y revela lo mejor y lo peor de las personas. Un experimento literario sobre la naturaleza humana.',
   },
   {
     id: 'lec-crimen-castigo',
@@ -357,7 +381,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 15,
     rating: 4.3,
-    porQue: 'Estudio profundo de la culpa y la conciencia. Sugerido para leer con un adulto.',
+    porQue:
+      'Raskólnikov comete un crimen y debe enfrentar su conciencia. Un estudio psicológico profundo sobre la culpa y la moral; sugerido para leer con un adulto.',
   },
   {
     id: 'lec-ladrona-libros',
@@ -369,7 +394,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.4,
-    porQue: 'La Segunda Guerra Mundial desde la mirada de una niña: emoción e historia.',
+    porQue:
+      'La muerte narra la historia de Liesel, una niña que roba libros en la Alemania nazi. Emoción e historia de la Segunda Guerra Mundial en una novela inolvidable.',
   },
   {
     id: 'lec-casa-espiritus',
@@ -381,7 +407,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.3,
-    porQue: 'Historia de Chile (siglo XX) a través de una saga familiar. Complementa Historia.',
+    porQue:
+      'La saga de una familia chilena a lo largo del siglo XX, con realismo mágico. Historia de Chile, política y sociedad contadas desde lo íntimo.',
   },
   {
     id: 'lec-todo-desmorona',
@@ -393,7 +420,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.0,
-    porQue: 'El impacto del colonialismo en una comunidad: historia y diversidad cultural.',
+    porQue:
+      'Okonkwo es un líder en su aldea africana hasta que llega el colonialismo. Una mirada potente al choque cultural y a la historia de África.',
   },
   // — Divulgación entretenida —
   {
@@ -406,7 +434,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.1,
-    porQue: 'Física moderna (relatividad, agujeros negros) con imágenes y explicaciones accesibles.',
+    porQue:
+      'Hawking explica relatividad, agujeros negros y el origen del universo con imágenes y analogías. Física moderna para lectores curiosos.',
   },
   {
     id: 'lec-breve-historia-tiempo',
@@ -418,7 +447,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.2,
-    porQue: 'El origen y la estructura del universo explicados por un gran divulgador.',
+    porQue:
+      'Del Big Bang a los agujeros negros, un recorrido por las grandes preguntas de la cosmología. Un clásico de la divulgación científica.',
   },
   {
     id: 'lec-cosmos',
@@ -430,7 +460,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.4,
-    porQue: 'Un clásico que despierta la curiosidad por la ciencia y el universo.',
+    porQue:
+      'Un viaje por el universo, la evolución de la vida y la historia de la ciencia. Un clásico que contagia curiosidad y asombro.',
   },
   {
     id: 'lec-sapiens',
@@ -442,7 +473,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.1,
-    porQue: 'La historia de la humanidad de un vistazo: conecta Historia, Biología y economía.',
+    porQue:
+      'Cómo el Homo sapiens pasó de cazador-recolector a dominar el planeta. Conecta Historia, Biología y economía en un relato provocador.',
   },
   {
     id: 'lec-que-pasaria-si',
@@ -454,7 +486,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Preguntas absurdas respondidas con ciencia real y mucho humor.',
+    porQue:
+      'Preguntas absurdas (¿y si todos saltáramos a la vez?) respondidas con física y matemática reales. Ciencia y humor en dosis perfectas.',
   },
   {
     id: 'lec-breve-historia-casi-todo',
@@ -466,7 +499,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.2,
-    porQue: 'Un recorrido ameno por toda la ciencia: perfecto para ampliar el background general.',
+    porQue:
+      'Un recorrido ameno por la astronomía, la geología, la biología y la historia de la ciencia. Perfecto para ampliar el background general.',
   },
   {
     id: 'lec-gen-egoista',
@@ -478,7 +512,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 15,
     rating: 4.1,
-    porQue: 'La evolución desde el punto de vista del gen. Sugerido para leer con un adulto.',
+    porQue:
+      'Dawkins explica la evolución desde el punto de vista del gen, con ejemplos brillantes. Un clásico que cambia la forma de ver la biología.',
   },
   {
     id: 'lec-relojero-ciego',
@@ -490,7 +525,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.0,
-    porQue: 'Cómo la selección natural produce complejidad sin diseño. Muy claro.',
+    porQue:
+      'Cómo la selección natural produce complejidad sin necesidad de un diseñador. Una explicación clara y elegante de la evolución.',
   },
   {
     id: 'lec-hombre-confundio-sombrero',
@@ -502,7 +538,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.2,
-    porQue: 'Casos reales y fascinantes del cerebro: puerta de entrada a la psicología y la neurociencia.',
+    porQue:
+      'Oliver Sacks narra casos reales de pacientes con trastornos neurológicos asombrosos. Una puerta de entrada fascinante a la neurociencia y la psicología.',
   },
   {
     id: 'lec-pensar-rapido-despacio',
@@ -514,7 +551,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 15,
     rating: 4.2,
-    porQue: 'Cómo pensamos y decidimos: sesgos y dos sistemas de pensamiento.',
+    porQue:
+      'Kahneman muestra los dos sistemas que guían nuestras decisiones y los sesgos que nos engañan. Psicología rigurosa y muy útil para pensar mejor.',
   },
   {
     id: 'lec-siete-breves-lecciones',
@@ -526,7 +564,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.1,
-    porQue: 'La física moderna (relatividad, cuántica) en siete capítulos breves y poéticos.',
+    porQue:
+      'Rovelli explica la relatividad, la cuántica y el tiempo en capítulos breves y poéticos. Física moderna para leer en una tarde.',
   },
   {
     id: 'lec-hombre-busca-sentido',
@@ -538,7 +577,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 15,
     rating: 4.4,
-    porQue: 'Psicología real (logoterapia) desde la experiencia de un sobreviviente. Sugerido para leer con un adulto.',
+    porQue:
+      'Viktor Frankl, psiquiatra y sobreviviente de campos de concentración, explica cómo el sentido sostiene a las personas. Psicología real y conmovedora; sugerido con un adulto.',
   },
   {
     id: 'lec-inteligencia-emocional',
@@ -550,7 +590,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 14,
     rating: 4.0,
-    porQue: 'Por qué las emociones importan tanto como el intelecto. Muy formativo.',
+    porQue:
+      'Goleman explica por qué las emociones importan tanto como el intelecto y cómo manejarlas. Muy formativo para la vida y los estudios.',
   },
   {
     id: 'lec-mindset',
@@ -562,7 +603,8 @@ export const lecturas: Lectura[] = [
     cursosAplica: ['M1'],
     edadMinima: 13,
     rating: 4.2,
-    porQue: 'Mentalidad de crecimiento: cómo tu forma de pensar cambia lo que logras.',
+    porQue:
+      'Carol Dweck muestra cómo la "mentalidad de crecimiento" cambia lo que logramos. Psicología del aprendizaje aplicada a estudiar mejor.',
   },
 ];
 

@@ -1876,8 +1876,48 @@ button.fila:hover,
 }
 
 .libro-detalle {
+  display: flex;
+  gap: 14px;
   border-top: 1px solid var(--borde);
-  padding: 10px 0 12px;
+  padding: 12px 0 14px;
+}
+
+.libro-detalle-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.portada {
+  display: block;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f4f1fb;
+}
+
+.portada-mini {
+  width: 38px;
+  height: 56px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.portada-grande {
+  width: 96px;
+  height: auto;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.portada-vacia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--texto-suave);
+  font-size: 1.1rem;
+}
+
+.portada-vacia.portada-grande {
+  height: 140px;
 }
 
 .libro-detalle p {

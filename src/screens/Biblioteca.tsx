@@ -16,6 +16,30 @@ function ratingColor(r?: number | null): string {
   return 'var(--texto-suave)';
 }
 
+function Portada({
+  id,
+  titulo,
+  size,
+}: {
+  id: string;
+  titulo: string;
+  size: 'mini' | 'grande';
+}): JSX.Element {
+  const [error, setError] = useState(false);
+  if (error) {
+    return <span className={`portada portada-${size} portada-vacia`}>📖</span>;
+  }
+  return (
+    <img
+      className={`portada portada-${size}`}
+      src={`portadas/${id}.jpg`}
+      alt={`Portada de ${titulo}`}
+      loading="lazy"
+      onError={() => setError(true)}
+    />
+  );
+}
+
 export default function Biblioteca(): JSX.Element {
   const [busqueda, setBusqueda] = useState('');
   const [genero, setGenero] = useState('Todas');
@@ -97,6 +121,7 @@ export default function Biblioteca(): JSX.Element {
             return (
               <details key={l.id} className="libro-fila">
                 <summary>
+                  <Portada id={l.id} titulo={l.titulo} size="mini" />
                   <span className="libro-rating" style={{ color: ratingColor(l.rating) }}>
                     {l.rating != null ? `★ ${l.rating.toFixed(1)}` : '–'}
                   </span>
@@ -119,14 +144,17 @@ export default function Biblioteca(): JSX.Element {
                   </button>
                 </summary>
                 <div className="libro-detalle">
-                  <div className="libro-area">🧠 {l.area}</div>
-                  <p>{l.por_que}</p>
-                  <div className="libro-temas">
-                    {l.temas.map((t, i) => (
-                      <Chip key={i} tono="suave">
-                        {t}
-                      </Chip>
-                    ))}
+                  <Portada id={l.id} titulo={l.titulo} size="grande" />
+                  <div className="libro-detalle-texto">
+                    <div className="libro-area">🧠 {l.area}</div>
+                    <p>{l.por_que}</p>
+                    <div className="libro-temas">
+                      {l.temas.map((t, i) => (
+                        <Chip key={i} tono="suave">
+                          {t}
+                        </Chip>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </details>
