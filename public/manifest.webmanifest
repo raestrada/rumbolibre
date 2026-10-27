@@ -1,0 +1,12 @@
+{
+  "name": "Rumbo Libre",
+  "short_name": "Rumbo Libre",
+  "description": "Guía y seguimiento para exámenes libres de 1° medio (MINEDUC).",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f5fb",
+  "theme_color": "#7c3aed",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
