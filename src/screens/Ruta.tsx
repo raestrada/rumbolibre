@@ -11,6 +11,7 @@ import {
   type RegistroRow,
 } from '../db/queries';
 import { NOTA_APROBACION } from '../data/tipos';
+import { ORDEN_MODULOS } from '../data/orden';
 import { ProgressBar } from '../components/ui';
 
 type EstadoModulo = 'aprobado' | 'reprobado' | 'encurso' | 'pendiente';
@@ -22,18 +23,20 @@ interface ItemRuta {
   posicion: number;
 }
 
-function ordenRecomendado(asignaturas: AsignaturaRow[]): ItemRuta[] {
-  const porAsignatura = asignaturas.map((a) => ({ asig: a, modulos: getModulos(a.id) }));
-  const max = porAsignatura.reduce((m, p) => Math.max(m, p.modulos.length), 0);
-  const out: ItemRuta[] = [];
-  for (let i = 0; i < max; i++) {
-    for (const p of porAsignatura) {
-      if (p.modulos[i]) {
-        out.push({ modulo: p.modulos[i], asignatura: p.asig, estado: 'pendiente', posicion: 0 });
-      }
-    }
+function ordenarItems(asignaturas: AsignaturaRow[]): ItemRuta[] {
+  const modulosPorId = new Map<string, { modulo: ModuloFull; asignatura: AsignaturaRow }>();
+  for (const a of asignaturas) {
+    for (const m of getModulos(a.id)) modulosPorId.set(m.id, { modulo: m, asignatura: a });
   }
-  return out;
+  const ordenados = ORDEN_MODULOS.map((id) => modulosPorId.get(id)).filter(
+    (x): x is { modulo: ModuloFull; asignatura: AsignaturaRow } => Boolean(x),
+  );
+  // Por seguridad: añadir cualquier módulo que no esté en el orden (p. ej. cursos futuros).
+  const vistos = new Set(ordenados.map((x) => x.modulo.id));
+  for (const [, v] of modulosPorId) {
+    if (!vistos.has(v.modulo.id)) ordenados.push(v);
+  }
+  return ordenados.map((v) => ({ modulo: v.modulo, asignatura: v.asignatura, estado: 'pendiente', posicion: 0 }));
 }
 
 function estadoDe(
@@ -70,7 +73,7 @@ export default function Ruta(): JSX.Element {
     }
   }
 
-  const items = ordenRecomendado(asignaturas).map((it, i) => ({
+  const items = ordenarItems(asignaturas).map((it, i) => ({
     ...it,
     posicion: i + 1,
     estado: estadoDe(it.modulo.id, ultimaNotaPorModulo.get(it.modulo.id) ?? null, progreso),

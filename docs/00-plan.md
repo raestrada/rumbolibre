@@ -86,7 +86,9 @@ Detalles en [`03-sistema-de-prompts.md`](./03-sistema-de-prompts.md) y
 
 1. **Configuración inicial** (onboarding): nombre, curso, fecha objetivo, PIN de padres, importar respaldo.
 2. **Dashboard estudiante**: avance por asignatura, OA completados, racha, próximos hitos.
-3. **Ruta (roadmap)**: asignatura → módulo (OA) → actividades, con checkboxes.
+3. **Ruta (roadmap)**: los 40 módulos en un **orden recomendado** (por dependencia y con las
+   materias intercaladas como un horario de colegio), con estados visibles, "siguiente recomendado"
+   y clic directo a cada módulo.
 4. **Ficha de módulo**: qué se evalúa (indicadores), copiar prompts, checklist, pegar evaluación/apuntes.
 5. **Registro**: historial de evaluaciones y apuntes, marcar verificadas.
 6. **Biblioteca**: lecturas recomendadas (ciencia, fantasía, historia, divulgación).

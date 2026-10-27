@@ -20,6 +20,7 @@ Curso (ej. M1 — 1° medio)
 ## Archivos
 - `src/data/cursos.ts` — cursos + asignaturas (colores e iconos).
 - `src/data/m1/*.ts` — módulos de 1° medio (un archivo por asignatura).
+- `src/data/orden.ts` — orden recomendado de módulos (dependencia + mezcla de materias, como un colegio).
 - `src/data/lecturas.ts` — catálogo de lecturas.
 - `src/lib/prompts.ts` — builders de prompts (actividad, resultados y repasar).
 - `src/db/seed.ts` — inserta todo lo anterior en SQLite (idempotente, con `SEED_VERSION`).
