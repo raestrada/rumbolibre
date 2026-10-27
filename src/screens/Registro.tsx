@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNav } from '../App';
 import { dbAll } from '../db/database';
 import {
   deleteRegistro,
@@ -77,6 +78,7 @@ function DetalleRegistro({ r }: { r: RegistroRow }): JSX.Element {
 
 export default function Registro(): JSX.Element {
   const cursoId = getCursoActivoId();
+  const { go } = useNav();
   const [filtro, setFiltro] = useState<Filtro>('todas');
   const [expandido, setExpandido] = useState<string | null>(null);
 
@@ -125,6 +127,7 @@ export default function Registro(): JSX.Element {
           icono="⭐"
           titulo="Nada por aquí todavía"
           texto="Entra a tu ruta, estudia un módulo y pega el resultado de tu IA."
+          accion={<button className="btn btn-primario" onClick={() => go({ name: 'ruta' })}>Ir a mi ruta →</button>}
         />
       ) : (
         <div className="lista">

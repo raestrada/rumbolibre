@@ -112,15 +112,20 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
         </div>
       ) : null}
 
-      <section className="tarjeta">
-        <h2 className="seccion-titulo">Qué se evalúa</h2>
-        <p className="modulo-descripcion">{modulo.descripcion}</p>
-        <ul className="indicadores">
-          {modulo.indicadores.map((ind, i) => (
-            <li key={i}>{ind}</li>
-          ))}
-        </ul>
-      </section>
+      <details className="acordeon">
+        <summary>
+          <span>Qué se evalúa</span>
+          <span className="acordeon-flecha">▾</span>
+        </summary>
+        <div className="acordeon-cuerpo">
+          <p className="modulo-descripcion">{modulo.descripcion}</p>
+          <ul className="indicadores">
+            {modulo.indicadores.map((ind, i) => (
+              <li key={i}>{ind}</li>
+            ))}
+          </ul>
+        </div>
+      </details>
 
       {/* Paso 1 */}
       <section className="tarjeta paso">

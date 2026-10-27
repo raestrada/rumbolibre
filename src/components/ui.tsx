@@ -118,16 +118,19 @@ export function EmptyState({
   icono,
   titulo,
   texto,
+  accion,
 }: {
   icono: string;
   titulo: string;
   texto?: string;
+  accion?: ReactNode;
 }): JSX.Element {
   return (
     <div className="empty">
       <div className="empty-icono">{icono}</div>
       <div className="empty-titulo">{titulo}</div>
       {texto ? <div className="empty-texto">{texto}</div> : null}
+      {accion ? <div className="empty-accion">{accion}</div> : null}
     </div>
   );
 }

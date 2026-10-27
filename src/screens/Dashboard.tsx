@@ -160,6 +160,7 @@ export default function Dashboard(): JSX.Element {
           icono="⭐"
           titulo="Aún no hay evaluaciones"
           texto="Cuando tu IA te evalúe, pega el resultado en tu ruta y aparecerá aquí."
+          accion={<button className="btn btn-primario" onClick={() => go({ name: 'ruta' })}>Ir a mi ruta →</button>}
         />
       ) : (
         <div className="lista">

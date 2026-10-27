@@ -34,6 +34,17 @@ export default function Onboarding(): JSX.Element {
           Tu guía para preparar los <strong>exámenes libres de 1° medio</strong> (MINEDUC) con ayuda de tu
           agente de IA. Todo se guarda en este computador.
         </p>
+        <div className="onboarding-pasos">
+          <div className="onboarding-paso">
+            <span>1</span> Copia el prompt y estudia con tu IA
+          </div>
+          <div className="onboarding-paso">
+            <span>2</span> Pega la evaluación que te dio
+          </div>
+          <div className="onboarding-paso">
+            <span>3</span> Mira tu avance y repasa lo débil
+          </div>
+        </div>
         <form onSubmit={empezar} className="onboarding-form">
           <label className="campo">
             <span>¿Cómo te llamas?</span>

@@ -16,7 +16,7 @@
   --amarillo: #d97706;
   --peligro: #dc2626;
   --gris: #9ca3af;
-  --sombra: 0 10px 30px rgba(124, 58, 237, 0.08);
+  --sombra: 0 4px 18px rgba(32, 26, 61, 0.06);
   --radio: 16px;
 }
 
@@ -29,6 +29,10 @@ body,
 #root {
   height: 100%;
   margin: 0;
+}
+
+html {
+  font-size: 17px;
 }
 
 body {
@@ -199,8 +203,12 @@ h3 {
 }
 
 .seccion-titulo {
-  font-size: 1.05rem;
-  margin: 26px 0 12px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--texto-suave);
+  font-weight: 750;
+  margin: 26px 0 10px;
 }
 
 /* — Tarjetas y listas — */
@@ -1025,43 +1033,47 @@ select {
 }
 
 /* — Responsive — */
-@media (max-width: 900px) {
+@media (max-width: 760px) {
   .sidebar {
-    position: static;
-    width: 100%;
+    position: fixed;
+    inset: auto 0 0 0;
+    width: auto;
     flex-direction: row;
-    align-items: center;
-    padding: 10px 12px;
-    gap: 8px;
+    align-items: stretch;
+    padding: 6px 8px;
     border-right: none;
-    border-bottom: 1px solid var(--borde);
+    border-top: 1px solid var(--borde);
     overflow-x: auto;
+    z-index: 20;
   }
 
-  .sidebar-marca {
-    padding: 0;
-    flex-shrink: 0;
-  }
-
-  .sidebar-nombre,
+  .sidebar-marca,
   .sidebar-pie {
     display: none;
   }
 
   .sidebar-nav {
     flex-direction: row;
-    flex: 1;
+    gap: 2px;
+    width: 100%;
     overflow-x: auto;
   }
 
   .nav-item {
-    padding: 9px 12px;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 11px;
+    font-size: 0.62rem;
     white-space: nowrap;
+  }
+
+  .nav-icono {
+    font-size: 1.1rem;
   }
 
   .contenido {
     margin-left: 0;
-    padding: 20px 16px 60px;
+    padding: 16px 14px 96px;
   }
 }
 
@@ -1683,4 +1695,90 @@ select {
 
 .ejemplo-opcion strong {
   color: var(--violeta);
+}
+
+/* — Refinamientos de UX — */
+:focus-visible {
+  outline: 2px solid var(--violeta);
+  outline-offset: 2px;
+}
+
+button.fila:hover,
+.roadmap-card:hover {
+  border-color: #e2d9f3;
+}
+
+/* Acordeón (ej. "Qué se evalúa") */
+.acordeon {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 0 18px;
+  margin-bottom: 14px;
+}
+
+.acordeon > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 15px 0;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.acordeon > summary::-webkit-details-marker {
+  display: none;
+}
+
+.acordeon-flecha {
+  color: var(--texto-suave);
+  transition: transform 0.15s;
+}
+
+.acordeon[open] .acordeon-flecha {
+  transform: rotate(180deg);
+}
+
+.acordeon-cuerpo {
+  padding-bottom: 16px;
+}
+
+/* Guía del onboarding */
+.onboarding-pasos {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0 0 22px;
+  text-align: left;
+}
+
+.onboarding-paso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  color: var(--texto-suave);
+}
+
+.onboarding-paso span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--violeta-suave);
+  color: var(--violeta);
+  font-weight: 800;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Acción en estados vacíos */
+.empty-accion {
+  margin-top: 16px;
 }
