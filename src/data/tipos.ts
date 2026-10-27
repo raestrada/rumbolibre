@@ -47,6 +47,7 @@ export interface Lectura {
   cursosAplica: string[];
   edadMinima: number;
   porQue: string;
+  rating?: number;
 }
 
 // Pasos por módulo, en orden. El paso 2 (evaluar) se desbloquea al completar el 1 (estudiar).

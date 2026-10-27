@@ -50,6 +50,7 @@ export async function persistNow(): Promise<void> {
 function syncSeed(): void {
   // Re-sincroniza el contenido (módulos, actividades, lecturas) si cambió la versión de semilla,
   // sin tocar el progreso ni los registros del usuario.
+  migrateSchema();
   const actual = Number(
     dbGet('SELECT valor FROM config WHERE clave = ?', ['seed_version'])?.valor ?? 0,
   );
@@ -59,6 +60,15 @@ function syncSeed(): void {
       'INSERT INTO config (clave, valor) VALUES (?, ?) ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor',
       ['seed_version', String(SEED_VERSION)],
     );
+  }
+}
+
+// Migraciones ligeras de esquema (columnas nuevas) para bases ya existentes.
+function migrateSchema(): void {
+  if (!db) return;
+  const cols = dbAll('PRAGMA table_info(lecturas)');
+  if (!cols.some((c) => c.name === 'rating')) {
+    db.exec('ALTER TABLE lecturas ADD COLUMN rating REAL');
   }
 }
 

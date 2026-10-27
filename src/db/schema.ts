@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS lecturas (
   temas TEXT NOT NULL,
   cursos_aplica TEXT NOT NULL,
   edad_minima INTEGER NOT NULL,
-  por_que TEXT NOT NULL
+  por_que TEXT NOT NULL,
+  rating REAL
 );
 CREATE TABLE IF NOT EXISTS progreso_lectura (
   lectura_id TEXT PRIMARY KEY,

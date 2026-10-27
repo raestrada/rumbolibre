@@ -1,7 +1,12 @@
 # Biblioteca de lecturas complementarias
 
+> **Fuente de verdad:** el catálogo completo (46 títulos, con calificación aproximada Goodreads ≥ 4.0)
+> vive en `src/data/lecturas.ts` (campo `rating`). Esta página es solo una guía de criterios.
+> La app lo muestra en "Biblioteca" con búsqueda, filtros, orden por calificación y marcado de lectura.
+
 Objetivo: dar un **background general** entretenido que complemente el estudio, sin reemplazar el
-temario. Cada libro se etiqueta por **género**, **área que refuerza** y **cursos a los que aplica**.
+temario. Cada libro se etiqueta por **género**, **área que refuerza**, **edad sugerida** y
+**calificación aproximada Goodreads**.
 
 ## Ciencia ficción "dura" (enseña ciencia real)
 - **Isaac Asimov** — *Fundación*, *Yo, Robot* (lógica, robótica, astronomía, historia cíclica).

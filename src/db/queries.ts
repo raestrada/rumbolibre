@@ -55,6 +55,7 @@ export interface LecturaRow {
   cursos_aplica: string[];
   edad_minima: number;
   por_que: string;
+  rating: number | null;
 }
 
 export interface HitoRow {
@@ -333,6 +334,7 @@ export function getLecturas(): LecturaRow[] {
     cursos_aplica: parseArray(r.cursos_aplica),
     edad_minima: Number(r.edad_minima ?? 13),
     por_que: r.por_que ?? '',
+    rating: r.rating ?? null,
   }));
 }
 

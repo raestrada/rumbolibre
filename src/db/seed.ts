@@ -11,7 +11,7 @@ import { lecturas } from '../data/lecturas';
 
 // Se incrementa cuando cambia el CONTENIDO semilla (módulos, actividades, lecturas).
 // Al detectar una versión menor, la app re-sincroniza el contenido sin tocar el progreso del usuario.
-export const SEED_VERSION = 2;
+export const SEED_VERSION = 3;
 
 const TODOS_MODULOS = [
   ...modulosLengua,
@@ -68,11 +68,11 @@ export function seedContenido(db: Database): void {
   insMod.free();
 
   const insLec = db.prepare(
-    `INSERT INTO lecturas (id, titulo, autor, genero, area, temas, cursos_aplica, edad_minima, por_que)
-     VALUES (?,?,?,?,?,?,?,?,?)
+    `INSERT INTO lecturas (id, titulo, autor, genero, area, temas, cursos_aplica, edad_minima, por_que, rating)
+     VALUES (?,?,?,?,?,?,?,?,?,?)
      ON CONFLICT(id) DO UPDATE SET titulo=excluded.titulo, autor=excluded.autor, genero=excluded.genero,
        area=excluded.area, temas=excluded.temas, cursos_aplica=excluded.cursos_aplica,
-       edad_minima=excluded.edad_minima, por_que=excluded.por_que`,
+       edad_minima=excluded.edad_minima, por_que=excluded.por_que, rating=excluded.rating`,
   );
   for (const l of lecturas) {
     insLec.run([
@@ -85,6 +85,7 @@ export function seedContenido(db: Database): void {
       JSON.stringify(l.cursosAplica),
       l.edadMinima,
       l.porQue,
+      l.rating ?? null,
     ]);
   }
   insLec.free();
