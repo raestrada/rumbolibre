@@ -77,7 +77,7 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
   const reprobado = nota != null && nota < NOTA_APROBACION;
 
   const promptEstudiar = getPrompt('estudiar', modulo, asig!.nombre);
-  const promptEvaluar = getPrompt('evaluar', modulo, asig!.nombre);
+  const promptEvaluar = getPrompt('evaluar', modulo, asig!.nombre, asig!.codigo);
   const promptApuntes = getPrompt('apuntes', modulo, asig!.nombre);
   const promptResultadoEval = getPromptResultado('evaluar', modulo) ?? '';
   const promptResultadoApuntes = getPromptResultado('apuntes', modulo) ?? '';

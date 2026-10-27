@@ -40,8 +40,10 @@ a medias. Por eso todos los prompts de actividad instruyen al agente a **avanzar
 - **Apuntes:** sugiere UNA idea clave o concepto por mensaje.
 
 El formato del examen imita al real (opción múltiple con 4 alternativas, verdadero/falso, respuesta
-corta o emparejamiento). Las preguntas de ejemplo oficiales (modalidad adultos) están en
-`docs/06-fuentes-oficiales.md`.
+corta o emparejamiento). Los prompts de evaluación y de ensayo general **incluyen un ejemplo real**
+del MINEDUC (por asignatura, tomado de los PDFs oficiales) como referencia de formato. Las preguntas
+de ejemplo oficiales (modalidad adultos) están en `docs/06-fuentes-oficiales.md` y guardadas en
+`public/examenes/`.
 
 ## Flujo completo (p. ej. `evaluar`)
 

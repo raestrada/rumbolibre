@@ -1625,3 +1625,62 @@ select {
   gap: 6px;
   margin-top: 10px;
 }
+
+/* — Exámenes reales — */
+.examen-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.examen-titulo h3 {
+  font-size: 1.05rem;
+}
+
+.examen-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ejemplo-pregunta {
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fbfaff;
+}
+
+.ejemplo-etiqueta {
+  margin-bottom: 8px;
+}
+
+.ejemplo-contexto {
+  font-style: italic;
+  color: var(--texto-suave);
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+}
+
+.ejemplo-enunciado {
+  font-weight: 650;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.ejemplo-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ejemplo-opcion {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ejemplo-opcion strong {
+  color: var(--violeta);
+}

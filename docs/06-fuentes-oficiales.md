@@ -53,6 +53,10 @@ adultos** ("Nivel Medio 1", equivalente a 1° y 2° medio), útiles como **refer
 
 También hay **"Sitios web para apoyar el estudio"** por asignatura (mismo sitio, tabla inferior).
 
+**Guardados en el sitio:** los 5 PDFs están en `public/examenes/` (lengua, matematica, ciencias,
+historia, ingles) y se sirven junto con la app. La pantalla **"Exámenes"** (menú lateral) los muestra
+con enlaces para **ver/descargar** y con **un ejemplo real por asignatura**.
+
 ### Formato del examen (menores de 18)
 Según "¿Cómo se evalúa?": pruebas en papel con **opción múltiple, respuestas cortas, verdadero o
 falso y/o emparejamiento**. Cada prueba: 25 preguntas, 90 minutos, máx. 2 por día. Este es el

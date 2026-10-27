@@ -1,4 +1,5 @@
 import type { TipoActividad } from '../data/tipos';
+import { EJEMPLOS_PREGUNTA } from '../data/ejemplos';
 
 export interface DatosModulo {
   codigo: string;
@@ -68,6 +69,22 @@ function encabezado(modulo: DatosModulo, asignatura: string): string {
   ].join('\n');
 }
 
+// Ejemplo real (de los PDFs oficiales) para que el agente vea el formato exacto.
+function ejemploFormato(codigo?: string): string {
+  const ej = codigo ? EJEMPLOS_PREGUNTA[codigo] : undefined;
+  if (!ej) return '';
+  const opts = ej.alternativas.map((a, i) => `${String.fromCharCode(65 + i)}. ${a}`).join('\n');
+  return [
+    '',
+    'EJEMPLO DEL ESTILO REAL (solo referencia de formato, no lo copies):',
+    ej.contexto ? `"${ej.contexto}"` : '',
+    ej.enunciado,
+    opts,
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 // — Prompts de actividad (estudio / evaluación / apuntes), sin JSON —
 // Todos van "de a poco": el agente avanza tema por tema o pregunta por pregunta,
 // y consulta antes de seguir, para no chocar con el límite de tokens de salida.
@@ -88,7 +105,7 @@ export function buildPromptBusqueda(modulo: DatosModulo, asignatura: string): st
   ].join('\n');
 }
 
-export function buildPromptEvaluar(modulo: DatosModulo, asignatura: string): string {
+export function buildPromptEvaluar(modulo: DatosModulo, asignatura: string, codigoAsignatura?: string): string {
   return [
     'Actúa como mi profesora examinadora de 1° medio. Vamos a simular el examen libre del MINEDUC.',
     '',
@@ -106,6 +123,7 @@ export function buildPromptEvaluar(modulo: DatosModulo, asignatura: string): str
     '   hazme la siguiente pregunta.',
     '3. Lleva la cuenta de cuántas correctas e incorrectas llevo.',
     '4. Al final, NO me des la nota ni el resumen todavía: te lo pediré en el siguiente mensaje.',
+    ejemploFormato(codigoAsignatura),
   ].join('\n');
 }
 
@@ -144,6 +162,7 @@ export function buildPromptEnsayo(
   asignatura: string,
   ejes: string[],
   modulos: DatosModulo[],
+  codigoAsignatura?: string,
 ): string {
   const lista = modulos.map((m) => `- ${m.codigo} — ${m.titulo}: ${m.descripcion}`).join('\n');
   return [
@@ -162,6 +181,7 @@ export function buildPromptEnsayo(
     '2. Mezcla los temas: no preguntes todo de un tema seguido.',
     '3. Lleva la cuenta de correctas e incorrectas.',
     '4. Al final, NO me des la nota ni el resumen todavía: te lo pediré en el siguiente mensaje.',
+    ejemploFormato(codigoAsignatura),
   ].join('\n');
 }
 
@@ -212,12 +232,13 @@ export function getPrompt(
   tipo: TipoActividad,
   modulo: DatosModulo,
   asignatura: string,
+  codigoAsignatura?: string,
 ): string {
   switch (tipo) {
     case 'estudiar':
       return buildPromptBusqueda(modulo, asignatura);
     case 'evaluar':
-      return buildPromptEvaluar(modulo, asignatura);
+      return buildPromptEvaluar(modulo, asignatura, codigoAsignatura);
     case 'apuntes':
       return buildPromptResumir(modulo, asignatura);
   }

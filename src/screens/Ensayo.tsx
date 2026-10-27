@@ -29,7 +29,7 @@ export default function Ensayo({ asignaturaId }: { asignaturaId: string }): JSX.
   const [panel, setPanel] = useState(false);
   const [modal, setModal] = useState<{ titulo: string; texto: string } | null>(null);
 
-  const prompt = buildPromptEnsayo(asig.nombre, asig.ejes, modulos);
+  const prompt = buildPromptEnsayo(asig.nombre, asig.ejes, modulos, asig.codigo);
   const datos = datosEnsayo(asig);
   const promptResultado = buildPromptResultadoEvaluacion(datos);
 
