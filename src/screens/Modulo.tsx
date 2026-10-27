@@ -10,7 +10,6 @@ import {
   insertRegistro,
   setProgreso,
   type ModuloFull,
-  type AsignaturaRow,
 } from '../db/queries';
 import { NOTA_APROBACION } from '../data/tipos';
 import { buildPromptRepasar, getPrompt, getPromptResultado } from '../lib/prompts';
@@ -18,16 +17,47 @@ import { notaColor, parsearRegistro } from '../lib/parser';
 import { Chip, CopyButton, EmptyState, Modal } from '../components/ui';
 
 function splitComa(s: string): string[] {
-  return s
-    .split(/[,;]/)
-    .map((x) => x.trim())
-    .filter(Boolean);
+  return s.split(/[,;]/).map((x) => x.trim()).filter(Boolean);
 }
 
 function clampNota(s: string): number | null {
   const n = Number(s.replace(',', '.'));
   if (!Number.isFinite(n)) return null;
   return Math.round(Math.min(7, Math.max(1, n)) * 10) / 10;
+}
+
+type EstadoMini = 'hecho' | 'actual' | 'bloqueado' | 'reprobado' | 'todo';
+
+function MiniStepper({ estados }: { estados: [EstadoMini, EstadoMini, EstadoMini] }): JSX.Element {
+  const pasos: { n: number; label: string }[] = [
+    { n: 1, label: 'Estudiar' },
+    { n: 2, label: 'Evaluar' },
+    { n: 3, label: 'Apuntes' },
+  ];
+  const icono: Record<EstadoMini, string> = {
+    hecho: '✓',
+    actual: '',
+    bloqueado: '🔒',
+    reprobado: '🔁',
+    todo: '',
+  };
+  return (
+    <div className="mini-stepper">
+      {pasos.map((p, i) => {
+        const e = estados[i];
+        const contenido = icono[e] || String(p.n);
+        return (
+          <div key={p.n} className="mini-paso-fila">
+            <div className={`mini-item ${e === 'actual' || e === 'reprobado' ? 'activo' : ''}`}>
+              <span className={`mini-dot ${e}`}>{contenido}</span>
+              <span className="mini-label">{p.label}</span>
+            </div>
+            {i < 2 ? <div className="mini-line" /> : null}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function PanelResultado({
@@ -84,44 +114,43 @@ function PanelResultado({
   }
 
   return (
-    <div className="pegar-panel">
-      <p className="pegar-instruccion">
-        1. Pega este prompt en el <strong>mismo chat</strong> para obtener tus resultados en un formato
-        simple:
-      </p>
-      <CopyButton text={promptResultado} label="Copiar prompt de resultados" icono="🧾" />
-      <p className="pegar-instruccion">
-        2. Pega aquí la respuesta (el bloque JSON). Si no lo lee, completa la nota a mano.
-      </p>
+    <div className="resultado-area">
+      <div className="sub-paso">
+        <span className="sub-paso-num">1</span>
+        <p className="sub-paso-texto">
+          Copia este prompt y pégalo en el <strong>mismo chat</strong> para obtener tus resultados:
+        </p>
+      </div>
+      <CopyButton className="btn btn-secundario btn-ancho" text={promptResultado} label="Copiar prompt de resultados" icono="🧾" />
+
+      <div className="sub-paso">
+        <span className="sub-paso-num">2</span>
+        <p className="sub-paso-texto">Pega aquí la respuesta (el bloque JSON) y guarda:</p>
+      </div>
       <textarea
         value={texto}
         onChange={(e) => setTexto(e.target.value)}
         placeholder="Pega aquí el texto de tu agente de IA…"
-        rows={6}
+        rows={5}
       />
       <div className="pegar-manual">
         {tipo === 'evaluacion' ? (
           <label>
-            Nota (1–7)
-            <input
-              value={notaManual}
-              onChange={(e) => setNotaManual(e.target.value)}
-              inputMode="decimal"
-              placeholder="ej. 5.5"
-            />
+            Nota (1–7, si no se leyó)
+            <input value={notaManual} onChange={(e) => setNotaManual(e.target.value)} inputMode="decimal" placeholder="ej. 5.5" />
           </label>
         ) : null}
         <label>
-          {tipo === 'evaluacion' ? 'Temas a reforzar (separados por coma)' : 'Notas / dudas (separadas por coma)'}
+          {tipo === 'evaluacion' ? 'Temas a reforzar' : 'Notas / dudas'}
           <input
             value={temasManual}
             onChange={(e) => setTemasManual(e.target.value)}
-            placeholder={tipo === 'evaluacion' ? 'ej. tópicos literarios, intertextualidad' : 'ej. repasar X, preguntar Y'}
+            placeholder={tipo === 'evaluacion' ? 'Separados por coma' : 'Separadas por coma'}
           />
         </label>
       </div>
       {msg ? <div className={msg.ok ? 'msg-ok' : 'msg-error'}>{msg.texto}</div> : null}
-      <button className="btn btn-primario" onClick={guardar}>
+      <button className="btn btn-primario btn-ancho" onClick={guardar}>
         💾 Guardar
       </button>
     </div>
@@ -148,6 +177,7 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
   const [panelApuntes, setPanelApuntes] = useState(false);
 
   const estudiarHecho = progreso[actividadId(modulo.id, 'estudiar')] === 'completada';
+  const apuntesHecho = progreso[actividadId(modulo.id, 'apuntes')] === 'completada';
   const evaluaciones = registros.filter((r) => r.tipo === 'evaluacion');
   const ultimaEval = evaluaciones[0];
   const nota = ultimaEval?.nota ?? null;
@@ -160,6 +190,12 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
   const promptResultadoEval = getPromptResultado('evaluar', modulo) ?? '';
   const promptResultadoApuntes = getPromptResultado('apuntes', modulo) ?? '';
   const promptRepasar = buildPromptRepasar(modulo, ultimaEval?.temas_a_reforzar ?? []);
+
+  const estadosMini: [EstadoMini, EstadoMini, EstadoMini] = [
+    estudiarHecho ? 'hecho' : 'actual',
+    !estudiarHecho ? 'bloqueado' : aprobado ? 'hecho' : reprobado ? 'reprobado' : 'actual',
+    apuntesHecho ? 'hecho' : 'todo',
+  ];
 
   return (
     <div className="pantalla">
@@ -176,10 +212,11 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
         <p className="cabecera-sub">{asig?.nombre}</p>
       </header>
 
+      <MiniStepper estados={estadosMini} />
+
       {nota != null ? (
         <div className={`banner ${aprobado ? 'banner-ok' : 'banner-mal'}`}>
-          {aprobado ? '🎉 ¡Módulo aprobado!' : '🔁 Reprobado, a repasar'}
-          {nota != null ? ` — nota ${nota.toFixed(1)}` : ''}
+          {aprobado ? '🎉 ¡Módulo aprobado!' : '🔁 Reprobado, a repasar'} — nota {nota.toFixed(1)}
         </div>
       ) : null}
 
@@ -193,71 +230,68 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
         </ul>
       </section>
 
-      {/* Paso 1 · Estudiar */}
-      <section className={`tarjeta paso ${estudiarHecho ? 'paso-hecho' : ''}`}>
+      {/* Paso 1 */}
+      <section className="tarjeta paso">
         <div className="paso-cabecera">
-          <span className="paso-numero">1</span>
+          <span className={`paso-numero ${estudiarHecho ? 'hecho' : ''}`}>{estudiarHecho ? '✓' : '1'}</span>
           <div className="paso-cuerpo">
-            <h3>Estudiar el tema 📚</h3>
-            <p className="paso-desc">Aprende con tu agente de IA y marca este paso cuando termines.</p>
+            <h3>Estudiar el tema</h3>
+            <p className="paso-desc">Aprende con tu agente de IA. Cuando termines, marca este paso.</p>
           </div>
-          <span className={`paso-estado ${estudiarHecho ? 'ok' : ''}`}>
-            {estudiarHecho ? '✓ Listo' : 'Pendiente'}
-          </span>
+          <span className={`paso-estado ${estudiarHecho ? 'ok' : ''}`}>{estudiarHecho ? '✓ Listo' : 'Paso 1 de 3'}</span>
         </div>
+
         <div className="paso-acciones">
-          <button className="btn btn-secundario" onClick={() => setModal({ titulo: 'Prompt de estudio', texto: promptEstudiar })}>
-            👀 Ver prompt
+          <button className="btn btn-ghost" onClick={() => setModal({ titulo: 'Prompt de estudio', texto: promptEstudiar })}>
+            Ver prompt
           </button>
-          <CopyButton text={promptEstudiar} label="Copiar prompt de estudio" />
+          <CopyButton className="btn btn-primario" text={promptEstudiar} label="Copiar prompt de estudio" />
         </div>
+
         <div className="paso-pie">
           {estudiarHecho ? (
-            <button
-              className="btn btn-suave"
-              onClick={() => setProgreso(actividadId(modulo.id, 'estudiar'), modulo.id, 'estudiar', 'pendiente')}
-            >
-              ↩️ Desmarcar (aún no termino)
+            <button className="btn btn-suave" onClick={() => setProgreso(actividadId(modulo.id, 'estudiar'), modulo.id, 'estudiar', 'pendiente')}>
+              ↩️ Aún no termino
             </button>
           ) : (
-            <button
-              className="btn btn-primario"
-              onClick={() => setProgreso(actividadId(modulo.id, 'estudiar'), modulo.id, 'estudiar', 'completada')}
-            >
-              ✅ Ya estudié, desbloquear evaluación
+            <button className="btn btn-exito btn-ancho" onClick={() => setProgreso(actividadId(modulo.id, 'estudiar'), modulo.id, 'estudiar', 'completada')}>
+              ✅ Ya estudié — desbloquear evaluación
             </button>
           )}
         </div>
       </section>
 
-      {/* Paso 2 · Evaluar */}
-      <section className={`tarjeta paso ${!estudiarHecho ? 'paso-bloqueado' : ''} ${aprobado ? 'paso-aprobado' : ''}`}>
+      {/* Paso 2 */}
+      <section className={`tarjeta paso ${!estudiarHecho ? 'paso-bloqueado' : ''}`}>
         <div className="paso-cabecera">
-          <span className="paso-numero">2</span>
+          <span className={`paso-numero ${!estudiarHecho ? 'bloqueado' : aprobado ? 'hecho' : reprobado ? 'reprobado' : ''}`}>
+            {!estudiarHecho ? '🔒' : aprobado ? '✓' : reprobado ? '🔁' : '2'}
+          </span>
           <div className="paso-cuerpo">
-            <h3>Evaluarte 🧪</h3>
-            <p className="paso-desc">Simula el examen (25 preguntas, nota 1–7) y guarda tu resultado.</p>
+            <h3>Evaluarte</h3>
+            <p className="paso-desc">Simula el examen (25 preguntas, nota 1–7) y registra tu resultado.</p>
           </div>
           <span className={`paso-estado ${aprobado ? 'ok' : reprobado ? 'mal' : ''}`}>
-            {aprobado ? '🎉 Aprobado' : reprobado ? '🔁 Repasar' : !estudiarHecho ? '🔒 Bloqueado' : 'Listo para evaluar'}
+            {aprobado ? '🎉 Aprobado' : reprobado ? '🔁 Repasar' : !estudiarHecho ? '🔒 Bloqueado' : 'Listo'}
           </span>
         </div>
 
         {!estudiarHecho ? (
-          <div className="paso-lock">🔒 Termina de estudiar (paso 1) para desbloquear la evaluación.</div>
+          <div className="paso-lock">Termina de estudiar (paso 1) para desbloquear la evaluación.</div>
         ) : (
           <>
             <div className="paso-acciones">
-              <button className="btn btn-secundario" onClick={() => setModal({ titulo: 'Prompt de evaluación', texto: promptEvaluar })}>
-                👀 Ver prompt
+              <button className="btn btn-ghost" onClick={() => setModal({ titulo: 'Prompt de evaluación', texto: promptEvaluar })}>
+                Ver prompt
               </button>
-              <CopyButton text={promptEvaluar} label="Copiar prompt de evaluación" />
+              <CopyButton className="btn btn-primario" text={promptEvaluar} label="Copiar prompt de evaluación" />
             </div>
             <p className="paso-nota-chat">💡 Puedes usar un chat nuevo: el prompt ya trae todo el contexto del tema.</p>
 
             {reprobado ? (
               <div className="paso-repasar">
-                <CopyButton text={promptRepasar} label="Copiar prompt de repasar" icono="📖" className="btn-copiar-repasar" />
+                <span className="paso-repasar-texto">Tu última nota fue {nota!.toFixed(1)}. Repasa y vuelve a intentar:</span>
+                <CopyButton className="btn btn-secundario" text={promptRepasar} label="Copiar prompt de repasar" icono="📖" />
                 <button
                   className="btn btn-suave"
                   onClick={() => setProgreso(actividadId(modulo.id, 'estudiar'), modulo.id, 'estudiar', 'pendiente')}
@@ -267,40 +301,40 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
               </div>
             ) : null}
 
-            <button className="btn btn-suave" onClick={() => setPanelEval((v) => !v)}>
-              📥 {panelEval ? 'Cerrar' : 'Guardar mi resultado'}
-            </button>
-            {panelEval ? (
-              <PanelResultado modulo={modulo} cursoId={cursoId} tipo="evaluacion" promptResultado={promptResultadoEval} />
-            ) : null}
+            <div className="resultado-toggle">
+              <button className="btn btn-secundario btn-ancho" onClick={() => setPanelEval((v) => !v)}>
+                📥 {panelEval ? 'Ocultar' : 'Registrar mi resultado'}
+              </button>
+            </div>
+            {panelEval ? <PanelResultado modulo={modulo} cursoId={cursoId} tipo="evaluacion" promptResultado={promptResultadoEval} /> : null}
           </>
         )}
       </section>
 
-      {/* Paso 3 · Apuntes */}
+      {/* Paso 3 */}
       <section className="tarjeta paso">
         <div className="paso-cabecera">
-          <span className="paso-numero">3</span>
+          <span className={`paso-numero ${apuntesHecho ? 'hecho' : ''}`}>{apuntesHecho ? '✓' : '3'}</span>
           <div className="paso-cuerpo">
-            <h3>Crear apuntes 📝</h3>
+            <h3>Crear apuntes</h3>
             <p className="paso-desc">Resume lo aprendido y guarda tus apuntes (opcional).</p>
           </div>
-          <span className="paso-estado">
-            {progreso[actividadId(modulo.id, 'apuntes')] === 'completada' ? '✓ Listo' : 'Opcional'}
-          </span>
+          <span className={`paso-estado ${apuntesHecho ? 'ok' : ''}`}>{apuntesHecho ? '✓ Listo' : 'Opcional'}</span>
         </div>
+
         <div className="paso-acciones">
-          <button className="btn btn-secundario" onClick={() => setModal({ titulo: 'Prompt de apuntes', texto: promptApuntes })}>
-            👀 Ver prompt
+          <button className="btn btn-ghost" onClick={() => setModal({ titulo: 'Prompt de apuntes', texto: promptApuntes })}>
+            Ver prompt
           </button>
-          <CopyButton text={promptApuntes} label="Copiar prompt de apuntes" />
+          <CopyButton className="btn btn-primario" text={promptApuntes} label="Copiar prompt de apuntes" />
         </div>
-        <button className="btn btn-suave" onClick={() => setPanelApuntes((v) => !v)}>
-          📥 {panelApuntes ? 'Cerrar' : 'Guardar mis apuntes'}
-        </button>
-        {panelApuntes ? (
-          <PanelResultado modulo={modulo} cursoId={cursoId} tipo="resumen" promptResultado={promptResultadoApuntes} />
-        ) : null}
+
+        <div className="resultado-toggle">
+          <button className="btn btn-secundario btn-ancho" onClick={() => setPanelApuntes((v) => !v)}>
+            📥 {panelApuntes ? 'Ocultar' : 'Registrar mis apuntes'}
+          </button>
+        </div>
+        {panelApuntes ? <PanelResultado modulo={modulo} cursoId={cursoId} tipo="resumen" promptResultado={promptResultadoApuntes} /> : null}
       </section>
 
       <h2 className="seccion-titulo">Tu historial aquí</h2>
@@ -329,7 +363,7 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
         <p className="modal-hint">Copia este prompt y pégalo en tu agente de IA (Gemini, Claude, etc.).</p>
         <pre className="prompt-box">{modal?.texto}</pre>
         <div className="modal-acciones">
-          <CopyButton text={modal?.texto ?? ''} label="Copiar prompt" className="btn-copiar" />
+          <CopyButton className="btn btn-primario" text={modal?.texto ?? ''} label="Copiar prompt" />
         </div>
       </Modal>
     </div>

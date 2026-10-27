@@ -31,7 +31,7 @@ export function CopyButton({
   }
 
   return (
-    <button type="button" className={`btn-copiar ${className}`} onClick={copiar}>
+    <button type="button" className={className || 'btn-copiar'} onClick={copiar}>
       {copiado ? '✓ ¡Copiado!' : `${icono} ${label}`}
     </button>
   );

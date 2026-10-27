@@ -376,6 +376,10 @@ button.fila {
   padding: 10px 16px;
   font-weight: 650;
   font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   transition: transform 0.08s, filter 0.15s;
 }
 
@@ -397,6 +401,21 @@ button.fila {
 .btn-suave {
   background: #f4f1fb;
   color: var(--texto);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--texto-suave);
+}
+
+.btn-exito {
+  background: var(--exito);
+  color: #fff;
+}
+
+.btn-ancho {
+  width: 100%;
 }
 
 .btn-peligro {
@@ -1015,16 +1034,8 @@ input:not([type]) {
   margin-bottom: 14px;
 }
 
-.paso-hecho {
-  border-left: 4px solid var(--menta);
-}
-
-.paso-aprobado {
-  border-left: 4px solid var(--exito);
-}
-
 .paso-bloqueado {
-  opacity: 0.9;
+  opacity: 0.72;
 }
 
 .paso-cabecera {
@@ -1034,8 +1045,8 @@ input:not([type]) {
 }
 
 .paso-numero {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--violeta), var(--rosa));
   color: #fff;
@@ -1044,6 +1055,19 @@ input:not([type]) {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.paso-numero.hecho {
+  background: var(--exito);
+}
+
+.paso-numero.bloqueado {
+  background: #e9e4f3;
+  color: #a89fc4;
+}
+
+.paso-numero.reprobado {
+  background: var(--amarillo);
 }
 
 .paso-cuerpo {
@@ -1165,4 +1189,131 @@ input:not([type]) {
   background: #fff7ed;
   color: var(--amarillo);
   font-size: 1.05rem;
+}
+
+/* — Mini stepper (resumen de pasos) — */
+.mini-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 18px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+
+.mini-paso-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.mini-paso-fila:last-child {
+  flex: 0 0 auto;
+}
+
+.mini-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--texto-suave);
+  white-space: nowrap;
+}
+
+.mini-item.activo {
+  color: var(--texto);
+}
+
+.mini-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: #f4f1fb;
+  color: var(--texto-suave);
+}
+
+.mini-dot.hecho {
+  background: var(--exito);
+  color: #fff;
+}
+
+.mini-dot.actual {
+  background: linear-gradient(135deg, var(--violeta), var(--rosa));
+  color: #fff;
+}
+
+.mini-dot.bloqueado {
+  background: #e9e4f3;
+  color: #a89fc4;
+}
+
+.mini-dot.reprobado {
+  background: var(--amarillo);
+  color: #fff;
+}
+
+.mini-line {
+  flex: 1;
+  height: 2px;
+  background: var(--borde);
+  border-radius: 2px;
+}
+
+/* — Panel de resultados (registrar evaluación/apuntes) — */
+.resultado-toggle {
+  margin-top: 12px;
+}
+
+.resultado-area {
+  margin-top: 14px;
+  border: 1px dashed var(--borde);
+  border-radius: 14px;
+  padding: 16px;
+  background: #fbfaff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sub-paso {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.sub-paso-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--violeta);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sub-paso-texto {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--texto);
+  line-height: 1.45;
+}
+
+.paso-repasar-texto {
+  flex-basis: 100%;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--amarillo);
 }
