@@ -2,7 +2,7 @@ import initSqlJs from 'sql.js';
 import type { Database, SqlJsStatic } from 'sql.js';
 import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url';
 import { loadDb, saveDb } from './storage';
-import { seed } from './seed';
+import { seed, seedContenido, SEED_VERSION } from './seed';
 
 let SQL: SqlJsStatic | null = null;
 let db: Database | null = null;
@@ -47,12 +47,28 @@ export async function persistNow(): Promise<void> {
   }
 }
 
+function syncSeed(): void {
+  // Re-sincroniza el contenido (módulos, actividades, lecturas) si cambió la versión de semilla,
+  // sin tocar el progreso ni los registros del usuario.
+  const actual = Number(
+    dbGet('SELECT valor FROM config WHERE clave = ?', ['seed_version'])?.valor ?? 0,
+  );
+  if (actual < SEED_VERSION && db) {
+    seedContenido(db);
+    dbRun(
+      'INSERT INTO config (clave, valor) VALUES (?, ?) ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor',
+      ['seed_version', String(SEED_VERSION)],
+    );
+  }
+}
+
 export async function initDatabase(): Promise<void> {
   if (db) return;
   SQL = await initSqlJs({ locateFile: () => wasmUrl });
   const bytes = await loadDb().catch(() => null);
   if (bytes) {
     db = new SQL.Database(bytes);
+    syncSeed();
   } else {
     db = new SQL.Database();
     seed(db);

@@ -9,37 +9,34 @@ import { modulosHistoria } from '../data/m1/historia';
 import { modulosIngles } from '../data/m1/ingles';
 import { lecturas } from '../data/lecturas';
 
-export function seed(db: Database): void {
+// Se incrementa cuando cambia el CONTENIDO semilla (módulos, actividades, lecturas).
+// Al detectar una versión menor, la app re-sincroniza el contenido sin tocar el progreso del usuario.
+export const SEED_VERSION = 2;
+
+const TODOS_MODULOS = [
+  ...modulosLengua,
+  ...modulosMatematica,
+  ...modulosCiencias,
+  ...modulosHistoria,
+  ...modulosIngles,
+];
+
+// Contenido curricular y biblioteca: idempotente (upsert). Se puede re-ejecutar sin duplicar.
+export function seedContenido(db: Database): void {
   db.run(SCHEMA_SQL);
 
-  const todosModulos = [
-    ...modulosLengua,
-    ...modulosMatematica,
-    ...modulosCiencias,
-    ...modulosHistoria,
-    ...modulosIngles,
-  ];
-
-  const conf = db.prepare('INSERT INTO config (clave, valor) VALUES (?, ?)');
-  const confs: [string, string][] = [
-    ['nombre', ''],
-    ['curso_activo', 'm1'],
-    ['pin_hash', ''],
-    ['schema_version', String(SCHEMA_VERSION)],
-    ['fecha_examen', ''],
-    ['fecha_creacion', new Date().toISOString()],
-  ];
-  for (const [k, v] of confs) conf.run([k, v]);
-  conf.free();
-
   const insCurso = db.prepare(
-    'INSERT INTO cursos (id, codigo, nombre, orden, decreto, descripcion) VALUES (?,?,?,?,?,?)',
+    `INSERT INTO cursos (id, codigo, nombre, orden, decreto, descripcion) VALUES (?,?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET codigo=excluded.codigo, nombre=excluded.nombre,
+       orden=excluded.orden, decreto=excluded.decreto, descripcion=excluded.descripcion`,
   );
   for (const c of cursos) insCurso.run([c.id, c.codigo, c.nombre, c.orden, c.decreto, c.descripcion]);
   insCurso.free();
 
   const insAsig = db.prepare(
-    'INSERT INTO asignaturas (id, curso_id, codigo, nombre, color, icono, ejes) VALUES (?,?,?,?,?,?,?)',
+    `INSERT INTO asignaturas (id, curso_id, codigo, nombre, color, icono, ejes) VALUES (?,?,?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET curso_id=excluded.curso_id, codigo=excluded.codigo,
+       nombre=excluded.nombre, color=excluded.color, icono=excluded.icono, ejes=excluded.ejes`,
   );
   for (const a of asignaturas) {
     insAsig.run([a.id, a.cursoId, a.codigo, a.nombre, a.color, a.icono, JSON.stringify(a.ejes)]);
@@ -47,9 +44,14 @@ export function seed(db: Database): void {
   insAsig.free();
 
   const insMod = db.prepare(
-    'INSERT INTO modulos (id, asignatura_id, codigo, numero, titulo, descripcion, indicadores, contenidos, eje, actividades) VALUES (?,?,?,?,?,?,?,?,?,?)',
+    `INSERT INTO modulos (id, asignatura_id, codigo, numero, titulo, descripcion, indicadores, contenidos, eje, actividades)
+     VALUES (?,?,?,?,?,?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET asignatura_id=excluded.asignatura_id, codigo=excluded.codigo,
+       numero=excluded.numero, titulo=excluded.titulo, descripcion=excluded.descripcion,
+       indicadores=excluded.indicadores, contenidos=excluded.contenidos, eje=excluded.eje,
+       actividades=excluded.actividades`,
   );
-  for (const m of todosModulos) {
+  for (const m of TODOS_MODULOS) {
     insMod.run([
       m.id,
       m.asignaturaId,
@@ -66,7 +68,11 @@ export function seed(db: Database): void {
   insMod.free();
 
   const insLec = db.prepare(
-    'INSERT INTO lecturas (id, titulo, autor, genero, area, temas, cursos_aplica, edad_minima, por_que) VALUES (?,?,?,?,?,?,?,?,?)',
+    `INSERT INTO lecturas (id, titulo, autor, genero, area, temas, cursos_aplica, edad_minima, por_que)
+     VALUES (?,?,?,?,?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET titulo=excluded.titulo, autor=excluded.autor, genero=excluded.genero,
+       area=excluded.area, temas=excluded.temas, cursos_aplica=excluded.cursos_aplica,
+       edad_minima=excluded.edad_minima, por_que=excluded.por_que`,
   );
   for (const l of lecturas) {
     insLec.run([
@@ -82,9 +88,25 @@ export function seed(db: Database): void {
     ]);
   }
   insLec.free();
+}
+
+// Configuración y datos por defecto: solo se insertan si no existen (no sobreescriben al usuario).
+function seedConfig(db: Database): void {
+  const conf = db.prepare('INSERT OR IGNORE INTO config (clave, valor) VALUES (?, ?)');
+  const confs: [string, string][] = [
+    ['nombre', ''],
+    ['curso_activo', 'm1'],
+    ['pin_hash', ''],
+    ['schema_version', String(SCHEMA_VERSION)],
+    ['seed_version', String(SEED_VERSION)],
+    ['fecha_examen', ''],
+    ['fecha_creacion', new Date().toISOString()],
+  ];
+  for (const [k, v] of confs) conf.run([k, v]);
+  conf.free();
 
   const insHito = db.prepare(
-    'INSERT INTO hitos (id, curso_id, titulo, fecha, descripcion, completado) VALUES (?,?,?,?,?,0)',
+    'INSERT OR IGNORE INTO hitos (id, curso_id, titulo, fecha, descripcion, completado) VALUES (?,?,?,?,?,0)',
   );
   insHito.run([
     'hito-inscripcion',
@@ -101,4 +123,10 @@ export function seed(db: Database): void {
     '5 asignaturas · 25 preguntas · 90 min cada una',
   ]);
   insHito.free();
+}
+
+// Semilla completa para una base nueva.
+export function seed(db: Database): void {
+  seedContenido(db);
+  seedConfig(db);
 }

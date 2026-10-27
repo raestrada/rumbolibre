@@ -73,17 +73,6 @@ export function buildPromptBusqueda(modulo: DatosModulo, asignatura: string): st
   ].join('\n');
 }
 
-export function buildPromptPracticar(modulo: DatosModulo, asignatura: string): string {
-  return [
-    'Actúa como mi profesora de 1° medio. Vamos a practicar antes del examen libre del MINEDUC.',
-    '',
-    encabezado(modulo, asignatura),
-    '',
-    'Hazme 5 preguntas (tipo examen: opción múltiple y respuestas cortas), una por una, y corrige',
-    'cada respuesta al momento. Sé exigente pero amable.',
-  ].join('\n');
-}
-
 export function buildPromptEvaluar(modulo: DatosModulo, asignatura: string): string {
   return [
     'Actúa como mi profesora examinadora de 1° medio. Vamos a simular el examen libre del MINEDUC.',
@@ -101,6 +90,21 @@ export function buildPromptResumir(modulo: DatosModulo, asignatura: string): str
     encabezado(modulo, asignatura),
     '',
     'Pídeme que te explique con mis palabras lo que aprendí y ayúdame a organizar mis apuntes.',
+  ].join('\n');
+}
+
+export function buildPromptRepasar(modulo: DatosModulo, temas: string[]): string {
+  const enfoque = temas.length ? bullets(temas) : modulo.descripcion;
+  return [
+    'Actúa como mi profesora de 1° medio. Me fue mal en la evaluación de este módulo y necesito repasar.',
+    '',
+    `Módulo: ${modulo.codigo} — ${modulo.titulo}.`,
+    '',
+    temas.length ? 'Estos son los temas que debo reforzar:' : 'Repasemos el objetivo completo:',
+    enfoque,
+    '',
+    'Explícamelos de nuevo como si tuviera 14 años, con ejemplos de Chile, y al final hazme 3',
+    'preguntas para asegurarte de que ahora sí los entiendo.',
   ].join('\n');
 }
 
@@ -139,23 +143,20 @@ export function getPrompt(
   asignatura: string,
 ): string {
   switch (tipo) {
-    case 'aprender':
+    case 'estudiar':
       return buildPromptBusqueda(modulo, asignatura);
-    case 'practicar':
-      return buildPromptPracticar(modulo, asignatura);
     case 'evaluar':
       return buildPromptEvaluar(modulo, asignatura);
-    case 'resumir':
+    case 'apuntes':
       return buildPromptResumir(modulo, asignatura);
   }
 }
 
 export function getPromptResultado(tipo: TipoActividad, modulo: DatosModulo): string | null {
   switch (tipo) {
-    case 'practicar':
     case 'evaluar':
       return buildPromptResultadoEvaluacion(modulo);
-    case 'resumir':
+    case 'apuntes':
       return buildPromptResultadoResumen(modulo);
     default:
       return null;

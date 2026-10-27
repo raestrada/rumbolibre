@@ -1,19 +1,21 @@
 # Sistema de prompts
 
-Cada **módulo (OA)** tiene 4 actividades. Cada actividad tiene un **prompt de actividad**
-(autocontenido) que la estudiante copia y pega en su agente (Gemini, Claude, etc.). Las actividades
-que producen un resultado guardable (Practicar, Evaluar, Crear apuntes) tienen, además, un **prompt
-de resultados** que se copia **al terminar, en el mismo chat**, y que devuelve un **bloque JSON**
+Cada **módulo (OA)** tiene **3 pasos en orden**: **Estudiar → Evaluar → Apuntes**. Cada paso tiene un
+**prompt de actividad** (autocontenido) que la estudiante copia y pega en su agente (Gemini, Claude,
+etc.). Los pasos con resultado guardable (Evaluar y Apuntes) tienen, además, un **prompt de
+resultados** que se copia **al terminar, en el mismo chat**, y que devuelve un **bloque JSON**
 parseable por la app.
 
-## Estructura de prompts por actividad
+## Estructura de prompts por paso
 
-| Actividad | Prompt de actividad (se copia al empezar) | Prompt de resultados (se copia al terminar) | Salida parseable |
+| Paso | Prompt de actividad (se copia al empezar) | Prompt de resultados (se copia al terminar) | Salida parseable |
 |---|---|---|---|
-| `aprender` (Explorar) | Explica el tema y hace 3 preguntas | — (no aplica) | — |
-| `practicar` (Ponerse a prueba) | Quiz corto de 5 preguntas, corrige al momento | `resultado evaluacion` | nota + JSON evaluacion |
-| `evaluar` (Examen) | Examen de 25 preguntas, corrige al final | `resultado evaluacion` | nota + JSON evaluacion |
-| `resumir` (Crear apuntes) | Pide explicar y ayuda a organizar apuntes | `resultado resumen` | JSON resumen |
+| `estudiar` (Estudiar) | Explica el tema y hace 3 preguntas | — (no aplica) | — |
+| `evaluar` (Evaluar) | Examen de 25 preguntas, corrige al final | `resultado evaluacion` | nota + JSON evaluacion |
+| `apuntes` (Apuntes) | Pide explicar y ayuda a organizar apuntes | `resultado resumen` | JSON resumen |
+
+Además existe un **prompt de repasar** que se ofrece cuando la evaluación sale con nota < 4,0:
+repasa los **temas a reforzar** obtenidos de la evaluación fallida y vuelve a bloquear la evaluación.
 
 ## Por qué un prompt de resultados separado
 
@@ -27,10 +29,11 @@ parseable por la app.
 
 ## Flujo completo (p. ej. `evaluar`)
 
-1. Copia el **prompt de actividad** y pégalo en tu agente → el agente te evalúa.
+1. Copia el **prompt de actividad** y pégalo en tu agente (puede ser un **chat nuevo**). El agente
+   te evalúa.
 2. Al terminar, copia el **prompt de resultados** y pégalo en el **mismo chat** → el agente devuelve
    un bloque JSON.
-3. Copia esa respuesta y pégala en la app (botón "Pegar resultado") → la app la **parsea** y guarda.
+3. Copia esa respuesta y pégala en la app ("Guardar mi resultado") → la app la **parsea** y guarda.
 
 ## Esquema JSON de salida
 
@@ -66,7 +69,7 @@ Los prompts se **generan** desde la metadata oficial del módulo (código, títu
 indicadores del temario). Esto garantiza que **nunca** se alucine contenido: el prompt solo nombra
 lo que ya está en el temario.
 
-### Prompt de actividad — `aprender` (búsqueda)
+### Prompt de actividad — `estudiar`
 ```
 Actúa como una profesora chilena de 1° medio, cercana, paciente y clara.
 
@@ -86,15 +89,35 @@ Usa un lenguaje simple y entretenido. Al final, hazme 3 preguntas cortas para co
 entendí y dime si las respondí bien.
 ```
 
-### Prompt de actividad — `practicar` / `evaluar`
+### Prompt de actividad — `evaluar`
 ```
-Actúa como mi profesora (examinadora) de 1° medio. Vamos a practicar / simular el examen libre
-del MINEDUC.
+Actúa como mi profesora examinadora de 1° medio. Vamos a simular el examen libre del MINEDUC.
 
 {cabecera con código, título, objetivo e indicadores}
 
-Hazme 5 preguntas (o 25, para el examen), una por una, y corrige cada respuesta. Sé exigente
-pero amable. [En el examen: hazlo por secciones y corrige todo al final.]
+Hazme un examen de 25 preguntas, como el real: opción múltiple, verdadero o falso y respuesta
+corta. Hazlo por secciones y al final corrígeme todo. Sé justa y detalla qué debo repasar.
+```
+
+### Prompt de actividad — `apuntes`
+```
+Actúa como mi tutora. Terminé de estudiar: {cabecera}.
+
+Pídeme que te explique con mis palabras lo que aprendí y ayúdame a organizar mis apuntes.
+```
+
+### Prompt de repasar (tras reprobar)
+```
+Actúa como mi profesora de 1° medio. Me fue mal en la evaluación de este módulo y necesito repasar.
+
+Módulo: {codigo} — {titulo}.
+
+Estos son los temas que debo reforzar:
+- {tema a reforzar 1}
+- {tema a reforzar 2}
+
+Explícamelos de nuevo como si tuviera 14 años, con ejemplos de Chile, y al final hazme 3
+preguntas para asegurarte de que ahora sí los entiendo.
 ```
 
 ### Prompt de resultados — evaluación
@@ -130,7 +153,10 @@ quedaron. Usa lo que conversamos recién.
 ## Implementación
 
 Los builders viven en `src/lib/prompts.ts`:
-- `buildPromptBusqueda`, `buildPromptPracticar`, `buildPromptEvaluar`, `buildPromptResumir`
-  (prompt de actividad).
+- `buildPromptBusqueda` (`estudiar`), `buildPromptEvaluar`, `buildPromptResumir` (`apuntes`),
+  `buildPromptRepasar`.
 - `buildPromptResultadoEvaluacion`, `buildPromptResultadoResumen` (prompt de resultados).
 - `getPrompt(tipo, modulo, asignatura)` y `getPromptResultado(tipo, modulo)`.
+
+Los pasos y el umbral de aprobación viven en `src/data/tipos.ts` (`ACTIVIDADES`,
+`NOTA_APROBACION = 4.0`).

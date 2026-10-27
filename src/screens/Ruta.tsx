@@ -6,9 +6,14 @@ import {
   getCursoActivoId,
   getModulos,
   getProgreso,
+  getRegistros,
   type ModuloFull,
+  type RegistroRow,
 } from '../db/queries';
+import { NOTA_APROBACION } from '../data/tipos';
 import { ProgressBar } from '../components/ui';
+
+type EstadoModulo = 'aprobado' | 'reprobado' | 'encurso';
 
 function progresoModulo(m: ModuloFull, progreso: Record<string, string>): { c: number; t: number } {
   let c = 0;
@@ -20,13 +25,34 @@ function progresoModulo(m: ModuloFull, progreso: Record<string, string>): { c: n
   return { c, t };
 }
 
-function FilaModulo({ m, progreso }: { m: ModuloFull; progreso: Record<string, string> }): JSX.Element {
+function estadoDeModulo(ultimaNota: number | null): EstadoModulo {
+  if (ultimaNota == null) return 'encurso';
+  return ultimaNota >= NOTA_APROBACION ? 'aprobado' : 'reprobado';
+}
+
+function FilaModulo({
+  m,
+  progreso,
+  estado,
+}: {
+  m: ModuloFull;
+  progreso: Record<string, string>;
+  estado: EstadoModulo;
+}): JSX.Element {
   const { go } = useNav();
   const { c, t } = progresoModulo(m, progreso);
-  const completo = c === t;
+  const badge =
+    estado === 'aprobado' ? (
+      <span className="modulo-check completo" title="Aprobado">🎉</span>
+    ) : estado === 'reprobado' ? (
+      <span className="modulo-check reprobado" title="Reprobado, a repasar">🔁</span>
+    ) : (
+      <span className="modulo-check">{`${c}/${t}`}</span>
+    );
+
   return (
     <button className="tarjeta fila fila-modulo" onClick={() => go({ name: 'modulo', moduloId: m.id })}>
-      <span className={`modulo-check ${completo ? 'completo' : ''}`}>{completo ? '✓' : `${c}/${t}`}</span>
+      {badge}
       <div className="fila-cuerpo">
         <div className="fila-titulo">
           <span className="codigo">{m.codigo}</span> {m.titulo}
@@ -44,6 +70,15 @@ export default function Ruta(): JSX.Element {
   const cursoId = getCursoActivoId();
   const progreso = getProgreso();
 
+  // Última nota de evaluación por módulo (los registros vienen ordenados por fecha descendente).
+  const ultimaNotaPorModulo = new Map<string, number | null>();
+  const registros: RegistroRow[] = getRegistros(cursoId);
+  for (const r of registros) {
+    if (r.tipo === 'evaluacion' && !ultimaNotaPorModulo.has(r.modulo_id)) {
+      ultimaNotaPorModulo.set(r.modulo_id, r.nota);
+    }
+  }
+
   const asignaturaSel = nav.name === 'ruta' ? nav.asignaturaId : undefined;
   const asignaturas = getAsignaturas(cursoId);
 
@@ -52,10 +87,7 @@ export default function Ruta(): JSX.Element {
     if (!asig) return <div className="pantalla" />;
     const modulos = getModulos(asig.id);
     const total = modulos.reduce((s, m) => s + m.actividades.length, 0);
-    const hechas = modulos.reduce(
-      (s, m) => s + progresoModulo(m, progreso).c,
-      0,
-    );
+    const hechas = modulos.reduce((s, m) => s + progresoModulo(m, progreso).c, 0);
     return (
       <div className="pantalla">
         <button className="btn-volver" onClick={() => go({ name: 'ruta' })}>
@@ -68,14 +100,19 @@ export default function Ruta(): JSX.Element {
           <div>
             <h1>{asig.nombre}</h1>
             <p className="cabecera-sub">
-              {asig.ejes.join(' · ')} · {hechas}/{total} actividades
+              {asig.ejes.join(' · ')} · {hechas}/{total} pasos
             </p>
             <ProgressBar pct={total ? (hechas / total) * 100 : 0} color={asig.color} alto={8} />
           </div>
         </header>
         <div className="lista">
           {modulos.map((m) => (
-            <FilaModulo key={m.id} m={m} progreso={progreso} />
+            <FilaModulo
+              key={m.id}
+              m={m}
+              progreso={progreso}
+              estado={estadoDeModulo(ultimaNotaPorModulo.get(m.id) ?? null)}
+            />
           ))}
         </div>
       </div>
@@ -86,13 +123,18 @@ export default function Ruta(): JSX.Element {
     <div className="pantalla">
       <header className="cabecera">
         <h1>Mi ruta 🗺️</h1>
-        <p className="cabecera-sub">Elige una asignatura y luego un módulo para estudiar.</p>
+        <p className="cabecera-sub">
+          Elige una asignatura y luego un módulo. En cada módulo: estudia → evalúate → apuntes.
+        </p>
       </header>
       <div className="lista">
         {asignaturas.map((a) => {
           const modulos = getModulos(a.id);
           const total = modulos.reduce((s, m) => s + m.actividades.length, 0);
           const hechas = modulos.reduce((s, m) => s + progresoModulo(m, progreso).c, 0);
+          const aprobados = modulos.filter(
+            (m) => estadoDeModulo(ultimaNotaPorModulo.get(m.id) ?? null) === 'aprobado',
+          ).length;
           return (
             <button
               key={a.id}
@@ -105,7 +147,7 @@ export default function Ruta(): JSX.Element {
               <div className="fila-cuerpo">
                 <div className="fila-titulo">{a.nombre}</div>
                 <div className="fila-sub">
-                  {modulos.length} módulos · {hechas}/{total} actividades
+                  {modulos.length} módulos · {aprobados} aprobados · {hechas}/{total} pasos
                 </div>
                 <ProgressBar pct={total ? (hechas / total) * 100 : 0} color={a.color} alto={6} />
               </div>

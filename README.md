@@ -30,7 +30,8 @@ npm run preview  # servir el build compilado
 
 1. **Inicio** — ve tu avance general y por asignatura.
 2. **Mi ruta** — elige asignatura → módulo (Objetivo de Aprendizaje del temario oficial).
-3. En cada módulo hay 4 actividades: **Explorar**, **Practicar**, **Evaluar** y **Crear apuntes**.
+3. En cada módulo hay **3 pasos en orden**: **Estudiar** → **Evaluarte** (se desbloquea al terminar
+   de estudiar) → **Crear apuntes** (opcional).
    - Copia el **prompt** y pégalo en tu agente de IA.
    - El prompt de evaluación/apuntes termina pidiendo un **bloque JSON**.
    - Pega la respuesta de vuelta en **"Pegar resultado"**: la app la **parsea** y la guarda

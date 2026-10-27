@@ -1009,3 +1009,160 @@ input:not([type]) {
     padding: 20px 16px 60px;
   }
 }
+
+/* — Pasos del módulo — */
+.paso {
+  margin-bottom: 14px;
+}
+
+.paso-hecho {
+  border-left: 4px solid var(--menta);
+}
+
+.paso-aprobado {
+  border-left: 4px solid var(--exito);
+}
+
+.paso-bloqueado {
+  opacity: 0.9;
+}
+
+.paso-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.paso-numero {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--violeta), var(--rosa));
+  color: #fff;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.paso-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.paso-cuerpo h3 {
+  font-size: 1rem;
+}
+
+.paso-desc {
+  color: var(--texto-suave);
+  font-size: 0.84rem;
+  margin: 3px 0 0;
+}
+
+.paso-estado {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  background: #f4f1fb;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.paso-estado.ok {
+  background: #eafaf0;
+  color: var(--exito);
+}
+
+.paso-estado.mal {
+  background: #fdecec;
+  color: var(--peligro);
+}
+
+.paso-lock {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #f4f1fb;
+  border-radius: 12px;
+  color: var(--texto-suave);
+  font-size: 0.88rem;
+}
+
+.paso-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.paso-pie {
+  margin-top: 12px;
+}
+
+.paso-nota-chat {
+  color: var(--texto-suave);
+  font-size: 0.82rem;
+  margin: 10px 0 0;
+}
+
+.paso-repasar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  padding: 12px;
+  background: #fff7ed;
+  border-radius: 12px;
+}
+
+.btn-copiar-repasar {
+  background: var(--amarillo);
+  color: #fff;
+}
+
+/* — Banner — */
+.banner {
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.banner-ok {
+  background: #eafaf0;
+  color: var(--exito);
+}
+
+.banner-mal {
+  background: #fdecec;
+  color: var(--peligro);
+}
+
+/* — Badge de módulo en la ruta — */
+.modulo-check {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  background: #f4f1fb;
+  color: var(--texto-suave);
+  flex-shrink: 0;
+}
+
+.modulo-check.completo {
+  background: #eafaf0;
+  color: var(--exito);
+  font-size: 1.15rem;
+}
+
+.modulo-check.reprobado {
+  background: #fff7ed;
+  color: var(--amarillo);
+  font-size: 1.05rem;
+}

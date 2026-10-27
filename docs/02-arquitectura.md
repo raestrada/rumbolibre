@@ -82,7 +82,7 @@ CREATE TABLE modulos (
 CREATE TABLE progreso_actividad (
   actividad_id TEXT PRIMARY KEY, -- '<modulo_id>:<tipo>'
   modulo_id TEXT NOT NULL,
-  tipo TEXT NOT NULL,            -- aprender | practicar | evaluar | resumir
+  tipo TEXT NOT NULL,            -- estudiar | evaluar | apuntes
   estado TEXT NOT NULL DEFAULT 'pendiente', -- pendiente | completada
   fecha TEXT
 );

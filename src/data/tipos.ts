@@ -17,7 +17,7 @@ export interface Asignatura {
   ejes: string[];
 }
 
-export type TipoActividad = 'aprender' | 'practicar' | 'evaluar' | 'resumir';
+export type TipoActividad = 'estudiar' | 'evaluar' | 'apuntes';
 
 export interface Actividad {
   tipo: TipoActividad;
@@ -49,32 +49,29 @@ export interface Lectura {
   porQue: string;
 }
 
+// Pasos por módulo, en orden. El paso 2 (evaluar) se desbloquea al completar el 1 (estudiar).
 export const ACTIVIDADES: Actividad[] = [
   {
-    tipo: 'aprender',
-    titulo: 'Explorar el tema',
-    descripcion: 'Aprende con tu agente de IA usando el prompt de búsqueda.',
-  },
-  {
-    tipo: 'practicar',
-    titulo: 'Ponerse a prueba',
-    descripcion: 'Responde un quiz corto y guarda el resultado de tu IA.',
+    tipo: 'estudiar',
+    titulo: 'Estudiar el tema',
+    descripcion: 'Aprende con tu agente de IA y, cuando termines, marca este paso como listo.',
   },
   {
     tipo: 'evaluar',
-    titulo: 'Examen del módulo',
-    descripcion: 'Simula el examen (25 preguntas, nota 1–7) y guarda la evaluación.',
+    titulo: 'Evaluarte',
+    descripcion: 'Simula el examen (25 preguntas, nota 1–7) y guarda tu resultado.',
   },
   {
-    tipo: 'resumir',
+    tipo: 'apuntes',
     titulo: 'Crear apuntes',
-    descripcion: 'Resume lo aprendido y guarda tus apuntes estructurados.',
+    descripcion: 'Resume lo aprendido y guarda tus apuntes (opcional).',
   },
 ];
 
 export const ACTIVIDAD_TIPO_LABEL: Record<TipoActividad, string> = {
-  aprender: 'Aprender',
-  practicar: 'Practicar',
+  estudiar: 'Estudiar',
   evaluar: 'Evaluar',
-  resumir: 'Apuntes',
+  apuntes: 'Apuntes',
 };
+
+export const NOTA_APROBACION = 4.0;

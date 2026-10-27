@@ -56,14 +56,19 @@ Para **1° medio** se rinden **5 asignaturas, cada una con su prueba separada**
 
 ## 4. Flujo de estudio (por módulo)
 
-```
-Explorar (aprender) → Practicar → Evaluar → Resumir (apuntes)
-```
+Cada módulo tiene **3 pasos en orden**, con bloqueo/desbloqueo:
 
-Cada actividad tiene **prompts listos para copiar** (autocontenidos, en español). Las actividades
-que generan un resultado guardable (Practicar, Evaluar, Crear apuntes) tienen además un **prompt de
-resultados** aparte: se pega **al terminar, en el mismo chat**, y devuelve un **bloque JSON** que la
-app **parsea** y guarda.
+1. **Estudiar** — estudia con el prompt de estudio y, al terminar, marca "listo".
+2. **Evaluar** (se desbloquea al terminar de estudiar) — simula el examen en un chat (puede ser
+   nuevo: el prompt trae todo el contexto) y guarda el resultado.
+   - Nota ≥ 4,0 → módulo **aprobado** 🎉.
+   - Nota < 4,0 → se ofrece un **prompt de repasar** (centrado en los temas débiles) y se vuelve a
+     bloquear la evaluación.
+3. **Crear apuntes** (opcional) — resume y guarda apuntes estructurados.
+
+Las actividades con resultado guardable (Evaluar, Crear apuntes) tienen un **prompt de resultados**
+aparte: se pega **al terminar, en el mismo chat**, y devuelve un **bloque JSON** que la app
+**parsea** y guarda.
 
 Flujo de evaluación:
 1. Abre la ficha del módulo y copia el **prompt de actividad** (estudiar o ser evaluada).
