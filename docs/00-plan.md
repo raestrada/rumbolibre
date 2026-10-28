@@ -52,6 +52,9 @@ Para **1° medio** se rinden **5 asignaturas, cada una con su prueba separada**
 - **Sin login de servidor**: el dashboard de padres se protege con un **PIN local** (hash SHA-256
   vía WebCrypto).
 - **PWA** básica (manifest + service worker) para uso offline e instalable.
+- **Modo IA opcional (OpenRouter)**: llamadas directas desde el navegador con **key segura**,
+  **cobertura determinística** por indicadores y **contenido HTML saneado**. Ver
+  [`09-modo-ia.md`](./09-modo-ia.md).
 - Detalles en [`02-arquitectura.md`](./02-arquitectura.md).
 
 ## 4. Flujo de estudio (por módulo)

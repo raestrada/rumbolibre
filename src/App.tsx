@@ -11,6 +11,7 @@ import Registro from './screens/Registro';
 import Repaso from './screens/Repaso';
 import Ensayo from './screens/Ensayo';
 import Examenes from './screens/Examenes';
+import SesionIA from './screens/SesionIA';
 import Biblioteca from './screens/Biblioteca';
 import Padres from './screens/Padres';
 import Ajustes from './screens/Ajustes';
@@ -21,6 +22,7 @@ export type Screen =
   | { name: 'ruta'; asignaturaId?: string }
   | { name: 'modulo'; moduloId: string }
   | { name: 'ensayo'; asignaturaId: string }
+  | { name: 'sesionIA'; tipo: 'modulo' | 'ensayo'; id: string }
   | { name: 'repaso' }
   | { name: 'examenes' }
   | { name: 'registro' }
@@ -58,6 +60,8 @@ function renderScreen(nav: Screen): JSX.Element {
       return <Modulo moduloId={nav.moduloId} />;
     case 'ensayo':
       return <Ensayo asignaturaId={nav.asignaturaId} />;
+    case 'sesionIA':
+      return <SesionIA tipo={nav.tipo} id={nav.id} />;
     case 'repaso':
       return <Repaso />;
     case 'examenes':

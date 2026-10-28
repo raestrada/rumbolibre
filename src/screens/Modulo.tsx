@@ -104,6 +104,12 @@ export default function Modulo({ moduloId }: { moduloId: string }): JSX.Element 
         <p className="cabecera-sub">{asig?.nombre}</p>
       </header>
 
+      <div style={{ marginBottom: 14 }}>
+        <button className="btn btn-ia btn-ancho" onClick={() => go({ name: 'sesionIA', tipo: 'modulo', id: modulo.id })}>
+          🤖 Sesión guiada con IA (OpenRouter)
+        </button>
+      </div>
+
       <MiniStepper estados={estadosMini} />
 
       {nota != null ? (

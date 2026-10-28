@@ -398,3 +398,37 @@ export function addBitacora(texto: string): void {
 export function deleteBitacora(id: string): void {
   dbRun('DELETE FROM bitacora WHERE id = ?', [id]);
 }
+
+// ---- Sesiones de IA (contexto y cobertura por módulo) ----
+export interface SesionIARow {
+  modulo_id: string;
+  mensajes: string;
+  cobertura: string;
+  fase: string;
+  actualizado: string;
+}
+
+export function getSesionIA(moduloId: string): SesionIARow | null {
+  const r = dbGet('SELECT * FROM sesiones_ia WHERE modulo_id = ?', [moduloId]);
+  return r ? (r as unknown as SesionIARow) : null;
+}
+
+export function saveSesionIA(
+  moduloId: string,
+  mensajes: unknown[],
+  cobertura: unknown[],
+  fase: string,
+): void {
+  dbRun(
+    `INSERT INTO sesiones_ia (modulo_id, mensajes, cobertura, fase, actualizado)
+     VALUES (?,?,?,?,?)
+     ON CONFLICT(modulo_id) DO UPDATE SET
+       mensajes = excluded.mensajes, cobertura = excluded.cobertura,
+       fase = excluded.fase, actualizado = excluded.actualizado`,
+    [moduloId, JSON.stringify(mensajes), JSON.stringify(cobertura), fase, new Date().toISOString()],
+  );
+}
+
+export function resetSesionIA(moduloId: string): void {
+  dbRun('DELETE FROM sesiones_ia WHERE modulo_id = ?', [moduloId]);
+}

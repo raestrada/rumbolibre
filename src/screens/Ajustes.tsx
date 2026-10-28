@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   addHito,
   deleteHito,
@@ -23,6 +23,8 @@ import {
   importSqlite,
 } from '../db/backup';
 import { Chip } from '../components/ui';
+import { MODELO_DEFECTO, listarModelos, probarClave, type ModeloOR } from '../lib/openrouter';
+import { borrarClave, cargarClave, getModoClave, guardarClave } from '../lib/secureKey';
 
 export default function Ajustes(): JSX.Element {
   const config = getConfig();
@@ -47,6 +49,64 @@ export default function Ajustes(): JSX.Element {
   const hitos = getHitos(cursoId);
   const bitacora = getBitacora();
   const [nota, setNota] = useState('');
+
+  // IA (OpenRouter)
+  const [aiMode, setAiMode] = useState(config.ai_mode || 'manual');
+  const [aiModel, setAiModel] = useState(config.ai_model || MODELO_DEFECTO);
+  const [keyInput, setKeyInput] = useState('');
+  const [keyStorage, setKeyStorage] = useState<string>(getModoClave());
+  const [passphrase, setPassphrase] = useState('');
+  const [testMsg, setTestMsg] = useState('');
+  const [msgIA, setMsgIA] = useState('');
+  const [modelos, setModelos] = useState<ModeloOR[]>([]);
+  const [cargandoModelos, setCargandoModelos] = useState(false);
+
+  useEffect(() => {
+    void cargarClave().then((k) => {
+      if (k) setKeyInput(k);
+    });
+  }, []);
+
+  useEffect(() => {
+    setCargandoModelos(true);
+    listarModelos()
+      .then(setModelos)
+      .catch(() => setModelos([]))
+      .finally(() => setCargandoModelos(false));
+  }, []);
+
+  async function probarIA(): Promise<void> {
+    let k = keyInput.trim();
+    if (!k && keyStorage === 'cifrada' && passphrase.trim()) {
+      const unlocked = await cargarClave(passphrase.trim());
+      if (unlocked) {
+        k = unlocked;
+        setKeyInput(unlocked);
+      }
+    }
+    const r = await probarClave(k);
+    setTestMsg(r.ok ? `✓ Clave válida${r.saldo != null ? ` · saldo $${r.saldo}` : ''}` : `✗ ${r.error}`);
+  }
+
+  async function guardarIA(e: FormEvent): Promise<void> {
+    e.preventDefault();
+    setConfig('ai_mode', aiMode);
+    setConfig('ai_model', aiModel);
+    if (aiMode === 'openrouter' && keyInput.trim()) {
+      if (keyStorage === 'cifrada' && !passphrase.trim()) {
+        setMsgIA('Escribe una passphrase para cifrar la clave.');
+        return;
+      }
+      await guardarClave(keyInput, keyStorage as 'memoria' | 'sesion' | 'cifrada', passphrase || undefined);
+    }
+    setMsgIA('Configuración de IA guardada ✓');
+  }
+
+  function quitarClave(): void {
+    borrarClave();
+    setKeyInput('');
+    setMsgIA('Clave eliminada ✓');
+  }
 
   function flash(texto: string): void {
     setMsg(texto);
@@ -231,6 +291,88 @@ export default function Ajustes(): JSX.Element {
           </div>
         </section>
       </div>
+
+      <section className="tarjeta">
+        <h2 className="seccion-titulo">Inteligencia Artificial</h2>
+        <p className="cabecera-sub">
+          Elige cómo estudiar: <strong>manual</strong> (copiar/pegar en tu IA) o <strong>directo</strong> con
+          OpenRouter (la app llama al modelo y controla el contexto).
+        </p>
+        <form onSubmit={guardarIA} className="form-col">
+          <label className="campo">
+            <span>Modo</span>
+            <select value={aiMode} onChange={(e) => setAiMode(e.target.value)}>
+              <option value="manual">Manual (copiar y pegar)</option>
+              <option value="openrouter">Directo (OpenRouter)</option>
+            </select>
+          </label>
+
+          {aiMode === 'openrouter' ? (
+            <>
+              <label className="campo">
+                <span>Clave de OpenRouter</span>
+                <input
+                  type="password"
+                  value={keyInput}
+                  onChange={(e) => setKeyInput(e.target.value)}
+                  placeholder="sk-or-v1-…"
+                  autoComplete="off"
+                />
+                <small>Se guarda solo en este navegador. Usa una clave con límite de gasto.</small>
+              </label>
+
+              <label className="campo">
+                <span>Almacenamiento de la clave</span>
+                <select value={keyStorage} onChange={(e) => setKeyStorage(e.target.value)}>
+                  <option value="memoria">Solo en memoria (más seguro)</option>
+                  <option value="sesion">En esta pestaña (se borra al cerrar)</option>
+                  <option value="cifrada">Recordar en este equipo (cifrada)</option>
+                </select>
+              </label>
+
+              {keyStorage === 'cifrada' ? (
+                <label className="campo">
+                  <span>Passphrase para cifrar</span>
+                  <input
+                    type="password"
+                    value={passphrase}
+                    onChange={(e) => setPassphrase(e.target.value)}
+                    placeholder="Frase secreta"
+                  />
+                </label>
+              ) : null}
+
+              <label className="campo">
+                <span>Modelo</span>
+                <select value={aiModel} onChange={(e) => setAiModel(e.target.value)} disabled={cargandoModelos}>
+                  {modelos.length === 0 ? <option value={MODELO_DEFECTO}>{MODELO_DEFECTO}</option> : null}
+                  {modelos.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+                {cargandoModelos ? <small>Cargando modelos…</small> : null}
+              </label>
+
+              <div className="paso-acciones">
+                <button type="button" className="btn btn-secundario" onClick={probarIA}>
+                  Probar clave
+                </button>
+                <button type="button" className="btn btn-suave" onClick={quitarClave}>
+                  Borrar clave
+                </button>
+              </div>
+              {testMsg ? <div className={testMsg.startsWith('✓') ? 'msg-ok' : 'msg-error'}>{testMsg}</div> : null}
+            </>
+          ) : null}
+
+          {msgIA ? <div className="msg-ok">{msgIA}</div> : null}
+          <button className="btn btn-primario" type="submit">
+            Guardar IA
+          </button>
+        </form>
+      </section>
 
       <section className="tarjeta">
         <h2 className="seccion-titulo">Calendario y plazos</h2>

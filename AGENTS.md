@@ -68,6 +68,9 @@ npm run preview    # servir el build
 - Los registros (`src/db` tabla `registros`) guardan la **salida pegada de la IA**, que se parsea
   con `src/lib/parser.ts` (tolerante) y se guarda estructurada + `texto_crudo`.
 - El PIN de padres se guarda como hash SHA-256 (WebCrypto), nunca en claro.
+- **Modo IA (OpenRouter) opcional**: la key se guarda de forma segura (memoria/sesión/AES-GCM); el
+  contexto y la cobertura viven en `sesiones_ia`; el HTML del LLM se sanea con allowlist. Ver
+  `docs/09-modo-ia.md`.
 
 ## Modelo de datos
 

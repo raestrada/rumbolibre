@@ -91,4 +91,11 @@ CREATE TABLE IF NOT EXISTS bitacora (
   fecha TEXT NOT NULL,
   texto TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS sesiones_ia (
+  modulo_id TEXT PRIMARY KEY,
+  mensajes TEXT NOT NULL,
+  cobertura TEXT NOT NULL,
+  fase TEXT NOT NULL DEFAULT 'ensenar',
+  actualizado TEXT NOT NULL
+);
 `;

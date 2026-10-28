@@ -61,6 +61,12 @@ export default function Ensayo({ asignaturaId }: { asignaturaId: string }): JSX.
         </p>
       </header>
 
+      <div style={{ marginBottom: 14 }}>
+        <button className="btn btn-ia btn-ancho" onClick={() => go({ name: 'sesionIA', tipo: 'ensayo', id: asig.id })}>
+          🤖 Ensayo general con IA (OpenRouter)
+        </button>
+      </div>
+
       {ensayoNota != null ? (
         <div className={`banner ${aprobado ? 'banner-ok' : 'banner-mal'}`}>
           {aprobado ? '🎉 ¡Ensayo general aprobado!' : '🔁 Ensayo general reprobado'} — nota{' '}
