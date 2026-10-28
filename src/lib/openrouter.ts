@@ -75,6 +75,7 @@ interface ChatOpts {
   responseFormat?: unknown;
   tools?: unknown[];
   temperature?: number;
+  maxTokens?: number;
   onDelta?: (chunk: string) => void;
   onReason?: (chunk: string) => void;
   signal?: AbortSignal;
@@ -86,6 +87,7 @@ export async function chatStream(opts: ChatOpts): Promise<string> {
     messages: opts.messages,
     stream: true,
     temperature: opts.temperature ?? 0.6,
+    max_tokens: opts.maxTokens ?? 4096,
   };
   if (opts.responseFormat) body.response_format = opts.responseFormat;
   if (opts.tools?.length) body.tools = opts.tools;
@@ -149,6 +151,44 @@ export async function chatStream(opts: ChatOpts): Promise<string> {
   return content;
 }
 
+export async function chatComplete(opts: Omit<ChatOpts, 'onDelta' | 'onReason'>): Promise<string> {
+  const body: Record<string, unknown> = {
+    model: opts.model,
+    messages: opts.messages,
+    stream: false,
+    temperature: opts.temperature ?? 0.4,
+    max_tokens: opts.maxTokens ?? 4096,
+  };
+  if (opts.responseFormat) body.response_format = opts.responseFormat;
+  if (opts.tools?.length) body.tools = opts.tools;
+
+  const res = await fetch(`${BASE}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${opts.key}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': location.origin,
+      'X-Title': 'Rumbo Libre',
+    },
+    body: JSON.stringify(body),
+    signal: opts.signal,
+  });
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    let msg = `OpenRouter ${res.status}`;
+    try {
+      msg += ': ' + (JSON.parse(txt).error?.message || txt.slice(0, 200));
+    } catch {
+      msg += ': ' + txt.slice(0, 200);
+    }
+    throw new Error(msg);
+  }
+  const j = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+  const content = j.choices?.[0]?.message?.content;
+  if (!content?.trim()) throw new Error('El modelo devolvió una respuesta vacía');
+  return content;
+}
+
 export async function chatJSON(opts: {
   key: string;
   model: string;
@@ -159,23 +199,56 @@ export async function chatJSON(opts: {
   tools?: unknown[];
   signal?: AbortSignal;
 }): Promise<unknown> {
-  let responseFormat: unknown;
-  if (opts.structured && opts.schema) {
-    responseFormat = { type: 'json_schema', json_schema: { name: 'resultado', strict: true, schema: opts.schema } };
-  } else if (opts.json) {
-    responseFormat = { type: 'json_object' };
+  const conFormato = opts.structured && opts.schema
+    ? { type: 'json_schema', json_schema: { name: 'resultado', strict: true, schema: opts.schema } }
+    : opts.json
+      ? { type: 'json_object' }
+      : undefined;
+
+  const esErrorDuro = (e: unknown): boolean => {
+    const msg = (e as Error)?.message || '';
+    return /\b401\b|\b402\b|credit|insufficient|quota|invalid.*key/i.test(msg);
+  };
+
+  // 1) streaming con formato, 2) streaming sin formato, 3) sin streaming.
+  const intentos: (unknown | undefined)[] = conFormato ? [conFormato, undefined] : [undefined];
+  let ultimo: unknown;
+  for (const rf of intentos) {
+    try {
+      const raw = await chatStream({
+        key: opts.key,
+        model: opts.model,
+        messages: opts.messages,
+        responseFormat: rf,
+        tools: opts.tools,
+        temperature: 0.4,
+        maxTokens: 4096,
+        signal: opts.signal,
+      });
+      return parseJSONLoose(raw);
+    } catch (e) {
+      ultimo = e;
+      if (esErrorDuro(e)) throw e;
+    }
   }
 
-  const raw = await chatStream({
-    key: opts.key,
-    model: opts.model,
-    messages: opts.messages,
-    responseFormat,
-    tools: opts.tools,
-    temperature: 0.4,
-    signal: opts.signal,
-  });
-  return parseJSONLoose(raw);
+  // 3) último recurso: sin streaming.
+  try {
+    const raw = await chatComplete({
+      key: opts.key,
+      model: opts.model,
+      messages: opts.messages,
+      responseFormat: conFormato,
+      tools: opts.tools,
+      temperature: 0.4,
+      maxTokens: 4096,
+      signal: opts.signal,
+    });
+    return parseJSONLoose(raw);
+  } catch (e) {
+    ultimo = e;
+  }
+  throw ultimo instanceof Error ? ultimo : new Error(String(ultimo));
 }
 
 // Herramienta de búsqueda web de OpenRouter (para fundamentar e imágenes).

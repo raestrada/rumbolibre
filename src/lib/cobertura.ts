@@ -126,18 +126,35 @@ export function buildEvalMessages(opts: {
   ];
 }
 
+function normalizarCorrecta(v: unknown): number {
+  if (typeof v === 'number') return Math.round(v);
+  if (typeof v === 'string') {
+    const s = v.trim().toUpperCase();
+    if (/^[A-D]$/.test(s)) return s.charCodeAt(0) - 65;
+    const n = Number(s);
+    if (Number.isFinite(n)) return Math.round(n);
+  }
+  return NaN;
+}
+
 export function normalizarPreguntas(raw: unknown, nUnidades: number): Pregunta[] {
-  const obj = raw as { preguntas?: unknown };
-  const arr = Array.isArray(obj?.preguntas) ? obj.preguntas : [];
+  const obj = raw as { preguntas?: unknown; questions?: unknown };
+  const arr = Array.isArray(obj?.preguntas)
+    ? obj.preguntas
+    : Array.isArray(obj?.questions)
+      ? obj.questions
+      : [];
   const out: Pregunta[] = [];
   for (const item of arr) {
     const p = item as Record<string, unknown>;
     const alternativas = Array.isArray(p.alternativas)
       ? p.alternativas.filter((a): a is string => typeof a === 'string').slice(0, 4)
-      : [];
-    const pregunta = typeof p.pregunta === 'string' ? p.pregunta.trim() : '';
-    const unidad = Math.round(Number(p.unidad));
-    const correcta = Math.round(Number(p.correcta));
+      : Array.isArray(p.options)
+        ? p.options.filter((a): a is string => typeof a === 'string').slice(0, 4)
+        : [];
+    const pregunta = typeof p.pregunta === 'string' ? p.pregunta.trim() : typeof p.question === 'string' ? p.question.trim() : '';
+    const unidad = Math.round(Number(p.unidad ?? p.unit ?? p.unidad_num));
+    const correcta = normalizarCorrecta(p.correcta ?? p.correct ?? p.answer);
     if (!pregunta || alternativas.length < 4) continue;
     if (!Number.isFinite(unidad) || unidad < 1 || unidad > nUnidades) continue;
     if (!Number.isFinite(correcta) || correcta < 0 || correcta > 3) continue;
@@ -146,7 +163,12 @@ export function normalizarPreguntas(raw: unknown, nUnidades: number): Pregunta[]
       pregunta,
       alternativas,
       correcta,
-      explicacion: typeof p.explicacion === 'string' ? p.explicacion.trim() : '',
+      explicacion:
+        typeof p.explicacion === 'string'
+          ? p.explicacion.trim()
+          : typeof p.explanation === 'string'
+            ? p.explanation.trim()
+            : '',
     });
   }
   return out;

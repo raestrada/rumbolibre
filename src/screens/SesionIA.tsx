@@ -74,6 +74,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const [elegida, setElegida] = useState<number | null>(null);
   const [resultado, setResultado] = useState<ResultadoEval | null>(null);
   const [cargando, setCargando] = useState(false);
+  const [estadoCarga, setEstadoCarga] = useState('');
   const [error, setError] = useState('');
 
   // Cargar clave y sesión guardada.
@@ -192,6 +193,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     if (!clave) return;
     setError('');
     setCargando(true);
+    setEstadoCarga('Preparando…');
     try {
       const nPreguntas = esEnsayo ? 25 : Math.min(25, Math.max(8, unidades.length + 2));
       const titulo = esEnsayo
@@ -201,34 +203,60 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         ? `Todas las OA de ${asignatura?.nombre}.`
         : `${asignatura?.nombre}. ${modulo?.descripcion}`;
 
+      const indices = unidades.map((_, i) => i + 1);
+      const nLotes = Math.max(1, Math.ceil(unidades.length / 6));
+      const tam = Math.ceil(unidades.length / nLotes);
+      const lotes: number[][] = [];
+      for (let i = 0; i < indices.length; i += tam) lotes.push(indices.slice(i, i + tam));
+      const base = Math.floor(nPreguntas / lotes.length);
+      const extra = nPreguntas % lotes.length;
+
       let acumuladas: Pregunta[] = [];
-      let faltan = unidades.map((_, i) => i + 1);
-      for (let intento = 0; intento < 3 && faltan.length; intento++) {
-        const schema = buildEvalSchema(unidades.length, intento === 0 ? nPreguntas : faltan.length);
-        const msgs = buildEvalMessages({
-          titulo,
-          contexto,
-          unidades,
-          nPreguntas: intento === 0 ? nPreguntas : faltan.length,
-          soloUnidades: intento === 0 ? undefined : faltan,
-        });
-        const raw = await chatJSON({
-          key: clave,
-          model: modelo,
-          messages: msgs,
-          schema,
-          structured: caps.structured,
-          json: caps.json,
-        });
-        const nuevas = normalizarPreguntas(raw, unidades.length).filter(
-          (p) => intento === 0 || faltan.includes(p.unidad),
-        );
+      for (let li = 0; li < lotes.length; li++) {
+        const lote = lotes[li];
+        setEstadoCarga(`Generando preguntas (${li + 1}/${lotes.length})…`);
+        const pedir = Math.max(lote.length, Math.min(12, base + (li < extra ? 1 : 0)));
+        let nuevas: Pregunta[] = [];
+        for (let intento = 0; intento < 2 && nuevas.length === 0; intento++) {
+          const schema = buildEvalSchema(unidades.length, pedir);
+          const msgs = buildEvalMessages({ titulo, contexto, unidades, nPreguntas: pedir, soloUnidades: lote });
+          const raw = await chatJSON({
+            key: clave,
+            model: modelo,
+            messages: msgs,
+            schema,
+            structured: caps.structured,
+            json: caps.json,
+          });
+          nuevas = normalizarPreguntas(raw, unidades.length).filter((p) => lote.includes(p.unidad));
+        }
         acumuladas = [...acumuladas, ...nuevas];
-        const cubiertas = unidadesCubiertas(acumuladas);
-        faltan = preguntasParaFaltantes(cubiertas, unidades.length);
       }
 
-      if (acumuladas.length === 0) throw new Error('El modelo no devolvió preguntas válidas. Intenta de nuevo.');
+      // Reintento final para unidades que hayan quedado sin pregunta.
+      const faltan = preguntasParaFaltantes(unidadesCubiertas(acumuladas), unidades.length);
+      if (faltan.length) {
+        try {
+          setEstadoCarga('Completando puntos faltantes…');
+          const schema = buildEvalSchema(unidades.length, faltan.length);
+          const msgs = buildEvalMessages({ titulo, contexto, unidades, nPreguntas: faltan.length, soloUnidades: faltan });
+          const raw = await chatJSON({
+            key: clave,
+            model: modelo,
+            messages: msgs,
+            schema,
+            structured: caps.structured,
+            json: caps.json,
+          });
+          acumuladas = [...acumuladas, ...normalizarPreguntas(raw, unidades.length).filter((p) => faltan.includes(p.unidad))];
+        } catch {
+          /* seguimos con lo que haya */
+        }
+      }
+
+      if (acumuladas.length === 0) {
+        throw new Error('El modelo no devolvió preguntas válidas. Revisa el crédito/modelo e intenta de nuevo.');
+      }
       setPreguntas(acumuladas);
       setRespuestas(acumuladas.map(() => null));
       setPreguntaActual(0);
@@ -239,6 +267,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
       setError((e as Error).message);
     } finally {
       setCargando(false);
+      setEstadoCarga('');
     }
   }
 
@@ -450,7 +479,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                       : `Preguntas que cubren los ${unidades.length} puntos del módulo.`}
                   </p>
                   <button className="btn btn-primario btn-ancho" disabled={cargando} onClick={generarEvaluacion}>
-                    {cargando ? 'Generando preguntas…' : esEnsayo ? 'Generar ensayo con IA' : 'Generar evaluación con IA'}
+                    {cargando ? estadoCarga || 'Generando preguntas…' : esEnsayo ? 'Generar ensayo con IA' : 'Generar evaluación con IA'}
                   </button>
                 </>
               ) : (
