@@ -123,16 +123,24 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     try {
       const msgs = buildTeachMessages(asignatura.nombre, modulo, indicadores[indice], mensajes);
       let acc = '';
-      const texto = await chatStream({
-        key: clave,
-        model: modelo,
-        messages: msgs,
-        tools: [{ type: 'openrouter:web_search' }],
-        onDelta: (d) => {
-          acc += d;
-          setStreamTexto(acc);
-        },
-      });
+      const onDelta = (d: string): void => {
+        acc += d;
+        setStreamTexto(acc);
+      };
+      let texto: string;
+      try {
+        texto = await chatStream({
+          key: clave,
+          model: modelo,
+          messages: msgs,
+          tools: [{ type: 'openrouter:web_search' }],
+          onDelta,
+        });
+      } catch {
+        acc = '';
+        setStreamTexto('');
+        texto = await chatStream({ key: clave, model: modelo, messages: msgs, onDelta });
+      }
       const nuevos = [...mensajes, { role: 'user' as const, content: `Explícame: ${indicadores[indice]}` }, { role: 'assistant' as const, content: texto }];
       const nuevaCob = cobertura.includes(indice) ? cobertura : [...cobertura, indice];
       setMensajes(nuevos);
