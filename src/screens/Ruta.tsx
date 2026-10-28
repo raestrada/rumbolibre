@@ -46,7 +46,7 @@ function estadoDe(
   progreso: Record<string, string>,
 ): EstadoModulo {
   if (ultimaNota != null) return ultimaNota >= NOTA_APROBACION ? 'aprobado' : 'reprobado';
-  const conProgreso = (['estudiar', 'evaluar', 'apuntes'] as const).some(
+  const conProgreso = (['estudiar', 'evaluar'] as const).some(
     (t) => progreso[actividadId(moduloId, t)] === 'completada',
   );
   return conProgreso ? 'encurso' : 'pendiente';

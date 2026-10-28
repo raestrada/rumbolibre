@@ -8,9 +8,8 @@ import {
   type ModuloFull,
 } from '../db/queries';
 import { NOTA_APROBACION } from '../data/tipos';
-import { buildPromptRepasarAsignatura } from '../lib/prompts';
 import { notaColor } from '../lib/parser';
-import { Chip, CopyButton, EmptyState } from '../components/ui';
+import { Chip, EmptyState } from '../components/ui';
 
 interface SeccionRepaso {
   asig: AsignaturaRow;
@@ -119,14 +118,9 @@ export default function Repaso(): JSX.Element {
                 ) : null}
 
                 {temas.length ? (
-                  <div className="paso-pie">
-                    <CopyButton
-                      className="btn btn-secundario"
-                      text={buildPromptRepasarAsignatura(asig.nombre, temas)}
-                      label="Copiar prompt de repaso de esta asignatura"
-                      icono="📖"
-                    />
-                  </div>
+                  <p className="cabecera-sub" style={{ marginTop: 10 }}>
+                    Abre un módulo para repasarlo con la sesión de IA.
+                  </p>
                 ) : null}
               </section>
             ))}

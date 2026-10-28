@@ -51,7 +51,6 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const cursoId = getCursoActivoId();
   const config = getConfig();
   const modelo = config.ai_model || MODELO_DEFECTO;
-  const modoIA = config.ai_mode === 'openrouter';
 
   const unidades: Unidad[] = esEnsayo
     ? modulos.map((m) => ({ etiqueta: `${m.codigo} — ${m.titulo}`, detalle: m.descripcion.slice(0, 110) }))
@@ -80,14 +79,13 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   }, []);
 
   useEffect(() => {
-    if (!modoIA) return;
     listarModelos()
       .then((ms) => {
         const m = ms.find((x) => x.id === modelo);
         setCaps({ structured: !!m?.structured, json: !!m?.json });
       })
       .catch(() => setCaps({ structured: false, json: false }));
-  }, [modoIA, modelo]);
+  }, [modelo]);
 
   useEffect(() => {
     const key = esEnsayo ? `ensayo:${id}` : id;
@@ -159,7 +157,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     setStreamTexto('');
     try {
       const msgs: MensajeIA[] = [
-        { role: 'system', content: 'Eres una profesora chilena de 1° medio. Responde claro y breve, con ejemplos. Puedes usar HTML simple.' },
+        { role: 'system', content: 'Eres una profesora chilena de 1° medio. Responde claro, breve y en HTML didáctico (h3, p, ul, strong, em, div class="rl-callout"/"rl-note", blockquote class="rl-quote", span class="rl-concept", figure/img de Wikimedia/NASA). Usa emojis. Sin markdown, sin scripts.' },
         ...mensajes,
         { role: 'user', content: texto },
       ];
@@ -332,17 +330,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         </p>
       </header>
 
-      {!modoIA ? (
-        <div className="banner banner-info">
-          Activa el <strong>modo IA</strong> en Ajustes para usar esta pantalla. Mientras tanto, puedes seguir con el modo
-          manual (copiar/pegar).
-          <div style={{ marginTop: 10 }}>
-            <button className="btn btn-primario" onClick={() => go({ name: 'ajustes' })}>
-              Ir a Ajustes
-            </button>
-          </div>
-        </div>
-      ) : !clave ? (
+      {!clave ? (
         <div className="banner banner-mal">
           No hay una clave de OpenRouter disponible. Configúrala (o desbloquéala) en Ajustes.
           <div style={{ marginTop: 10 }}>

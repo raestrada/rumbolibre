@@ -2258,3 +2258,198 @@ button.fila:hover,
   justify-content: center;
   margin-top: 14px;
 }
+
+/* — IA hero (módulo/ensayo) — */
+.ia-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #ffffff, var(--violeta-suave));
+  border: 1px solid var(--violeta-suave);
+}
+
+.ia-hero-icono {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  background: #fff;
+  box-shadow: var(--sombra);
+  flex-shrink: 0;
+}
+
+.ia-hero-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.ia-hero-cuerpo strong {
+  font-size: 1.05rem;
+}
+
+.ia-hero-cuerpo p {
+  margin: 4px 0 6px;
+  color: var(--texto-suave);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.ia-hero .btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 620px) {
+  .ia-hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ia-hero .btn {
+    width: 100%;
+  }
+}
+
+/* — OpenRouter info — */
+.link-info {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--violeta);
+  font: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.or-info p {
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+
+.or-info h4 {
+  margin: 14px 0 6px;
+  font-size: 0.95rem;
+}
+
+.or-pasos {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.or-pasos li {
+  margin-bottom: 6px;
+  line-height: 1.45;
+}
+
+.or-info code {
+  background: #f4f1fb;
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 0.85em;
+}
+
+.or-info a {
+  color: var(--violeta);
+}
+
+.or-info-nota {
+  background: var(--violeta-suave);
+  color: var(--texto);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* — Ajustes con pestañas — */
+.ajustes-tabs {
+  margin-bottom: 16px;
+}
+
+.ajustes-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.ajustes-panel > .tarjeta {
+  height: fit-content;
+}
+
+.ajustes-ia-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.ajustes-ia-badge {
+  font-size: 0.7rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--exito);
+  background: #eafaf0;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* — HTML didáctico del LLM — */
+.contenido-ia .rl-callout {
+  background: var(--violeta-suave);
+  border-left: 4px solid var(--violeta);
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+
+.contenido-ia .rl-note {
+  background: #f4f1fb;
+  color: var(--texto-suave);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  margin: 8px 0;
+}
+
+.contenido-ia .rl-quote {
+  border-left: 3px solid var(--violeta);
+  background: #fbfaff;
+  margin: 8px 0;
+  padding: 8px 12px;
+  color: var(--texto);
+  font-style: italic;
+}
+
+.contenido-ia blockquote {
+  border-left: 3px solid var(--borde);
+  margin: 8px 0;
+  padding: 4px 12px;
+  color: var(--texto-suave);
+}
+
+.contenido-ia hr {
+  border: none;
+  border-top: 1px solid var(--borde);
+  margin: 14px 0;
+}
+
+.contenido-ia a {
+  color: var(--violeta);
+}
+
+.contenido-ia code {
+  background: #f4f1fb;
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 0.88em;
+}
+
+.contenido-ia h4 {
+  font-size: 0.95rem;
+  margin: 12px 0 6px;
+}

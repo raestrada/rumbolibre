@@ -22,13 +22,16 @@ import {
   importJson,
   importSqlite,
 } from '../db/backup';
-import { Chip } from '../components/ui';
 import { MODELO_DEFECTO, listarModelos, probarClave, type ModeloOR } from '../lib/openrouter';
 import { borrarClave, cargarClave, getModoClave, guardarClave } from '../lib/secureKey';
+import OpenRouterInfo from '../components/OpenRouterInfo';
+
+type Tab = 'general' | 'ia' | 'datos' | 'planes';
 
 export default function Ajustes(): JSX.Element {
   const config = getConfig();
   const cursoId = getCursoActivoId();
+  const [tab, setTab] = useState<Tab>('general');
   const [nombre, setNombre] = useState(config.nombre || '');
   const [fecha, setFecha] = useState(config.fecha_examen || '');
   const [msg, setMsg] = useState('');
@@ -51,7 +54,6 @@ export default function Ajustes(): JSX.Element {
   const [nota, setNota] = useState('');
 
   // IA (OpenRouter)
-  const [aiMode, setAiMode] = useState(config.ai_mode || 'manual');
   const [aiModel, setAiModel] = useState(config.ai_model || MODELO_DEFECTO);
   const [keyInput, setKeyInput] = useState('');
   const [keyStorage, setKeyStorage] = useState<string>(getModoClave());
@@ -90,9 +92,8 @@ export default function Ajustes(): JSX.Element {
 
   async function guardarIA(e: FormEvent): Promise<void> {
     e.preventDefault();
-    setConfig('ai_mode', aiMode);
     setConfig('ai_model', aiModel);
-    if (aiMode === 'openrouter' && keyInput.trim()) {
+    if (keyInput.trim()) {
       if (keyStorage === 'cifrada' && !passphrase.trim()) {
         setMsgIA('Escribe una passphrase para cifrar la clave.');
         return;
@@ -176,139 +177,96 @@ export default function Ajustes(): JSX.Element {
     <div className="pantalla">
       <header className="cabecera">
         <h1>Ajustes ⚙️</h1>
-        <p className="cabecera-sub">Tu perfil, plazos, PIN, respaldos y notas.</p>
+        <p className="cabecera-sub">Tu perfil, la IA, los datos y los plazos.</p>
       </header>
       {msg ? <div className="msg-ok">{msg}</div> : null}
 
-      <div className="grid-ajustes">
-        <section className="tarjeta">
-          <h2 className="seccion-titulo">Curso</h2>
-          <p className="cabecera-sub">Elige el curso que estás preparando.</p>
-          <label className="campo">
-            <span>Curso activo</span>
-            <select
-              value={config.curso_activo || 'm1'}
-              onChange={(e) => setConfig('curso_activo', e.target.value)}
-            >
-              {getCursos().map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
-            <small>Por ahora solo está disponible 1° medio.</small>
-          </label>
-        </section>
-
-        <section className="tarjeta">
-          <h2 className="seccion-titulo">Perfil</h2>
-          <form onSubmit={guardarPerfil} className="form-col">
-            <label className="campo">
-              <span>Nombre</span>
-              <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
-            </label>
-            <label className="campo">
-              <span>Fecha del examen (aproximada)</span>
-              <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
-            </label>
-            <button className="btn btn-primario" type="submit">
-              Guardar perfil
-            </button>
-          </form>
-        </section>
-
-        <section className="tarjeta">
-          <h2 className="seccion-titulo">PIN de papás</h2>
-          <form onSubmit={guardarPin} className="form-col">
-            {config.pin_hash ? (
-              <label className="campo">
-                <span>PIN actual</span>
-                <input type="password" value={pinActual} onChange={(e) => setPinActual(e.target.value)} />
-              </label>
-            ) : (
-              <p className="cabecera-sub">Aún no hay PIN. Define uno para proteger el seguimiento.</p>
-            )}
-            <label className="campo">
-              <span>Nuevo PIN</span>
-              <input
-                type="password"
-                value={pinNuevo}
-                onChange={(e) => setPinNuevo(e.target.value)}
-                inputMode="numeric"
-                maxLength={6}
-              />
-            </label>
-            <label className="campo">
-              <span>Repetir PIN</span>
-              <input
-                type="password"
-                value={pinConfirmar}
-                onChange={(e) => setPinConfirmar(e.target.value)}
-                inputMode="numeric"
-                maxLength={6}
-              />
-            </label>
-            {msgPin ? <div className="msg-ok">{msgPin}</div> : null}
-            <button className="btn btn-primario" type="submit">
-              Guardar PIN
-            </button>
-          </form>
-        </section>
-
-        <section className="tarjeta">
-          <h2 className="seccion-titulo">Respaldo de datos</h2>
-          <p className="cabecera-sub">
-            Tus datos viven en este computador. Descarga un respaldo y guárdalo en un lugar seguro (Drive,
-            USB, etc.).
-          </p>
-          <div className="botones-col">
-            <button className="btn btn-secundario" onClick={exportarSqlite}>
-              ⬇️ Descargar respaldo (.sqlite)
-            </button>
-            <button className="btn btn-secundario" onClick={exportarJson}>
-              ⬇️ Descargar respaldo (.json)
-            </button>
-            <button className="btn btn-suave" onClick={() => fileSqlite.current?.click()}>
-              ⬆️ Importar .sqlite
-            </button>
-            <button className="btn btn-suave" onClick={() => fileJson.current?.click()}>
-              ⬆️ Importar .json
-            </button>
-            <input
-              ref={fileSqlite}
-              type="file"
-              accept=".sqlite,.db,.bin,application/x-sqlite3"
-              hidden
-              onChange={(e) => onImportarSqlite(e.target.files?.[0] ?? null)}
-            />
-            <input
-              ref={fileJson}
-              type="file"
-              accept=".json,application/json"
-              hidden
-              onChange={(e) => onImportarJson(e.target.files?.[0] ?? null)}
-            />
-          </div>
-        </section>
+      <div className="tabs ajustes-tabs">
+        {(
+          [
+            ['general', '👤 General'],
+            ['ia', '🤖 Inteligencia artificial'],
+            ['datos', '💾 Datos'],
+            ['planes', '📅 Plazos y notas'],
+          ] as [Tab, string][]
+        ).map(([id, label]) => (
+          <button key={id} className={`tab ${tab === id ? 'activo' : ''}`} onClick={() => setTab(id)}>
+            {label}
+          </button>
+        ))}
       </div>
 
-      <section className="tarjeta">
-        <h2 className="seccion-titulo">Inteligencia Artificial</h2>
-        <p className="cabecera-sub">
-          Elige cómo estudiar: <strong>manual</strong> (copiar/pegar en tu IA) o <strong>directo</strong> con
-          OpenRouter (la app llama al modelo y controla el contexto).
-        </p>
-        <form onSubmit={guardarIA} className="form-col">
-          <label className="campo">
-            <span>Modo</span>
-            <select value={aiMode} onChange={(e) => setAiMode(e.target.value)}>
-              <option value="manual">Manual (copiar y pegar)</option>
-              <option value="openrouter">Directo (OpenRouter)</option>
-            </select>
-          </label>
+      {tab === 'general' ? (
+        <div className="ajustes-panel">
+          <section className="tarjeta">
+            <h2 className="seccion-titulo">Perfil</h2>
+            <form onSubmit={guardarPerfil} className="form-col">
+              <label className="campo">
+                <span>Nombre</span>
+                <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
+              </label>
+              <label className="campo">
+                <span>Curso</span>
+                <select value={config.curso_activo || 'm1'} onChange={(e) => setConfig('curso_activo', e.target.value)}>
+                  {getCursos().map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nombre}
+                    </option>
+                  ))}
+                </select>
+                <small>Por ahora solo está disponible 1° medio.</small>
+              </label>
+              <label className="campo">
+                <span>Fecha del examen (aproximada)</span>
+                <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+              </label>
+              <button className="btn btn-primario" type="submit">
+                Guardar perfil
+              </button>
+            </form>
+          </section>
 
-          {aiMode === 'openrouter' ? (
-            <>
+          <section className="tarjeta">
+            <h2 className="seccion-titulo">PIN de papás</h2>
+            <form onSubmit={guardarPin} className="form-col">
+              {config.pin_hash ? (
+                <label className="campo">
+                  <span>PIN actual</span>
+                  <input type="password" value={pinActual} onChange={(e) => setPinActual(e.target.value)} />
+                </label>
+              ) : (
+                <p className="cabecera-sub">Aún no hay PIN. Define uno para proteger el seguimiento.</p>
+              )}
+              <label className="campo">
+                <span>Nuevo PIN</span>
+                <input type="password" value={pinNuevo} onChange={(e) => setPinNuevo(e.target.value)} inputMode="numeric" maxLength={6} />
+              </label>
+              <label className="campo">
+                <span>Repetir PIN</span>
+                <input type="password" value={pinConfirmar} onChange={(e) => setPinConfirmar(e.target.value)} inputMode="numeric" maxLength={6} />
+              </label>
+              {msgPin ? <div className="msg-ok">{msgPin}</div> : null}
+              <button className="btn btn-primario" type="submit">
+                Guardar PIN
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {tab === 'ia' ? (
+        <div className="ajustes-panel">
+          <section className="tarjeta">
+            <div className="ajustes-ia-cab">
+              <div>
+                <h2 className="seccion-titulo">OpenRouter</h2>
+                <p className="cabecera-sub">
+                  La app estudia y evalúa con IA directamente desde tu navegador. <OpenRouterInfo />
+                </p>
+              </div>
+              <span className="ajustes-ia-badge">IA directa</span>
+            </div>
+            <form onSubmit={guardarIA} className="form-col">
               <label className="campo">
                 <span>Clave de OpenRouter</span>
                 <input
@@ -320,7 +278,6 @@ export default function Ajustes(): JSX.Element {
                 />
                 <small>Se guarda solo en este navegador. Usa una clave con límite de gasto.</small>
               </label>
-
               <label className="campo">
                 <span>Almacenamiento de la clave</span>
                 <select value={keyStorage} onChange={(e) => setKeyStorage(e.target.value)}>
@@ -329,19 +286,12 @@ export default function Ajustes(): JSX.Element {
                   <option value="cifrada">Recordar en este equipo (cifrada)</option>
                 </select>
               </label>
-
               {keyStorage === 'cifrada' ? (
                 <label className="campo">
                   <span>Passphrase para cifrar</span>
-                  <input
-                    type="password"
-                    value={passphrase}
-                    onChange={(e) => setPassphrase(e.target.value)}
-                    placeholder="Frase secreta"
-                  />
+                  <input type="password" value={passphrase} onChange={(e) => setPassphrase(e.target.value)} placeholder="Frase secreta" />
                 </label>
               ) : null}
-
               <label className="campo">
                 <span>Modelo</span>
                 <select value={aiModel} onChange={(e) => setAiModel(e.target.value)} disabled={cargandoModelos}>
@@ -354,7 +304,6 @@ export default function Ajustes(): JSX.Element {
                 </select>
                 {cargandoModelos ? <small>Cargando modelos…</small> : null}
               </label>
-
               <div className="paso-acciones">
                 <button type="button" className="btn btn-secundario" onClick={probarIA}>
                   Probar clave
@@ -364,118 +313,140 @@ export default function Ajustes(): JSX.Element {
                 </button>
               </div>
               {testMsg ? <div className={testMsg.startsWith('✓') ? 'msg-ok' : 'msg-error'}>{testMsg}</div> : null}
-            </>
-          ) : null}
-
-          {msgIA ? <div className="msg-ok">{msgIA}</div> : null}
-          <button className="btn btn-primario" type="submit">
-            Guardar IA
-          </button>
-        </form>
-      </section>
-
-      <section className="tarjeta">
-        <h2 className="seccion-titulo">Calendario y plazos</h2>
-        <div className="lista">
-          {hitos.map((h) => (
-            <div key={h.id} className="tarjeta fila">
-              <button
-                className={`check ${h.completado ? 'check-on' : ''}`}
-                onClick={() => setHitoCompletado(h.id, !h.completado)}
-              >
-                {h.completado ? '✓' : ''}
+              {msgIA ? <div className="msg-ok">{msgIA}</div> : null}
+              <button className="btn btn-primario" type="submit">
+                Guardar
               </button>
-              <div className="fila-cuerpo">
-                <div className="fila-titulo">{h.titulo}</div>
-                <div className="fila-sub">{h.descripcion}</div>
-              </div>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {tab === 'datos' ? (
+        <div className="ajustes-panel">
+          <section className="tarjeta">
+            <h2 className="seccion-titulo">Respaldo de datos</h2>
+            <p className="cabecera-sub">
+              Tus datos viven en este computador. Descarga un respaldo y guárdalo en un lugar seguro.
+            </p>
+            <div className="botones-col">
+              <button className="btn btn-secundario" onClick={exportarSqlite}>
+                ⬇️ Descargar respaldo (.sqlite)
+              </button>
+              <button className="btn btn-secundario" onClick={exportarJson}>
+                ⬇️ Descargar respaldo (.json)
+              </button>
+              <button className="btn btn-suave" onClick={() => fileSqlite.current?.click()}>
+                ⬆️ Importar .sqlite
+              </button>
+              <button className="btn btn-suave" onClick={() => fileJson.current?.click()}>
+                ⬆️ Importar .json
+              </button>
               <input
-                type="date"
-                className="input-fecha"
-                value={h.fecha || ''}
-                onChange={(e) => setHitoFecha(h.id, e.target.value)}
+                ref={fileSqlite}
+                type="file"
+                accept=".sqlite,.db,.bin,application/x-sqlite3"
+                hidden
+                onChange={(e) => onImportarSqlite(e.target.files?.[0] ?? null)}
               />
-              <button className="btn-peligro-suave" onClick={() => deleteHito(h.id)}>
-                ✕
+              <input
+                ref={fileJson}
+                type="file"
+                accept=".json,application/json"
+                hidden
+                onChange={(e) => onImportarJson(e.target.files?.[0] ?? null)}
+              />
+            </div>
+          </section>
+
+          <section className="tarjeta peligro">
+            <h2 className="seccion-titulo">Zona de riesgo</h2>
+            <p className="cabecera-sub">Borra todos los datos y vuelve a empezar desde cero.</p>
+            <button
+              className="btn btn-peligro"
+              onClick={() => {
+                if (confirm('¿Seguro? Se borrará TODO tu progreso y registros.')) resetDatabase();
+              }}
+            >
+              Restablecer todo
+            </button>
+          </section>
+        </div>
+      ) : null}
+
+      {tab === 'planes' ? (
+        <div className="ajustes-panel">
+          <section className="tarjeta">
+            <h2 className="seccion-titulo">Calendario y plazos</h2>
+            <div className="lista">
+              {hitos.map((h) => (
+                <div key={h.id} className="tarjeta fila">
+                  <button className={`check ${h.completado ? 'check-on' : ''}`} onClick={() => setHitoCompletado(h.id, !h.completado)}>
+                    {h.completado ? '✓' : ''}
+                  </button>
+                  <div className="fila-cuerpo">
+                    <div className="fila-titulo">{h.titulo}</div>
+                    <div className="fila-sub">{h.descripcion}</div>
+                  </div>
+                  <input type="date" className="input-fecha" value={h.fecha || ''} onChange={(e) => setHitoFecha(h.id, e.target.value)} />
+                  <button className="btn-peligro-suave" onClick={() => deleteHito(h.id)}>
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="form-fila">
+              <input value={hitoTitulo} onChange={(e) => setHitoTitulo(e.target.value)} placeholder="Nuevo plazo (ej. Inscripción)" />
+              <input type="date" value={nuevaFechaHito} onChange={(e) => setNuevaFechaHito(e.target.value)} />
+              <button
+                className="btn btn-suave"
+                onClick={() => {
+                  if (hitoTitulo.trim()) {
+                    addHito(cursoId, hitoTitulo.trim(), nuevaFechaHito, '');
+                    setHitoTitulo('');
+                    setNuevaFechaHito('');
+                  }
+                }}
+              >
+                Agregar
               </button>
             </div>
-          ))}
-        </div>
-        <div className="form-fila">
-          <input
-            value={hitoTitulo}
-            onChange={(e) => setHitoTitulo(e.target.value)}
-            placeholder="Nuevo plazo (ej. Inscripción)"
-          />
-          <input
-            type="date"
-            value={nuevaFechaHito}
-            onChange={(e) => setNuevaFechaHito(e.target.value)}
-          />
-          <button
-            className="btn btn-suave"
-            onClick={() => {
-              if (hitoTitulo.trim()) {
-                addHito(cursoId, hitoTitulo.trim(), nuevaFechaHito, '');
-                setHitoTitulo('');
-                setNuevaFechaHito('');
-              }
-            }}
-          >
-            Agregar
-          </button>
-        </div>
-      </section>
+          </section>
 
-      <section className="tarjeta">
-        <h2 className="seccion-titulo">Notas rápidas</h2>
-        <div className="form-fila">
-          <input
-            value={nota}
-            onChange={(e) => setNota(e.target.value)}
-            placeholder="Escribe una nota o recordatorio…"
-          />
-          <button
-            className="btn btn-suave"
-            onClick={() => {
-              if (nota.trim()) {
-                addBitacora(nota.trim());
-                setNota('');
-              }
-            }}
-          >
-            Guardar
-          </button>
-        </div>
-        {bitacora.length ? (
-          <div className="lista bitacora">
-            {bitacora.map((b) => (
-              <div key={b.id} className="fila">
-                <div className="fila-cuerpo">
-                  <div className="fila-titulo">{b.texto}</div>
-                  <div className="fila-sub">{new Date(b.fecha).toLocaleString('es-CL')}</div>
-                </div>
-                <button className="btn-peligro-suave" onClick={() => deleteBitacora(b.id)}>
-                  ✕
-                </button>
+          <section className="tarjeta">
+            <h2 className="seccion-titulo">Notas rápidas</h2>
+            <div className="form-fila">
+              <input value={nota} onChange={(e) => setNota(e.target.value)} placeholder="Escribe una nota o recordatorio…" />
+              <button
+                className="btn btn-suave"
+                onClick={() => {
+                  if (nota.trim()) {
+                    addBitacora(nota.trim());
+                    setNota('');
+                  }
+                }}
+              >
+                Guardar
+              </button>
+            </div>
+            {bitacora.length ? (
+              <div className="lista bitacora">
+                {bitacora.map((b) => (
+                  <div key={b.id} className="fila">
+                    <div className="fila-cuerpo">
+                      <div className="fila-titulo">{b.texto}</div>
+                      <div className="fila-sub">{new Date(b.fecha).toLocaleString('es-CL')}</div>
+                    </div>
+                    <button className="btn-peligro-suave" onClick={() => deleteBitacora(b.id)}>
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : null}
-      </section>
-
-      <section className="tarjeta peligro">
-        <h2 className="seccion-titulo">Zona de riesgo</h2>
-        <p className="cabecera-sub">Borra todos los datos y vuelve a empezar desde cero.</p>
-        <button
-          className="btn btn-peligro"
-          onClick={() => {
-            if (confirm('¿Seguro? Se borrará TODO tu progreso y registros.')) resetDatabase();
-          }}
-        >
-          Restablecer todo
-        </button>
-      </section>
+            ) : null}
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }

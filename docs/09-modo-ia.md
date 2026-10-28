@@ -1,10 +1,8 @@
 # Modo IA con OpenRouter
 
-La app ofrece **dos modos** para estudiar/evaluar:
-
-1. **Manual** (por defecto): la app genera prompts y tú los pegas en tu IA; luego pegas el resultado.
-2. **Directo (OpenRouter)**: la app llama al modelo desde el navegador, controla el contexto y la
-   cobertura, y renderiza el contenido con el diseño de la app.
+La app usa **IA directa** para estudiar y evaluar: la app llama al modelo desde el navegador,
+controla el contexto y la cobertura, y renderiza el contenido con el diseño de la app.
+**No hay modo de copiar/pegar prompts** (se eliminó para no confundir).
 
 ## Seguridad de la API key
 

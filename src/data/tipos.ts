@@ -17,7 +17,7 @@ export interface Asignatura {
   ejes: string[];
 }
 
-export type TipoActividad = 'estudiar' | 'evaluar' | 'apuntes';
+export type TipoActividad = 'estudiar' | 'evaluar';
 
 export interface Actividad {
   tipo: TipoActividad;
@@ -50,7 +50,7 @@ export interface Lectura {
   rating?: number;
 }
 
-// Pasos por módulo, en orden. El paso 2 (evaluar) se desbloquea al completar el 1 (estudiar).
+// Pasos por módulo, en orden. La evaluación se desbloquea al completar el estudio.
 export const ACTIVIDADES: Actividad[] = [
   {
     tipo: 'estudiar',
@@ -60,19 +60,13 @@ export const ACTIVIDADES: Actividad[] = [
   {
     tipo: 'evaluar',
     titulo: 'Evaluarte',
-    descripcion: 'Simula el examen (25 preguntas, nota 1–7) y guarda tu resultado.',
-  },
-  {
-    tipo: 'apuntes',
-    titulo: 'Crear apuntes',
-    descripcion: 'Resume lo aprendido y guarda tus apuntes (opcional).',
+    descripcion: 'Responde el examen (25 preguntas, nota 1–7) y guarda tu resultado.',
   },
 ];
 
 export const ACTIVIDAD_TIPO_LABEL: Record<TipoActividad, string> = {
   estudiar: 'Estudiar',
   evaluar: 'Evaluar',
-  apuntes: 'Apuntes',
 };
 
 export const NOTA_APROBACION = 4.0;
