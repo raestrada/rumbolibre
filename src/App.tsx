@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { Component, createContext, useContext, useEffect, useState, type ErrorInfo, type ReactNode } from 'react';
 import { initDatabase } from './db/database';
 import { getConfig } from './db/queries';
 import { useDB } from './useDB';
@@ -77,6 +77,36 @@ function renderScreen(nav: Screen): JSX.Element {
   }
 }
 
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state: { error: Error | null } = { error: null };
+
+  static getDerivedStateFromError(error: Error): { error: Error } {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo): void {
+    console.error('Rumbo Libre · error de pantalla', error, info);
+  }
+
+  render(): ReactNode {
+    if (this.state.error) {
+      return (
+        <div className="pantalla">
+          <div className="msg-error">
+            Ocurrió un error en esta pantalla: {String(this.state.error.message)}
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <button className="btn btn-primario" onClick={() => location.reload()}>
+              Recargar
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App(): JSX.Element {
   const { ready } = useDB();
   const [nav, setNav] = useState<Screen>({ name: 'dashboard' });
@@ -94,7 +124,9 @@ export default function App(): JSX.Element {
     <NavContext.Provider value={{ nav, go: setNav }}>
       <div className="app">
         <Sidebar />
-        <main className="contenido">{renderScreen(nav)}</main>
+        <main className="contenido">
+          <ErrorBoundary>{renderScreen(nav)}</ErrorBoundary>
+        </main>
       </div>
     </NavContext.Provider>
   );

@@ -63,7 +63,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const [caps, setCaps] = useState({ structured: false, json: false });
   const [mensajes, setMensajes] = useState<MensajeIA[]>([]);
   const [cobertura, setCobertura] = useState<number[]>([]);
-  const [fase, setFase] = useState<Fase>('ensenar');
+  const [fase, setFase] = useState<Fase>(esEnsayo ? 'evaluar' : 'ensenar');
   const [paso, setPaso] = useState(0);
   const [streaming, setStreaming] = useState(false);
   const [streamTexto, setStreamTexto] = useState('');
@@ -315,6 +315,8 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const unidadActual = esEnsayo ? null : indicadores[paso];
   const pregunta = preguntas[preguntaActual];
   const porcentaje = resultado ? Math.round(resultado.pct * 100) : 0;
+  // Si quedó guardada una fase "resultado" sin resultado en memoria, mostramos la evaluación.
+  const faseEfectiva: Fase = fase === 'resultado' && !resultado ? (esEnsayo ? 'evaluar' : 'ensenar') : fase;
 
   return (
     <div className="pantalla">
@@ -378,7 +380,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
             </section>
           ) : null}
 
-          {fase === 'ensenar' && !esEnsayo ? (
+          {faseEfectiva === 'ensenar' && !esEnsayo ? (
             <section className="tarjeta">
               <h2 className="seccion-titulo">Punto actual</h2>
               <p className="ia-punto">{unidadActual}</p>
@@ -396,7 +398,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
             </section>
           ) : null}
 
-          {fase === 'ensenar' && !esEnsayo ? (
+          {faseEfectiva === 'ensenar' && !esEnsayo ? (
             <section className="tarjeta">
               <h2 className="seccion-titulo">Conversación</h2>
               <div className="ia-chat">
@@ -437,7 +439,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
             </section>
           ) : null}
 
-          {fase === 'evaluar' ? (
+          {faseEfectiva === 'evaluar' ? (
             <section className="tarjeta">
               {preguntas.length === 0 ? (
                 <>
@@ -490,7 +492,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
             </section>
           ) : null}
 
-          {fase === 'resultado' && resultado ? (
+          {faseEfectiva === 'resultado' && resultado ? (
             <section className="tarjeta">
               <div className={`banner ${resultado.nota >= NOTA_APROBACION ? 'banner-ok' : 'banner-mal'}`}>
                 {resultado.nota >= NOTA_APROBACION ? '🎉 ¡Aprobado!' : '🔁 A repasar'} — nota {resultado.nota.toFixed(1)} ·{' '}
@@ -517,7 +519,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
             </section>
           ) : null}
 
-          {fase !== 'resultado' ? (
+          {faseEfectiva !== 'resultado' ? (
             <div className="ia-footer">
               <button className="btn btn-suave" onClick={reiniciar}>
                 ↺ Reiniciar sesión

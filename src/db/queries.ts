@@ -409,8 +409,12 @@ export interface SesionIARow {
 }
 
 export function getSesionIA(moduloId: string): SesionIARow | null {
-  const r = dbGet('SELECT * FROM sesiones_ia WHERE modulo_id = ?', [moduloId]);
-  return r ? (r as unknown as SesionIARow) : null;
+  try {
+    const r = dbGet('SELECT * FROM sesiones_ia WHERE modulo_id = ?', [moduloId]);
+    return r ? (r as unknown as SesionIARow) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function saveSesionIA(
@@ -419,16 +423,24 @@ export function saveSesionIA(
   cobertura: unknown[],
   fase: string,
 ): void {
-  dbRun(
-    `INSERT INTO sesiones_ia (modulo_id, mensajes, cobertura, fase, actualizado)
-     VALUES (?,?,?,?,?)
-     ON CONFLICT(modulo_id) DO UPDATE SET
-       mensajes = excluded.mensajes, cobertura = excluded.cobertura,
-       fase = excluded.fase, actualizado = excluded.actualizado`,
-    [moduloId, JSON.stringify(mensajes), JSON.stringify(cobertura), fase, new Date().toISOString()],
-  );
+  try {
+    dbRun(
+      `INSERT INTO sesiones_ia (modulo_id, mensajes, cobertura, fase, actualizado)
+       VALUES (?,?,?,?,?)
+       ON CONFLICT(modulo_id) DO UPDATE SET
+         mensajes = excluded.mensajes, cobertura = excluded.cobertura,
+         fase = excluded.fase, actualizado = excluded.actualizado`,
+      [moduloId, JSON.stringify(mensajes), JSON.stringify(cobertura), fase, new Date().toISOString()],
+    );
+  } catch {
+    /* si la tabla no existe, no bloqueamos la pantalla */
+  }
 }
 
 export function resetSesionIA(moduloId: string): void {
-  dbRun('DELETE FROM sesiones_ia WHERE modulo_id = ?', [moduloId]);
+  try {
+    dbRun('DELETE FROM sesiones_ia WHERE modulo_id = ?', [moduloId]);
+  } catch {
+    /* ignore */
+  }
 }
