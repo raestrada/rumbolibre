@@ -23,14 +23,12 @@ import {
   buildTeachMessages,
   calificar,
   normalizarPreguntas,
-  preguntasParaFaltantes,
-  unidadesCubiertas,
   type Pregunta,
   type ResultadoEval,
   type Unidad,
 } from '../lib/cobertura';
 import { arreglarImagenes, sanitizarHTML } from '../lib/sanitize';
-import { Chip, CopyButton, Modal } from '../components/ui';
+import { Chip, ProgressBar } from '../components/ui';
 
 type Fase = 'ensenar' | 'evaluar' | 'resultado';
 
@@ -68,16 +66,15 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const [streaming, setStreaming] = useState(false);
   const [streamTexto, setStreamTexto] = useState('');
   const [preguntaLibre, setPreguntaLibre] = useState('');
-  const [preguntas, setPreguntas] = useState<Pregunta[]>([]);
-  const [respuestas, setRespuestas] = useState<(number | null)[]>([]);
-  const [preguntaActual, setPreguntaActual] = useState(0);
+  const [plan, setPlan] = useState<number[]>([]);
+  const [indice, setIndice] = useState(0);
+  const [preguntaData, setPreguntaData] = useState<Pregunta | null>(null);
+  const [historial, setHistorial] = useState<{ pregunta: Pregunta; respuesta: number }[]>([]);
   const [elegida, setElegida] = useState<number | null>(null);
+  const [generandoPregunta, setGenerandoPregunta] = useState(false);
   const [resultado, setResultado] = useState<ResultadoEval | null>(null);
-  const [cargando, setCargando] = useState(false);
-  const [estadoCarga, setEstadoCarga] = useState('');
   const [error, setError] = useState('');
 
-  // Cargar clave y sesión guardada.
   useEffect(() => {
     void cargarClave().then(setClave);
   }, []);
@@ -99,7 +96,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     try {
       setMensajes(JSON.parse(s.mensajes) as MensajeIA[]);
       setCobertura(JSON.parse(s.cobertura) as number[]);
-      setFase((s.fase as Fase) || 'ensenar');
+      setFase((s.fase as Fase) || (esEnsayo ? 'evaluar' : 'ensenar'));
     } catch {
       /* ignore */
     }
@@ -110,19 +107,13 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     saveSesionIA(key, m, c, f);
   }
 
-  function agregarMensaje(m: MensajeIA, c = cobertura, f = fase): void {
-    const next = [...mensajes, m];
-    setMensajes(next);
-    persistir(next, c, f);
-  }
-
-  async function explicar(indice: number): Promise<void> {
+  async function explicar(indiceIndicador: number): Promise<void> {
     if (!clave || !modulo || !asignatura) return;
     setError('');
     setStreaming(true);
     setStreamTexto('');
     try {
-      const msgs = buildTeachMessages(asignatura.nombre, modulo, indicadores[indice], mensajes);
+      const msgs = buildTeachMessages(asignatura.nombre, modulo, indicadores[indiceIndicador], mensajes);
       let acc = '';
       const onDelta = (d: string): void => {
         acc += d;
@@ -142,8 +133,12 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         setStreamTexto('');
         texto = await chatStream({ key: clave, model: modelo, messages: msgs, onDelta });
       }
-      const nuevos = [...mensajes, { role: 'user' as const, content: `Explícame: ${indicadores[indice]}` }, { role: 'assistant' as const, content: texto }];
-      const nuevaCob = cobertura.includes(indice) ? cobertura : [...cobertura, indice];
+      const nuevos: MensajeIA[] = [
+        ...mensajes,
+        { role: 'user', content: `Explícame: ${indicadores[indiceIndicador]}` },
+        { role: 'assistant', content: texto },
+      ];
+      const nuevaCob = cobertura.includes(indiceIndicador) ? cobertura : [...cobertura, indiceIndicador];
       setMensajes(nuevos);
       setCobertura(nuevaCob);
       persistir(nuevos, nuevaCob, fase);
@@ -189,107 +184,79 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     }
   }
 
-  async function generarEvaluacion(): Promise<void> {
+  function iniciarEvaluacion(): void {
     if (!clave) return;
     setError('');
-    setCargando(true);
-    setEstadoCarga('Preparando…');
+    const total = esEnsayo ? 25 : Math.max(8, Math.min(25, unidades.length));
+    const p: number[] = [];
+    for (let i = 0; i < total; i++) p.push((i % Math.max(1, unidades.length)) + 1);
+    setPlan(p);
+    setIndice(0);
+    setHistorial([]);
+    setResultado(null);
+    setPreguntaData(null);
+    setElegida(null);
+    setFase('evaluar');
+    persistir(mensajes, cobertura, 'evaluar');
+    void generarPregunta(p[0]);
+  }
+
+  async function generarPregunta(unidad: number): Promise<void> {
+    if (!clave) return;
+    setGenerandoPregunta(true);
+    setError('');
+    setPreguntaData(null);
+    setElegida(null);
     try {
-      const nPreguntas = esEnsayo ? 25 : Math.min(25, Math.max(8, unidades.length + 2));
       const titulo = esEnsayo
         ? `Ensayo general — ${asignatura?.nombre}`
         : `Módulo ${modulo?.codigo} — ${modulo?.titulo}`;
       const contexto = esEnsayo
         ? `Todas las OA de ${asignatura?.nombre}.`
         : `${asignatura?.nombre}. ${modulo?.descripcion}`;
-
-      const indices = unidades.map((_, i) => i + 1);
-      const nLotes = Math.max(1, Math.ceil(unidades.length / 6));
-      const tam = Math.ceil(unidades.length / nLotes);
-      const lotes: number[][] = [];
-      for (let i = 0; i < indices.length; i += tam) lotes.push(indices.slice(i, i + tam));
-      const base = Math.floor(nPreguntas / lotes.length);
-      const extra = nPreguntas % lotes.length;
-
-      let acumuladas: Pregunta[] = [];
-      for (let li = 0; li < lotes.length; li++) {
-        const lote = lotes[li];
-        setEstadoCarga(`Generando preguntas (${li + 1}/${lotes.length})…`);
-        const pedir = Math.max(lote.length, Math.min(12, base + (li < extra ? 1 : 0)));
-        let nuevas: Pregunta[] = [];
-        for (let intento = 0; intento < 2 && nuevas.length === 0; intento++) {
-          const schema = buildEvalSchema(unidades.length, pedir);
-          const msgs = buildEvalMessages({ titulo, contexto, unidades, nPreguntas: pedir, soloUnidades: lote });
-          const raw = await chatJSON({
-            key: clave,
-            model: modelo,
-            messages: msgs,
-            schema,
-            structured: caps.structured,
-            json: caps.json,
-          });
-          nuevas = normalizarPreguntas(raw, unidades.length).filter((p) => lote.includes(p.unidad));
-        }
-        acumuladas = [...acumuladas, ...nuevas];
+      let q: Pregunta | null = null;
+      for (let intento = 0; intento < 2 && !q; intento++) {
+        const schema = buildEvalSchema(unidades.length, 1);
+        const msgs = buildEvalMessages({ titulo, contexto, unidades, nPreguntas: 1, soloUnidades: [unidad] });
+        const raw = await chatJSON({
+          key: clave,
+          model: modelo,
+          messages: msgs,
+          schema,
+          structured: caps.structured,
+          json: caps.json,
+        });
+        const arr = normalizarPreguntas(raw, unidades.length);
+        q = arr.find((x) => x.unidad === unidad) || arr[0] || null;
       }
-
-      // Reintento final para unidades que hayan quedado sin pregunta.
-      const faltan = preguntasParaFaltantes(unidadesCubiertas(acumuladas), unidades.length);
-      if (faltan.length) {
-        try {
-          setEstadoCarga('Completando puntos faltantes…');
-          const schema = buildEvalSchema(unidades.length, faltan.length);
-          const msgs = buildEvalMessages({ titulo, contexto, unidades, nPreguntas: faltan.length, soloUnidades: faltan });
-          const raw = await chatJSON({
-            key: clave,
-            model: modelo,
-            messages: msgs,
-            schema,
-            structured: caps.structured,
-            json: caps.json,
-          });
-          acumuladas = [...acumuladas, ...normalizarPreguntas(raw, unidades.length).filter((p) => faltan.includes(p.unidad))];
-        } catch {
-          /* seguimos con lo que haya */
-        }
-      }
-
-      if (acumuladas.length === 0) {
-        throw new Error('El modelo no devolvió preguntas válidas. Revisa el crédito/modelo e intenta de nuevo.');
-      }
-      setPreguntas(acumuladas);
-      setRespuestas(acumuladas.map(() => null));
-      setPreguntaActual(0);
-      setElegida(null);
-      setFase('evaluar');
-      persistir(mensajes, cobertura, 'evaluar');
+      if (!q) throw new Error('No se pudo generar la pregunta. Intenta de nuevo.');
+      setPreguntaData(q);
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setCargando(false);
-      setEstadoCarga('');
+      setGenerandoPregunta(false);
     }
   }
 
   function responder(opcion: number): void {
     if (elegida != null) return;
     setElegida(opcion);
-    const next = [...respuestas];
-    next[preguntaActual] = opcion;
-    setRespuestas(next);
   }
 
   function siguientePregunta(): void {
-    if (preguntaActual + 1 < preguntas.length) {
-      setPreguntaActual(preguntaActual + 1);
-      setElegida(null);
+    if (!preguntaData || elegida == null) return;
+    const nuevoHist = [...historial, { pregunta: preguntaData, respuesta: elegida }];
+    setHistorial(nuevoHist);
+    if (indice + 1 < plan.length) {
+      setIndice(indice + 1);
+      void generarPregunta(plan[indice + 1]);
     } else {
-      finalizar();
+      finalizar(nuevoHist);
     }
   }
 
-  function finalizar(): void {
-    const res = calificar(preguntas, respuestas);
+  function finalizar(hist: { pregunta: Pregunta; respuesta: number }[]): void {
+    const res = calificar(hist.map((h) => h.pregunta), hist.map((h) => h.respuesta));
     setResultado(res);
     setFase('resultado');
 
@@ -314,7 +281,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
       ideas_clave: [],
       conceptos: [],
       dudas: [],
-      texto_crudo: JSON.stringify({ origen: 'ia', preguntas, respuestas }),
+      texto_crudo: JSON.stringify({ origen: 'ia', historial: hist }),
       estado_parseo: 'ok',
     });
 
@@ -334,17 +301,18 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     setCobertura([]);
     setFase(esEnsayo ? 'evaluar' : 'ensenar');
     setPaso(0);
-    setPreguntas([]);
-    setRespuestas([]);
+    setPlan([]);
+    setIndice(0);
+    setPreguntaData(null);
+    setHistorial([]);
+    setElegida(null);
     setResultado(null);
     setError('');
   }
 
   const titulo = esEnsayo ? `Ensayo con IA · ${asignatura?.nombre ?? ''}` : `Sesión IA · ${modulo?.titulo ?? ''}`;
   const unidadActual = esEnsayo ? null : indicadores[paso];
-  const pregunta = preguntas[preguntaActual];
   const porcentaje = resultado ? Math.round(resultado.pct * 100) : 0;
-  // Si quedó guardada una fase "resultado" sin resultado en memoria, mostramos la evaluación.
   const faseEfectiva: Fase = fase === 'resultado' && !resultado ? (esEnsayo ? 'evaluar' : 'ensenar') : fase;
 
   return (
@@ -366,7 +334,8 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
 
       {!modoIA ? (
         <div className="banner banner-info">
-          Activa el **modo IA** en Ajustes para usar esta pantalla. Mientras tanto, puedes seguir con el modo manual (copiar/pegar).
+          Activa el <strong>modo IA</strong> en Ajustes para usar esta pantalla. Mientras tanto, puedes seguir con el modo
+          manual (copiar/pegar).
           <div style={{ marginTop: 10 }}>
             <button className="btn btn-primario" onClick={() => go({ name: 'ajustes' })}>
               Ir a Ajustes
@@ -420,8 +389,8 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                 <button className="btn btn-secundario" disabled={streaming} onClick={() => setPaso(Math.min(paso + 1, indicadores.length - 1))}>
                   Siguiente punto →
                 </button>
-                <button className="btn btn-exito" disabled={streaming || cobertura.length === 0} onClick={generarEvaluacion}>
-                  Generar evaluación
+                <button className="btn btn-exito" disabled={streaming || cobertura.length === 0} onClick={iniciarEvaluacion}>
+                  Evaluarme
                 </button>
               </div>
             </section>
@@ -470,32 +439,37 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
 
           {faseEfectiva === 'evaluar' ? (
             <section className="tarjeta">
-              {preguntas.length === 0 ? (
+              {plan.length === 0 ? (
                 <>
                   <h2 className="seccion-titulo">{esEnsayo ? 'Ensayo general' : 'Evaluación'}</h2>
                   <p className="fila-sub">
                     {esEnsayo
-                      ? '25 preguntas mezclando todas las OA de la asignatura.'
-                      : `Preguntas que cubren los ${unidades.length} puntos del módulo.`}
+                      ? '25 preguntas, una por vez, mezclando todas las OA de la asignatura.'
+                      : `Preguntas que cubren los ${unidades.length} puntos del módulo, una por vez.`}
                   </p>
-                  <button className="btn btn-primario btn-ancho" disabled={cargando} onClick={generarEvaluacion}>
-                    {cargando ? estadoCarga || 'Generando preguntas…' : esEnsayo ? 'Generar ensayo con IA' : 'Generar evaluación con IA'}
+                  <button className="btn btn-primario btn-ancho" onClick={iniciarEvaluacion}>
+                    {esEnsayo ? 'Empezar ensayo con IA' : 'Empezar evaluación con IA'}
                   </button>
                 </>
-              ) : (
+              ) : generandoPregunta ? (
+                <p className="fila-sub">
+                  Generando pregunta {indice + 1} de {plan.length}…
+                </p>
+              ) : preguntaData ? (
                 <>
                   <div className="ia-eval-cab">
                     <span className="fila-sub">
-                      Pregunta {preguntaActual + 1} de {preguntas.length}
+                      Pregunta {indice + 1} de {plan.length}
                     </span>
-                    <Chip tono="suave">unidad {pregunta?.unidad}</Chip>
+                    <Chip tono="suave">{(unidades[preguntaData.unidad - 1]?.etiqueta ?? '').slice(0, 46)}</Chip>
                   </div>
-                  <p className="ia-pregunta">{pregunta?.pregunta}</p>
+                  <ProgressBar pct={(indice / Math.max(1, plan.length)) * 100} alto={6} />
+                  <p className="ia-pregunta">{preguntaData.pregunta}</p>
                   <div className="ia-opciones">
-                    {pregunta?.alternativas.map((alt, i) => {
+                    {preguntaData.alternativas.map((alt, i) => {
                       let clase = 'ia-opcion';
                       if (elegida != null) {
-                        if (i === pregunta.correcta) clase += ' correcta';
+                        if (i === preguntaData.correcta) clase += ' correcta';
                         else if (i === elegida) clase += ' incorrecta';
                       }
                       return (
@@ -507,15 +481,22 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                   </div>
                   {elegida != null ? (
                     <>
-                      <div className={elegida === pregunta.correcta ? 'msg-ok' : 'msg-error'}>
-                        {elegida === pregunta.correcta ? '✓ Correcto' : `✗ Correcto: ${String.fromCharCode(65 + pregunta.correcta)}`}
-                        {pregunta.explicacion ? ` — ${pregunta.explicacion}` : ''}
+                      <div className={elegida === preguntaData.correcta ? 'msg-ok' : 'msg-error'}>
+                        {elegida === preguntaData.correcta ? '✓ Correcto' : `✗ Correcto: ${String.fromCharCode(65 + preguntaData.correcta)}`}
+                        {preguntaData.explicacion ? ` — ${preguntaData.explicacion}` : ''}
                       </div>
                       <button className="btn btn-primario btn-ancho" onClick={siguientePregunta}>
-                        {preguntaActual + 1 < preguntas.length ? 'Siguiente pregunta →' : 'Ver resultado'}
+                        {indice + 1 < plan.length ? 'Siguiente pregunta →' : 'Ver resultado'}
                       </button>
                     </>
                   ) : null}
+                </>
+              ) : (
+                <>
+                  <p className="fila-sub">No se pudo generar la pregunta.</p>
+                  <button className="btn btn-secundario" onClick={() => void generarPregunta(plan[Math.min(indice, plan.length - 1)])}>
+                    Reintentar
+                  </button>
                 </>
               )}
             </section>
