@@ -52,7 +52,9 @@ export function buildTeachMessages(
       '  <figure><img src="https://upload.wikimedia.org/…" alt="descripción"><figcaption>…</figcaption></figure>',
       '  Usa SOLO URLs https directas de imágenes de Wikimedia Commons o NASA. Si no estás seguro, NO pongas imagen.',
       '- Al final incluye <h3>🔎 Fuentes</h3> con 1 a 3 enlaces https confiables.',
-      '- No uses <script>, <style>, ni atributos style/onclick.',
+      '- No uses <script>, <style>, ni atributos style/onclick/width/height: el diseño ya es responsivo.',
+      '- Las tablas deben tener como máximo 3 columnas y textos cortos (se adaptan al ancho de la pantalla).',
+      '- Escribe párrafos de 2 a 3 líneas; evita bloques de texto largos.',
       '- Sé breve: 3 a 6 bloques.',
     ].join('\n'),
   };

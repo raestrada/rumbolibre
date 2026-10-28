@@ -37,9 +37,10 @@ export function sanitizarHTML(html: string): string {
           }
         } else if (name === 'src') {
           if (!/^https:\/\//i.test(attr.value)) el.removeAttribute('src');
-        } else if (['alt', 'title', 'colspan', 'rowspan', 'width', 'height'].includes(name)) {
+        } else if (['alt', 'title', 'colspan', 'rowspan'].includes(name)) {
           // permitidos
         } else {
+          // width/height/style: fuera, el CSS ya hace el contenido responsivo
           el.removeAttribute(attr.name);
         }
       });
@@ -59,5 +60,18 @@ export function arreglarImagenes(root: HTMLElement | null): void {
     img.onerror = () => {
       img.style.display = 'none';
     };
+  });
+}
+
+// Ajusta el HTML del LLM para que sea responsivo: imágenes y tablas anchas.
+export function prepararHTML(root: HTMLElement | null): void {
+  if (!root) return;
+  arreglarImagenes(root);
+  root.querySelectorAll('table').forEach((tabla) => {
+    if (tabla.parentElement?.classList.contains('rl-tabla')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'rl-tabla';
+    tabla.replaceWith(wrap);
+    wrap.appendChild(tabla);
   });
 }

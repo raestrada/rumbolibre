@@ -27,7 +27,7 @@ import {
   type ResultadoEval,
   type Unidad,
 } from '../lib/cobertura';
-import { arreglarImagenes, sanitizarHTML } from '../lib/sanitize';
+import { prepararHTML, sanitizarHTML } from '../lib/sanitize';
 import { Chip, ProgressBar } from '../components/ui';
 
 type Fase = 'ensenar' | 'evaluar' | 'resultado';
@@ -36,7 +36,7 @@ function HtmlIA({ html }: { html: string }): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const safe = useMemo(() => sanitizarHTML(html), [html]);
   useEffect(() => {
-    arreglarImagenes(ref.current);
+    prepararHTML(ref.current);
   }, [safe]);
   return <div ref={ref} className="contenido-ia" dangerouslySetInnerHTML={{ __html: safe }} />;
 }
@@ -302,7 +302,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     setStreamTexto('');
     try {
       const msgs: MensajeIA[] = [
-        { role: 'system', content: 'Eres una profesora chilena de 1° medio. Responde claro, breve y en HTML didáctico (h3, p, ul, strong, em, div class="rl-callout"/"rl-note", blockquote class="rl-quote", span class="rl-concept", figure/img de Wikimedia/NASA). Usa emojis. Sin markdown, sin scripts.' },
+        { role: 'system', content: 'Eres una profesora chilena de 1° medio. Responde claro, breve y en HTML didáctico (h3, p, ul, strong, em, div class="rl-callout"/"rl-note", blockquote class="rl-quote", span class="rl-concept", figure/img de Wikimedia/NASA). Usa emojis. Párrafos cortos, tablas de máximo 3 columnas, sin atributos style/width/height (el diseño es responsivo), sin markdown ni scripts.' },
         ...hist,
         { role: 'user', content: texto },
       ];

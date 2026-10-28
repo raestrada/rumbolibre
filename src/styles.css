@@ -2081,8 +2081,9 @@ button.fila:hover,
 
 .ia-msg {
   border-radius: 12px;
-  padding: 10px 12px;
-  max-width: 92%;
+  padding: 10px 14px;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .ia-user {
@@ -2090,10 +2091,13 @@ button.fila:hover,
   background: var(--violeta-suave);
   color: var(--texto);
   white-space: pre-wrap;
+  max-width: 80%;
 }
 
 .ia-bot {
-  align-self: flex-start;
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
   background: #fbfaff;
   border: 1px solid var(--borde);
 }
@@ -2108,35 +2112,64 @@ button.fila:hover,
 }
 
 .contenido-ia {
-  font-size: 0.95rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  font-size: clamp(0.92rem, 1.6vw, 0.98rem);
   line-height: 1.6;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-.contenido-ia h2,
+.contenido-ia > *:first-child {
+  margin-top: 0;
+}
+
+.contenido-ia > *:last-child {
+  margin-bottom: 0;
+}
+
+.contenido-ia h2 {
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  line-height: 1.3;
+  margin: 18px 0 8px;
+}
+
 .contenido-ia h3 {
-  font-size: 1rem;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  line-height: 1.35;
+  margin: 16px 0 7px;
+}
+
+.contenido-ia h4 {
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
   margin: 12px 0 6px;
 }
 
 .contenido-ia p {
   margin: 0 0 10px;
+  max-width: 88ch;
 }
 
 .contenido-ia ul,
 .contenido-ia ol {
   margin: 0 0 10px;
-  padding-left: 20px;
+  padding-left: 22px;
+  max-width: 92ch;
 }
 
 .contenido-ia li {
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .contenido-ia img {
   max-width: 100%;
+  max-height: 440px;
+  width: auto;
   height: auto;
+  object-fit: contain;
   border-radius: 10px;
-  margin: 8px 0;
+  margin: 8px auto;
   display: block;
 }
 
@@ -2152,21 +2185,30 @@ button.fila:hover,
   border: 1px solid var(--borde);
   padding: 6px 8px;
   text-align: left;
+  vertical-align: top;
+}
+
+.rl-tabla {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 10px 0;
+}
+
+.rl-tabla table {
+  min-width: 460px;
+  margin: 0;
 }
 
 .contenido-ia figure {
-  margin: 10px 0;
+  margin: 12px 0;
+  max-width: 100%;
 }
 
 .contenido-ia figcaption {
   font-size: 0.78rem;
   color: var(--texto-suave);
-}
-
-.contenido-ia .rl-callout {
-  background: var(--violeta-suave);
-  padding: 10px 12px;
-  border-radius: 10px;
 }
 
 .contenido-ia .rl-concept {
@@ -2183,9 +2225,10 @@ button.fila:hover,
 
 .ia-pregunta {
   font-weight: 700;
-  font-size: 1.02rem;
-  margin: 4px 0 12px;
+  font-size: clamp(1.02rem, 2.2vw, 1.22rem);
+  margin: 4px 0 14px;
   line-height: 1.45;
+  max-width: 70ch;
 }
 
 .ia-opciones {
@@ -2193,6 +2236,14 @@ button.fila:hover,
   flex-direction: column;
   gap: 8px;
   margin: 10px 0;
+}
+
+@media (min-width: 900px) {
+  .ia-opciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
 }
 
 .ia-opcion {
@@ -2203,7 +2254,8 @@ button.fila:hover,
   border: 1px solid var(--borde);
   border-radius: 12px;
   padding: 11px 13px;
-  font-size: 0.92rem;
+  font-size: clamp(0.9rem, 1.5vw, 0.98rem);
+  line-height: 1.45;
   cursor: pointer;
   color: var(--texto);
 }
@@ -2251,6 +2303,65 @@ button.fila:hover,
 
 .ia-resultado-lista li.mal {
   background: #fff7ed;
+}
+
+@media (min-width: 900px) {
+  .ia-resultado-lista {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* — Responsive del contenido generado por la IA — */
+@media (max-width: 620px) {
+  .ia-msg {
+    padding: 9px 11px;
+    border-radius: 10px;
+  }
+
+  .ia-user {
+    max-width: 92%;
+  }
+
+  .contenido-ia {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .contenido-ia h2 {
+    margin: 14px 0 6px;
+  }
+
+  .contenido-ia h3 {
+    margin: 12px 0 5px;
+  }
+
+  .contenido-ia ul,
+  .contenido-ia ol {
+    padding-left: 18px;
+  }
+
+  .contenido-ia img {
+    max-height: 300px;
+    border-radius: 8px;
+  }
+
+  .rl-tabla table {
+    min-width: 320px;
+    font-size: 0.82rem;
+  }
+
+  .ia-input {
+    flex-wrap: wrap;
+  }
+
+  .ia-input input {
+    flex: 1 1 100%;
+  }
+
+  .ia-input .btn {
+    width: 100%;
+  }
 }
 
 .ia-footer {
@@ -2440,6 +2551,7 @@ button.fila:hover,
 
 .contenido-ia a {
   color: var(--violeta);
+  overflow-wrap: anywhere;
 }
 
 .contenido-ia code {
@@ -2447,11 +2559,7 @@ button.fila:hover,
   padding: 1px 5px;
   border-radius: 5px;
   font-size: 0.88em;
-}
-
-.contenido-ia h4 {
-  font-size: 0.95rem;
-  margin: 12px 0 6px;
+  overflow-wrap: anywhere;
 }
 
 /* — Sesión de IA por puntos — */
