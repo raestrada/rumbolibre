@@ -48,13 +48,14 @@ export async function persistNow(): Promise<void> {
 }
 
 function syncSeed(): void {
-  // Re-sincroniza el contenido (módulos, actividades, lecturas) si cambió la versión de semilla,
-  // sin tocar el progreso ni los registros del usuario.
   migrateSchema();
   const actual = Number(
     dbGet('SELECT valor FROM config WHERE clave = ?', ['seed_version'])?.valor ?? 0,
   );
-  if (actual < SEED_VERSION && db) {
+  // Auto-reparación: si hay libros sin calificación, re-sembrar el contenido.
+  const faltanRatings =
+    Number(dbGet('SELECT COUNT(*) AS n FROM lecturas WHERE rating IS NULL')?.n ?? 0) > 0;
+  if ((actual < SEED_VERSION || faltanRatings) && db) {
     seedContenido(db);
     dbRun(
       'INSERT INTO config (clave, valor) VALUES (?, ?) ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor',

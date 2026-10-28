@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { getLecturas, getProgresoLectura, setProgresoLectura } from '../db/queries';
-import { Chip, EmptyState } from '../components/ui';
+import { getLecturas, getProgresoLectura, setProgresoLectura, type LecturaRow } from '../db/queries';
+import { descripcionDe } from '../data/descripciones';
+import { Chip, EmptyState, Modal } from '../components/ui';
 
 const ESTADOS: Record<string, { label: string; icono: string }> = {
   sin_leer: { label: 'Por leer', icono: '📕' },
@@ -45,6 +46,7 @@ export default function Biblioteca(): JSX.Element {
   const [genero, setGenero] = useState('Todas');
   const [soloPorLeer, setSoloPorLeer] = useState(false);
   const [orden, setOrden] = useState<'rating' | 'titulo'>('rating');
+  const [sel, setSel] = useState<LecturaRow | null>(null);
 
   const lecturas = getLecturas();
   const progreso = getProgresoLectura();
@@ -76,6 +78,8 @@ export default function Biblioteca(): JSX.Element {
     const idx = ordenEstados.indexOf(actual);
     setProgresoLectura(id, ordenEstados[(idx + 1) % ordenEstados.length]);
   }
+
+  const estadoSel = sel ? progreso[sel.id] || 'sin_leer' : 'sin_leer';
 
   return (
     <div className="pantalla">
@@ -119,45 +123,28 @@ export default function Biblioteca(): JSX.Element {
           {filtradas.map((l) => {
             const estado = progreso[l.id] || 'sin_leer';
             return (
-              <details key={l.id} className="libro-fila">
-                <summary>
+              <div key={l.id} className="libro-fila">
+                <button className="libro-abrir" onClick={() => setSel(l)}>
                   <Portada id={l.id} titulo={l.titulo} size="mini" />
                   <span className="libro-rating" style={{ color: ratingColor(l.rating) }}>
                     {l.rating != null ? `★ ${l.rating.toFixed(1)}` : '–'}
                   </span>
-                  <div className="libro-info">
-                    <div className="libro-titulo">{l.titulo}</div>
-                    <div className="libro-meta">
+                  <span className="libro-info">
+                    <span className="libro-titulo">{l.titulo}</span>
+                    <span className="libro-meta">
                       {l.autor} · {l.genero}
-                    </div>
-                  </div>
+                    </span>
+                  </span>
                   <span className="libro-edad">+{l.edad_minima}</span>
-                  <button
-                    className={`libro-estado estado-${estado}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      avanzar(l.id);
-                    }}
-                    title="Cambiar estado de lectura"
-                  >
-                    {ESTADOS[estado].icono} <span>{ESTADOS[estado].label}</span>
-                  </button>
-                </summary>
-                <div className="libro-detalle">
-                  <Portada id={l.id} titulo={l.titulo} size="grande" />
-                  <div className="libro-detalle-texto">
-                    <div className="libro-area">🧠 {l.area}</div>
-                    <p>{l.por_que}</p>
-                    <div className="libro-temas">
-                      {l.temas.map((t, i) => (
-                        <Chip key={i} tono="suave">
-                          {t}
-                        </Chip>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </details>
+                </button>
+                <button
+                  className={`libro-estado estado-${estado}`}
+                  onClick={() => avanzar(l.id)}
+                  title="Cambiar estado de lectura"
+                >
+                  {ESTADOS[estado].icono} <span>{ESTADOS[estado].label}</span>
+                </button>
+              </div>
             );
           })}
         </div>
@@ -166,6 +153,47 @@ export default function Biblioteca(): JSX.Element {
       <p className="cabecera-sub" style={{ marginTop: 14 }}>
         Las calificaciones (★) son promedios aproximados de Goodreads y pueden variar con el tiempo.
       </p>
+
+      <Modal abierto={sel != null} titulo={sel?.titulo ?? ''} onCerrar={() => setSel(null)} ancho={660}>
+        {sel ? (
+          <div className="libro-modal">
+            <div className="libro-modal-cab">
+              <Portada id={sel.id} titulo={sel.titulo} size="grande" />
+              <div className="libro-modal-info">
+                <div className="libro-modal-autor">{sel.autor}</div>
+                <div className="libro-modal-meta">
+                  <Chip>{sel.genero}</Chip>
+                  <span className="libro-rating" style={{ color: ratingColor(sel.rating) }}>
+                    ★ {sel.rating != null ? sel.rating.toFixed(1) : '–'}
+                  </span>
+                  <span>+{sel.edad_minima} años</span>
+                </div>
+                <button className={`libro-estado estado-${estadoSel}`} onClick={() => avanzar(sel.id)}>
+                  {ESTADOS[estadoSel].icono} {ESTADOS[estadoSel].label}
+                </button>
+              </div>
+            </div>
+
+            <div className="libro-modal-seccion">
+              <h4>De qué trata</h4>
+              <p>{descripcionDe(sel.id)}</p>
+            </div>
+
+            <div className="libro-modal-seccion">
+              <h4>Por qué leerlo (educativo)</h4>
+              <p>{sel.por_que}</p>
+            </div>
+
+            <div className="libro-temas">
+              {sel.temas.map((t, i) => (
+                <Chip key={i} tono="suave">
+                  {t}
+                </Chip>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 }

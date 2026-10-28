@@ -1809,11 +1809,27 @@ button.fila:hover,
 }
 
 .libro-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: var(--tarjeta);
   border: 1px solid var(--borde);
   border-radius: 12px;
   box-shadow: var(--sombra);
   padding: 0 14px;
+}
+
+.libro-abrir {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
 
 .libro-fila > summary {
@@ -1841,12 +1857,14 @@ button.fila:hover,
 }
 
 .libro-titulo {
+  display: block;
   font-weight: 650;
   font-size: 0.94rem;
   line-height: 1.25;
 }
 
 .libro-meta {
+  display: block;
   color: var(--texto-suave);
   font-size: 0.78rem;
 }
@@ -1931,4 +1949,59 @@ button.fila:hover,
   font-size: 0.82rem;
   color: var(--texto-suave);
   margin-bottom: 6px;
+}
+
+/* Popup de libro */
+.libro-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.libro-modal-cab {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.libro-modal-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.libro-modal-autor {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.libro-modal-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.libro-modal-meta .libro-rating {
+  min-width: auto;
+  font-size: 1rem;
+}
+
+.libro-modal-seccion h4 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--texto-suave);
+  margin: 0 0 6px;
+}
+
+.libro-modal-seccion p {
+  margin: 0;
+  line-height: 1.55;
+  font-size: 0.92rem;
 }
