@@ -2594,7 +2594,7 @@ button.fila:hover,
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 18px;
+  padding: 20px 28px;
 }
 
 .ia-fullscreen-cab {
@@ -2603,7 +2603,7 @@ button.fila:hover,
   align-items: flex-start;
   gap: 12px;
   width: 100%;
-  max-width: 860px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
@@ -2655,13 +2655,32 @@ button.fila:hover,
   gap: 10px;
   padding: 4px 2px;
   width: 100%;
-  max-width: 860px;
+  max-width: 1280px;
   margin: 0 auto;
+}
+
+.ia-fullscreen .ia-msg {
+  max-width: 1080px;
+}
+
+.ia-fullscreen .ia-user {
+  align-self: flex-end;
+  max-width: 70%;
 }
 
 .ia-fullscreen .ia-input,
 .ia-fullscreen .paso-acciones {
   width: 100%;
-  max-width: 860px;
+  max-width: 1280px;
   margin: 0 auto;
+}
+
+.ia-fullscreen .ia-input input {
+  flex: 1;
+}
+
+@media (max-width: 620px) {
+  .ia-fullscreen {
+    padding: 14px;
+  }
 }
