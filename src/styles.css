@@ -2560,3 +2560,86 @@ button.fila:hover,
     max-height: 180px;
   }
 }
+
+/* — Ancho amplio y pantalla completa del chat — */
+.pantalla-ancha {
+  max-width: 1200px;
+}
+
+.sesion-panel-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icono {
+  border: none;
+  background: var(--violeta-suave);
+  color: var(--violeta);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ia-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: var(--fondo);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+}
+
+.ia-fullscreen-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.ia-fullscreen-cab strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.05rem;
+}
+
+.ia-fullscreen-cerrar {
+  border: none;
+  background: var(--violeta-suave);
+  color: var(--violeta);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ia-fullscreen-chat {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 2px;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.ia-fullscreen .ia-input,
+.ia-fullscreen .paso-acciones {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}

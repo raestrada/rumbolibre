@@ -93,7 +93,7 @@ export default function Ruta(): JSX.Element {
   const pctAprobados = items.length ? (aprobados / items.length) * 100 : 0;
 
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>Mi ruta 🗺️</h1>
         <p className="cabecera-sub">

@@ -59,7 +59,7 @@ export default function Repaso(): JSX.Element {
   const totalReprobados = secciones.reduce((s, x) => s + x.reprobados.length, 0);
 
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>Repasar 🔁</h1>
         <p className="cabecera-sub">

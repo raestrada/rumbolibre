@@ -74,7 +74,7 @@ export default function Dashboard(): JSX.Element {
   const diasExamen = diasHasta(config.fecha_examen);
 
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>
           {saludo}, {nombre}! 👋

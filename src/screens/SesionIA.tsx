@@ -41,6 +41,101 @@ function HtmlIA({ html }: { html: string }): JSX.Element {
   return <div ref={ref} className="contenido-ia" dangerouslySetInnerHTML={{ __html: safe }} />;
 }
 
+function ChatPunto({
+  mensajes,
+  streaming,
+  streamTexto,
+  preguntaLibre,
+  setPreguntaLibre,
+  onPreguntar,
+  onExplicar,
+  onSiguiente,
+  puedeSiguiente,
+  fullscreen,
+  onCerrar,
+  titulo,
+}: {
+  mensajes: MensajeIA[];
+  streaming: boolean;
+  streamTexto: string;
+  preguntaLibre: string;
+  setPreguntaLibre: (v: string) => void;
+  onPreguntar: () => void;
+  onExplicar: () => void;
+  onSiguiente: () => void;
+  puedeSiguiente: boolean;
+  fullscreen?: boolean;
+  onCerrar?: () => void;
+  titulo?: string;
+}): JSX.Element {
+  const contenido = (
+    <>
+      {fullscreen ? (
+        <div className="ia-fullscreen-cab">
+          <div>
+            <span className="fila-sub">Chat del punto</span>
+            <strong>{titulo}</strong>
+          </div>
+          <button className="ia-fullscreen-cerrar" onClick={onCerrar} aria-label="Cerrar pantalla completa">
+            ✕
+          </button>
+        </div>
+      ) : null}
+
+      <div className={fullscreen ? 'ia-fullscreen-chat' : 'sesion-chat'}>
+        {mensajes.length === 0 && !streaming ? (
+          <p className="fila-sub">Pulsa "Explicar este punto" para empezar. Cada punto tiene su propio chat.</p>
+        ) : null}
+        {mensajes.map((m, i) =>
+          m.role === 'user' ? (
+            <div key={i} className="ia-msg ia-user">
+              {m.content}
+            </div>
+          ) : (
+            <div key={i} className="ia-msg ia-bot">
+              <HtmlIA html={m.content} />
+            </div>
+          ),
+        )}
+        {streaming ? (
+          <div className="ia-msg ia-bot">
+            {streamTexto ? <HtmlIA html={streamTexto} /> : <span className="fila-sub">Escribiendo…</span>}
+          </div>
+        ) : null}
+      </div>
+
+      <div className="ia-input">
+        <input
+          value={preguntaLibre}
+          onChange={(e) => setPreguntaLibre(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onPreguntar();
+          }}
+          placeholder="Pregunta sobre este punto…"
+          disabled={streaming}
+        />
+        <button className="btn btn-secundario" disabled={streaming || !preguntaLibre.trim()} onClick={onPreguntar}>
+          Enviar
+        </button>
+      </div>
+
+      <div className="paso-acciones">
+        <button className="btn btn-primario" disabled={streaming} onClick={onExplicar}>
+          {mensajes.length ? 'Volver a explicar' : 'Explicar este punto'}
+        </button>
+        {puedeSiguiente ? (
+          <button className="btn btn-secundario" disabled={streaming} onClick={onSiguiente}>
+            Siguiente punto →
+          </button>
+        ) : null}
+      </div>
+    </>
+  );
+
+  if (fullscreen) return <div className="ia-fullscreen">{contenido}</div>;
+  return <>{contenido}</>;
+}
+
 export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: string }): JSX.Element {
   const { go } = useNav();
   const esEnsayo = tipo === 'ensayo';
@@ -62,6 +157,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const [cobertura, setCobertura] = useState<number[]>([]);
   const [fase, setFase] = useState<Fase>(esEnsayo ? 'evaluar' : 'ensenar');
   const [paso, setPaso] = useState(0);
+  const [pantallaCompleta, setPantallaCompleta] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [streamTexto, setStreamTexto] = useState('');
   const [preguntaLibre, setPreguntaLibre] = useState('');
@@ -332,7 +428,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const faseEfectiva: Fase = fase === 'resultado' && !resultado ? (esEnsayo ? 'evaluar' : 'ensenar') : fase;
 
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <button className="btn-volver" onClick={() => go(esEnsayo ? { name: 'ensayo', asignaturaId: id } : { name: 'modulo', moduloId: id })}>
         ← Volver
       </button>
@@ -358,7 +454,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         <>
           {error ? <div className="msg-error">{error}</div> : null}
 
-          {faseEfectiva === 'ensenar' && !esEnsayo ? (
+          {faseEfectiva === 'ensenar' && !esEnsayo && !pantallaCompleta ? (
             <>
               <div className="sesion-barra">
                 <div>
@@ -392,58 +488,45 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                     <span className="fila-sub">
                       Punto {paso + 1} de {indicadores.length}
                     </span>
-                    <span className={visto ? 'paso-estado ok' : 'paso-estado'}>{visto ? '✓ visto' : 'pendiente'}</span>
+                    <div className="sesion-panel-acciones">
+                      <span className={visto ? 'paso-estado ok' : 'paso-estado'}>{visto ? '✓ visto' : 'pendiente'}</span>
+                      <button className="btn-icono" title="Pantalla completa" onClick={() => setPantallaCompleta(true)}>
+                        ⛶
+                      </button>
+                    </div>
                   </div>
                   <p className="ia-punto">{indicadores[paso]}</p>
-
-                  <div className="sesion-chat">
-                    {chatActual.length === 0 && !streaming ? (
-                      <p className="fila-sub">Pulsa "Explicar este punto" para empezar. Cada punto tiene su propio chat.</p>
-                    ) : null}
-                    {chatActual.map((m, i) =>
-                      m.role === 'user' ? (
-                        <div key={i} className="ia-msg ia-user">
-                          {m.content}
-                        </div>
-                      ) : (
-                        <div key={i} className="ia-msg ia-bot">
-                          <HtmlIA html={m.content} />
-                        </div>
-                      ),
-                    )}
-                    {streaming ? (
-                      <div className="ia-msg ia-bot">
-                        {streamTexto ? <HtmlIA html={streamTexto} /> : <span className="fila-sub">Escribiendo…</span>}
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div className="ia-input">
-                    <input
-                      value={preguntaLibre}
-                      onChange={(e) => setPreguntaLibre(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') void preguntar();
-                      }}
-                      placeholder="Pregunta sobre este punto…"
-                      disabled={streaming}
-                    />
-                    <button className="btn btn-secundario" disabled={streaming || !preguntaLibre.trim()} onClick={preguntar}>
-                      Enviar
-                    </button>
-                  </div>
-
-                  <div className="paso-acciones">
-                    <button className="btn btn-primario" disabled={streaming} onClick={() => explicar(paso)}>
-                      {chatActual.length ? 'Volver a explicar' : 'Explicar este punto'}
-                    </button>
-                    <button className="btn btn-secundario" disabled={streaming || indicadores.length <= 1} onClick={marcarVistoYSeguir}>
-                      Siguiente punto →
-                    </button>
-                  </div>
+                  <ChatPunto
+                    mensajes={chatActual}
+                    streaming={streaming}
+                    streamTexto={streamTexto}
+                    preguntaLibre={preguntaLibre}
+                    setPreguntaLibre={setPreguntaLibre}
+                    onPreguntar={() => void preguntar()}
+                    onExplicar={() => void explicar(paso)}
+                    onSiguiente={marcarVistoYSeguir}
+                    puedeSiguiente={indicadores.length > 1}
+                  />
                 </section>
               </div>
             </>
+          ) : null}
+
+          {faseEfectiva === 'ensenar' && !esEnsayo && pantallaCompleta ? (
+            <ChatPunto
+              fullscreen
+              titulo={indicadores[paso]}
+              onCerrar={() => setPantallaCompleta(false)}
+              mensajes={chatActual}
+              streaming={streaming}
+              streamTexto={streamTexto}
+              preguntaLibre={preguntaLibre}
+              setPreguntaLibre={setPreguntaLibre}
+              onPreguntar={() => void preguntar()}
+              onExplicar={() => void explicar(paso)}
+              onSiguiente={marcarVistoYSeguir}
+              puedeSiguiente={indicadores.length > 1}
+            />
           ) : null}
 
           {faseEfectiva === 'evaluar' ? (
