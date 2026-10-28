@@ -58,7 +58,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
 
   const [clave, setClave] = useState<string | null>(null);
   const [caps, setCaps] = useState({ structured: false, json: false });
-  const [mensajes, setMensajes] = useState<MensajeIA[]>([]);
+  const [chats, setChats] = useState<Record<number, MensajeIA[]>>({});
   const [cobertura, setCobertura] = useState<number[]>([]);
   const [fase, setFase] = useState<Fase>(esEnsayo ? 'evaluar' : 'ensenar');
   const [paso, setPaso] = useState(0);
@@ -92,7 +92,9 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     const s = getSesionIA(key);
     if (!s) return;
     try {
-      setMensajes(JSON.parse(s.mensajes) as MensajeIA[]);
+      const raw = JSON.parse(s.mensajes) as unknown;
+      if (Array.isArray(raw)) setChats({ 0: raw as MensajeIA[] });
+      else if (raw && typeof raw === 'object') setChats(raw as Record<number, MensajeIA[]>);
       setCobertura(JSON.parse(s.cobertura) as number[]);
       setFase((s.fase as Fase) || (esEnsayo ? 'evaluar' : 'ensenar'));
     } catch {
@@ -100,18 +102,19 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     }
   }, [esEnsayo, id]);
 
-  function persistir(m: MensajeIA[], c: number[], f: Fase): void {
+  function persistir(c: Record<number, MensajeIA[]>, cob: number[], f: Fase): void {
     const key = esEnsayo ? `ensayo:${id}` : id;
-    saveSesionIA(key, m, c, f);
+    saveSesionIA(key, c, cob, f);
   }
 
-  async function explicar(indiceIndicador: number): Promise<void> {
+  async function explicar(indicePunto: number): Promise<void> {
     if (!clave || !modulo || !asignatura) return;
     setError('');
     setStreaming(true);
     setStreamTexto('');
     try {
-      const msgs = buildTeachMessages(asignatura.nombre, modulo, indicadores[indiceIndicador], mensajes);
+      const historialPunto = chats[indicePunto] || [];
+      const msgs = buildTeachMessages(asignatura.nombre, modulo, indicadores[indicePunto], historialPunto);
       let acc = '';
       const onDelta = (d: string): void => {
         acc += d;
@@ -131,15 +134,18 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         setStreamTexto('');
         texto = await chatStream({ key: clave, model: modelo, messages: msgs, onDelta });
       }
-      const nuevos: MensajeIA[] = [
-        ...mensajes,
-        { role: 'user', content: `Explícame: ${indicadores[indiceIndicador]}` },
-        { role: 'assistant', content: texto },
-      ];
-      const nuevaCob = cobertura.includes(indiceIndicador) ? cobertura : [...cobertura, indiceIndicador];
-      setMensajes(nuevos);
+      const nuevosChats = {
+        ...chats,
+        [indicePunto]: [
+          ...historialPunto,
+          { role: 'user' as const, content: `Explícame: ${indicadores[indicePunto]}` },
+          { role: 'assistant' as const, content: texto },
+        ],
+      };
+      const nuevaCob = cobertura.includes(indicePunto) ? cobertura : [...cobertura, indicePunto];
+      setChats(nuevosChats);
       setCobertura(nuevaCob);
-      persistir(nuevos, nuevaCob, fase);
+      persistir(nuevosChats, nuevaCob, fase);
       setStreamTexto('');
     } catch (e) {
       setError((e as Error).message);
@@ -151,6 +157,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   async function preguntar(): Promise<void> {
     if (!clave || !preguntaLibre.trim()) return;
     const texto = preguntaLibre.trim();
+    const hist = chats[paso] || [];
     setPreguntaLibre('');
     setError('');
     setStreaming(true);
@@ -158,7 +165,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     try {
       const msgs: MensajeIA[] = [
         { role: 'system', content: 'Eres una profesora chilena de 1° medio. Responde claro, breve y en HTML didáctico (h3, p, ul, strong, em, div class="rl-callout"/"rl-note", blockquote class="rl-quote", span class="rl-concept", figure/img de Wikimedia/NASA). Usa emojis. Sin markdown, sin scripts.' },
-        ...mensajes,
+        ...hist,
         { role: 'user', content: texto },
       ];
       let acc = '';
@@ -171,15 +178,25 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
           setStreamTexto(acc);
         },
       });
-      const nuevos: MensajeIA[] = [...mensajes, { role: 'user', content: texto }, { role: 'assistant', content: resp }];
-      setMensajes(nuevos);
-      persistir(nuevos, cobertura, fase);
+      const nuevosChats = {
+        ...chats,
+        [paso]: [...hist, { role: 'user' as const, content: texto }, { role: 'assistant' as const, content: resp }],
+      };
+      setChats(nuevosChats);
+      persistir(nuevosChats, cobertura, fase);
       setStreamTexto('');
     } catch (e) {
       setError((e as Error).message);
     } finally {
       setStreaming(false);
     }
+  }
+
+  function marcarVistoYSeguir(): void {
+    const nuevaCob = cobertura.includes(paso) ? cobertura : [...cobertura, paso];
+    setCobertura(nuevaCob);
+    persistir(chats, nuevaCob, fase);
+    setPaso(Math.min(paso + 1, Math.max(0, indicadores.length - 1)));
   }
 
   function iniciarEvaluacion(): void {
@@ -195,7 +212,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     setPreguntaData(null);
     setElegida(null);
     setFase('evaluar');
-    persistir(mensajes, cobertura, 'evaluar');
+    persistir(chats, cobertura, 'evaluar');
     void generarPregunta(p[0]);
   }
 
@@ -289,13 +306,13 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         setProgreso(actividadId(modulo.id, 'estudiar'), modulo.id, 'estudiar', 'completada');
       }
     }
-    persistir(mensajes, cobertura, 'resultado');
+    persistir(chats, cobertura, 'resultado');
   }
 
   function reiniciar(): void {
     const key = esEnsayo ? `ensayo:${id}` : id;
     resetSesionIA(key);
-    setMensajes([]);
+    setChats({});
     setCobertura([]);
     setFase(esEnsayo ? 'evaluar' : 'ensenar');
     setPaso(0);
@@ -309,7 +326,8 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   }
 
   const titulo = esEnsayo ? `Ensayo con IA · ${asignatura?.nombre ?? ''}` : `Sesión IA · ${modulo?.titulo ?? ''}`;
-  const unidadActual = esEnsayo ? null : indicadores[paso];
+  const chatActual = chats[paso] || [];
+  const visto = cobertura.includes(paso);
   const porcentaje = resultado ? Math.round(resultado.pct * 100) : 0;
   const faseEfectiva: Fase = fase === 'resultado' && !resultado ? (esEnsayo ? 'evaluar' : 'ensenar') : fase;
 
@@ -325,9 +343,6 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
           <Chip tono="suave">{modelo}</Chip>
         </div>
         <h1>{titulo}</h1>
-        <p className="cabecera-sub">
-          Tu agente trabaja desde este navegador. La app controla el contexto y la cobertura para que no se pierda nada.
-        </p>
       </header>
 
       {!clave ? (
@@ -343,86 +358,92 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         <>
           {error ? <div className="msg-error">{error}</div> : null}
 
-          {!esEnsayo ? (
-            <section className="tarjeta">
-              <div className="ia-cobertura">
-                <div className="ia-cobertura-cab">
-                  <strong>Cobertura de puntos</strong>
-                  <span className="fila-sub">
-                    {cobertura.length}/{indicadores.length} vistos
-                  </span>
-                </div>
-                <ul className="ia-checklist">
-                  {indicadores.map((ind, i) => (
-                    <li key={i} className={cobertura.includes(i) ? 'visto' : i === paso ? 'actual' : ''}>
-                      <span className="ia-check">{cobertura.includes(i) ? '✓' : i === paso ? '▸' : '○'}</span>
-                      <button className="ia-check-texto" onClick={() => setPaso(i)}>
-                        {ind}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-          ) : null}
-
           {faseEfectiva === 'ensenar' && !esEnsayo ? (
-            <section className="tarjeta">
-              <h2 className="seccion-titulo">Punto actual</h2>
-              <p className="ia-punto">{unidadActual}</p>
-              <div className="paso-acciones">
-                <button className="btn btn-primario" disabled={streaming} onClick={() => explicar(paso)}>
-                  {streaming ? 'Explicando…' : 'Explicar este punto'}
-                </button>
-                <button className="btn btn-secundario" disabled={streaming} onClick={() => setPaso(Math.min(paso + 1, indicadores.length - 1))}>
-                  Siguiente punto →
-                </button>
+            <>
+              <div className="sesion-barra">
+                <div>
+                  <strong>
+                    {cobertura.length}/{indicadores.length} puntos
+                  </strong>
+                  <ProgressBar pct={indicadores.length ? (cobertura.length / indicadores.length) * 100 : 0} alto={6} />
+                </div>
                 <button className="btn btn-exito" disabled={streaming || cobertura.length === 0} onClick={iniciarEvaluacion}>
                   Evaluarme
                 </button>
               </div>
-            </section>
-          ) : null}
 
-          {faseEfectiva === 'ensenar' && !esEnsayo ? (
-            <section className="tarjeta">
-              <h2 className="seccion-titulo">Conversación</h2>
-              <div className="ia-chat">
-                {mensajes.length === 0 && !streaming ? (
-                  <p className="fila-sub">Pulsa "Explicar este punto" para empezar. También puedes escribir una pregunta abajo.</p>
-                ) : null}
-                {mensajes.map((m, i) =>
-                  m.role === 'user' ? (
-                    <div key={i} className="ia-msg ia-user">
-                      {m.content}
-                    </div>
-                  ) : (
-                    <div key={i} className="ia-msg ia-bot">
-                      <HtmlIA html={m.content} />
-                    </div>
-                  ),
-                )}
-                {streaming ? (
-                  <div className="ia-msg ia-bot">
-                    {streamTexto ? <HtmlIA html={streamTexto} /> : <span className="fila-sub">Escribiendo…</span>}
+              <div className="sesion-layout">
+                <aside className="sesion-puntos tarjeta">
+                  <div className="sesion-puntos-cab">Puntos del módulo</div>
+                  {indicadores.map((ind, i) => (
+                    <button
+                      key={i}
+                      className={`sesion-punto ${i === paso ? 'actual' : ''} ${cobertura.includes(i) ? 'visto' : ''}`}
+                      onClick={() => setPaso(i)}
+                    >
+                      <span className="sesion-dot">{cobertura.includes(i) ? '✓' : i === paso ? '▸' : '○'}</span>
+                      <span>{ind}</span>
+                    </button>
+                  ))}
+                </aside>
+
+                <section className="sesion-panel tarjeta">
+                  <div className="ia-eval-cab">
+                    <span className="fila-sub">
+                      Punto {paso + 1} de {indicadores.length}
+                    </span>
+                    <span className={visto ? 'paso-estado ok' : 'paso-estado'}>{visto ? '✓ visto' : 'pendiente'}</span>
                   </div>
-                ) : null}
+                  <p className="ia-punto">{indicadores[paso]}</p>
+
+                  <div className="sesion-chat">
+                    {chatActual.length === 0 && !streaming ? (
+                      <p className="fila-sub">Pulsa "Explicar este punto" para empezar. Cada punto tiene su propio chat.</p>
+                    ) : null}
+                    {chatActual.map((m, i) =>
+                      m.role === 'user' ? (
+                        <div key={i} className="ia-msg ia-user">
+                          {m.content}
+                        </div>
+                      ) : (
+                        <div key={i} className="ia-msg ia-bot">
+                          <HtmlIA html={m.content} />
+                        </div>
+                      ),
+                    )}
+                    {streaming ? (
+                      <div className="ia-msg ia-bot">
+                        {streamTexto ? <HtmlIA html={streamTexto} /> : <span className="fila-sub">Escribiendo…</span>}
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="ia-input">
+                    <input
+                      value={preguntaLibre}
+                      onChange={(e) => setPreguntaLibre(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') void preguntar();
+                      }}
+                      placeholder="Pregunta sobre este punto…"
+                      disabled={streaming}
+                    />
+                    <button className="btn btn-secundario" disabled={streaming || !preguntaLibre.trim()} onClick={preguntar}>
+                      Enviar
+                    </button>
+                  </div>
+
+                  <div className="paso-acciones">
+                    <button className="btn btn-primario" disabled={streaming} onClick={() => explicar(paso)}>
+                      {chatActual.length ? 'Volver a explicar' : 'Explicar este punto'}
+                    </button>
+                    <button className="btn btn-secundario" disabled={streaming || indicadores.length <= 1} onClick={marcarVistoYSeguir}>
+                      Siguiente punto →
+                    </button>
+                  </div>
+                </section>
               </div>
-              <div className="ia-input">
-                <input
-                  value={preguntaLibre}
-                  onChange={(e) => setPreguntaLibre(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') void preguntar();
-                  }}
-                  placeholder="Pregunta lo que no entiendas…"
-                  disabled={streaming}
-                />
-                <button className="btn btn-secundario" disabled={streaming || !preguntaLibre.trim()} onClick={preguntar}>
-                  Enviar
-                </button>
-              </div>
-            </section>
+            </>
           ) : null}
 
           {faseEfectiva === 'evaluar' ? (
@@ -507,9 +528,11 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                 ))}
               </ul>
               <div className="paso-acciones">
-                <button className="btn btn-secundario" onClick={reiniciar}>
-                  Reiniciar sesión
-                </button>
+                {!esEnsayo ? (
+                  <button className="btn btn-secundario" onClick={() => setFase('ensenar')}>
+                    Volver a estudiar
+                  </button>
+                ) : null}
                 <button className="btn btn-primario" onClick={() => go(esEnsayo ? { name: 'ensayo', asignaturaId: id } : { name: 'modulo', moduloId: id })}>
                   Volver
                 </button>

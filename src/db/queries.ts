@@ -419,7 +419,7 @@ export function getSesionIA(moduloId: string): SesionIARow | null {
 
 export function saveSesionIA(
   moduloId: string,
-  mensajes: unknown[],
+  mensajes: unknown,
   cobertura: unknown[],
   fase: string,
 ): void {
