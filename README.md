@@ -9,7 +9,7 @@
 
 > **Rumbo Libre** es una plataforma web libre, gratuita y **100% local** (sin servidor) diseñada para preparar los **Exámenes Libres de Validación de Estudios (menores de 18 años)** del Ministerio de Educación de Chile (**MINEDUC**). Nivel inicial: **1° medio**.
 
-Disponible en línea vía GitHub Pages: **[https://raestrada.github.io/rumbolibre/](https://raestrada.github.io/rumbolibre/)**
+Sitio oficial en producción: **[https://rumbolibre.app/](https://rumbolibre.app/)**
 
 ---
 
