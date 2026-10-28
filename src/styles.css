@@ -2702,7 +2702,7 @@ button.fila:hover,
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 28px;
+  padding: 18px 32px;
 }
 
 .ia-fullscreen-cab {
@@ -2711,8 +2711,8 @@ button.fila:hover,
   align-items: flex-start;
   gap: 12px;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .ia-fullscreen-cab strong {
@@ -2763,12 +2763,12 @@ button.fila:hover,
   gap: 10px;
   padding: 4px 2px;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .ia-fullscreen .ia-msg {
-  max-width: 1080px;
+  max-width: 100%;
 }
 
 .ia-fullscreen .ia-user {
@@ -2776,11 +2776,28 @@ button.fila:hover,
   max-width: 70%;
 }
 
+/* En pantalla completa el contenido usa TODO el ancho disponible. */
+.ia-fullscreen .contenido-ia {
+  width: 100%;
+  max-width: none;
+  font-size: clamp(0.95rem, 1.05vw, 1.1rem);
+}
+
+.ia-fullscreen .contenido-ia p,
+.ia-fullscreen .contenido-ia ul,
+.ia-fullscreen .contenido-ia ol {
+  max-width: none;
+}
+
+.ia-fullscreen .contenido-ia img {
+  max-height: 62vh;
+}
+
 .ia-fullscreen .ia-input,
 .ia-fullscreen .paso-acciones {
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .ia-fullscreen .ia-input input {
