@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { getLecturas, getProgresoLectura, setProgresoLectura, type LecturaRow } from '../db/queries';
+import { lecturas as CATALOGO } from '../data/lecturas';
+import type { Lectura } from '../data/tipos';
 import { descripcionDe } from '../data/descripciones';
+import { getProgresoLectura, setProgresoLectura } from '../db/queries';
 import { Chip, EmptyState, Modal } from '../components/ui';
 
 const ESTADOS: Record<string, { label: string; icono: string }> = {
@@ -46,32 +48,28 @@ export default function Biblioteca(): JSX.Element {
   const [genero, setGenero] = useState('Todas');
   const [soloPorLeer, setSoloPorLeer] = useState(false);
   const [orden, setOrden] = useState<'rating' | 'titulo'>('rating');
-  const [sel, setSel] = useState<LecturaRow | null>(null);
+  const [sel, setSel] = useState<Lectura | null>(null);
 
-  const lecturas = getLecturas();
   const progreso = getProgresoLectura();
-
-  const generos = ['Todas', ...Array.from(new Set(lecturas.map((l) => l.genero))).sort()];
+  const generos = ['Todas', ...Array.from(new Set(CATALOGO.map((l) => l.genero))).sort()];
 
   const q = busqueda.trim().toLowerCase();
-  const filtradas = lecturas
-    .filter((l) => {
-      if (genero !== 'Todas' && l.genero !== genero) return false;
-      const estado = progreso[l.id] || 'sin_leer';
-      if (soloPorLeer && estado === 'leida') return false;
-      if (q) {
-        const texto = [l.titulo, l.autor, l.genero, l.area, l.por_que, ...l.temas].join(' ').toLowerCase();
-        return texto.includes(q);
-      }
-      return true;
-    })
-    .sort((a, b) =>
-      orden === 'rating'
-        ? (b.rating ?? 0) - (a.rating ?? 0) || a.titulo.localeCompare(b.titulo)
-        : a.titulo.localeCompare(b.titulo),
-    );
+  const filtradas = CATALOGO.filter((l) => {
+    if (genero !== 'Todas' && l.genero !== genero) return false;
+    const estado = progreso[l.id] || 'sin_leer';
+    if (soloPorLeer && estado === 'leida') return false;
+    if (q) {
+      const texto = [l.titulo, l.autor, l.genero, l.area, l.porQue, ...l.temas].join(' ').toLowerCase();
+      return texto.includes(q);
+    }
+    return true;
+  }).sort((a, b) =>
+    orden === 'rating'
+      ? (b.rating ?? 0) - (a.rating ?? 0) || a.titulo.localeCompare(b.titulo)
+      : a.titulo.localeCompare(b.titulo),
+  );
 
-  const totalLeidas = lecturas.filter((l) => progreso[l.id] === 'leida').length;
+  const totalLeidas = CATALOGO.filter((l) => progreso[l.id] === 'leida').length;
 
   function avanzar(id: string): void {
     const actual = progreso[id] || 'sin_leer';
@@ -86,7 +84,7 @@ export default function Biblioteca(): JSX.Element {
       <header className="cabecera">
         <h1>Biblioteca 📚</h1>
         <p className="cabecera-sub">
-          Novelas y libros de divulgación que te enseñan mientras disfrutas. {lecturas.length} títulos ·{' '}
+          Novelas y libros de divulgación que te enseñan mientras disfrutas. {CATALOGO.length} títulos ·{' '}
           {totalLeidas} leídos.
         </p>
       </header>
@@ -135,7 +133,7 @@ export default function Biblioteca(): JSX.Element {
                       {l.autor} · {l.genero}
                     </span>
                   </span>
-                  <span className="libro-edad">+{l.edad_minima}</span>
+                  <span className="libro-edad">+{l.edadMinima}</span>
                 </button>
                 <button
                   className={`libro-estado estado-${estado}`}
@@ -166,7 +164,7 @@ export default function Biblioteca(): JSX.Element {
                   <span className="libro-rating" style={{ color: ratingColor(sel.rating) }}>
                     ★ {sel.rating != null ? sel.rating.toFixed(1) : '–'}
                   </span>
-                  <span>+{sel.edad_minima} años</span>
+                  <span>+{sel.edadMinima} años</span>
                 </div>
                 <button className={`libro-estado estado-${estadoSel}`} onClick={() => avanzar(sel.id)}>
                   {ESTADOS[estadoSel].icono} {ESTADOS[estadoSel].label}
@@ -181,7 +179,7 @@ export default function Biblioteca(): JSX.Element {
 
             <div className="libro-modal-seccion">
               <h4>Por qué leerlo (educativo)</h4>
-              <p>{sel.por_que}</p>
+              <p>{sel.porQue}</p>
             </div>
 
             <div className="libro-temas">
