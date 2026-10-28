@@ -54,6 +54,10 @@ function ChatPunto({
   fullscreen,
   onCerrar,
   titulo,
+  puntos,
+  paso,
+  vistos,
+  onCambiarPunto,
 }: {
   mensajes: MensajeIA[];
   streaming: boolean;
@@ -67,14 +71,28 @@ function ChatPunto({
   fullscreen?: boolean;
   onCerrar?: () => void;
   titulo?: string;
+  puntos?: string[];
+  paso?: number;
+  vistos?: number[];
+  onCambiarPunto?: (i: number) => void;
 }): JSX.Element {
   const contenido = (
     <>
       {fullscreen ? (
         <div className="ia-fullscreen-cab">
-          <div>
+          <div className="ia-fullscreen-info">
             <span className="fila-sub">Chat del punto</span>
-            <strong>{titulo}</strong>
+            {puntos && puntos.length && onCambiarPunto ? (
+              <select value={paso ?? 0} onChange={(e) => onCambiarPunto(Number(e.target.value))} disabled={streaming}>
+                {puntos.map((p, i) => (
+                  <option key={i} value={i}>
+                    {(vistos?.includes(i) ? '✓ ' : '') + p.slice(0, 70)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <strong>{titulo}</strong>
+            )}
           </div>
           <button className="ia-fullscreen-cerrar" onClick={onCerrar} aria-label="Cerrar pantalla completa">
             ✕
@@ -191,8 +209,23 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
       const raw = JSON.parse(s.mensajes) as unknown;
       if (Array.isArray(raw)) setChats({ 0: raw as MensajeIA[] });
       else if (raw && typeof raw === 'object') setChats(raw as Record<number, MensajeIA[]>);
-      setCobertura(JSON.parse(s.cobertura) as number[]);
+      const cob = JSON.parse(s.cobertura) as number[];
+      setCobertura(cob);
       setFase((s.fase as Fase) || (esEnsayo ? 'evaluar' : 'ensenar'));
+      if (!esEnsayo && indicadores.length) {
+        let guardado = NaN;
+        try {
+          guardado = Number(localStorage.getItem(`rl-punto-m-${id}`));
+        } catch {
+          /* ignore */
+        }
+        if (Number.isInteger(guardado) && guardado >= 0 && guardado < indicadores.length) {
+          setPaso(guardado);
+        } else {
+          const idx = indicadores.findIndex((_, i) => !cob.includes(i));
+          setPaso(idx === -1 ? 0 : idx);
+        }
+      }
     } catch {
       /* ignore */
     }
@@ -201,6 +234,15 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   function persistir(c: Record<number, MensajeIA[]>, cob: number[], f: Fase): void {
     const key = esEnsayo ? `ensayo:${id}` : id;
     saveSesionIA(key, c, cob, f);
+  }
+
+  function cambiarPaso(i: number): void {
+    setPaso(i);
+    try {
+      localStorage.setItem(`rl-punto-${esEnsayo ? 'e' : 'm'}-${id}`, String(i));
+    } catch {
+      /* ignore */
+    }
   }
 
   async function explicar(indicePunto: number): Promise<void> {
@@ -292,7 +334,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     const nuevaCob = cobertura.includes(paso) ? cobertura : [...cobertura, paso];
     setCobertura(nuevaCob);
     persistir(chats, nuevaCob, fase);
-    setPaso(Math.min(paso + 1, Math.max(0, indicadores.length - 1)));
+    cambiarPaso(Math.min(paso + 1, Math.max(0, indicadores.length - 1)));
   }
 
   function iniciarEvaluacion(): void {
@@ -475,7 +517,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                     <button
                       key={i}
                       className={`sesion-punto ${i === paso ? 'actual' : ''} ${cobertura.includes(i) ? 'visto' : ''}`}
-                      onClick={() => setPaso(i)}
+                      onClick={() => cambiarPaso(i)}
                     >
                       <span className="sesion-dot">{cobertura.includes(i) ? '✓' : i === paso ? '▸' : '○'}</span>
                       <span>{ind}</span>
@@ -526,6 +568,10 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
               onExplicar={() => void explicar(paso)}
               onSiguiente={marcarVistoYSeguir}
               puedeSiguiente={indicadores.length > 1}
+              puntos={indicadores}
+              paso={paso}
+              vistos={cobertura}
+              onCambiarPunto={cambiarPaso}
             />
           ) : null}
 

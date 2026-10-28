@@ -2613,6 +2613,28 @@ button.fila:hover,
   font-size: 1.05rem;
 }
 
+.ia-fullscreen-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.ia-fullscreen-info select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--tarjeta);
+  color: var(--texto);
+  font: inherit;
+  font-weight: 650;
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
 .ia-fullscreen-cerrar {
   border: none;
   background: var(--violeta-suave);
