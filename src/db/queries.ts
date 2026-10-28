@@ -420,7 +420,7 @@ export function getSesionIA(moduloId: string): SesionIARow | null {
 export function saveSesionIA(
   moduloId: string,
   mensajes: unknown,
-  cobertura: unknown[],
+  cobertura: unknown,
   fase: string,
 ): void {
   try {

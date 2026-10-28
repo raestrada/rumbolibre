@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNav } from '../App';
 import {
   actividadId,
@@ -22,9 +23,10 @@ interface ItemRuta {
   asignatura: AsignaturaRow;
   estado: EstadoModulo;
   posicion: number;
+  nota: number | null;
 }
 
-function ordenarItems(asignaturas: AsignaturaRow[]): ItemRuta[] {
+function ordenarItems(asignaturas: AsignaturaRow[]): Omit<ItemRuta, 'posicion' | 'estado' | 'nota'>[] {
   const modulosPorId = new Map<string, { modulo: ModuloFull; asignatura: AsignaturaRow }>();
   for (const a of asignaturas) {
     for (const m of getModulos(a.id)) modulosPorId.set(m.id, { modulo: m, asignatura: a });
@@ -37,7 +39,7 @@ function ordenarItems(asignaturas: AsignaturaRow[]): ItemRuta[] {
   for (const [, v] of modulosPorId) {
     if (!vistos.has(v.modulo.id)) ordenados.push(v);
   }
-  return ordenados.map((v) => ({ modulo: v.modulo, asignatura: v.asignatura, estado: 'pendiente', posicion: 0 }));
+  return ordenados.map((v) => ({ modulo: v.modulo, asignatura: v.asignatura }));
 }
 
 function estadoDe(
@@ -59,11 +61,14 @@ const ETIQUETA_ESTADO: Record<EstadoModulo, string> = {
   pendiente: 'Pendiente',
 };
 
-export default function Ruta(): JSX.Element {
+export default function Ruta({ filtroInicial }: { filtroInicial?: string }): JSX.Element {
   const { nav, go } = useNav();
   const cursoId = getCursoActivoId();
   const progreso = getProgreso();
   const asignaturas = getAsignaturas(cursoId);
+
+  // Filtro especial integrado para "Por repasar"
+  const [soloRepasar, setSoloRepasar] = useState(filtroInicial === 'repasar');
 
   // Última nota de evaluación por módulo.
   const ultimaNotaPorModulo = new Map<string, number | null>();
@@ -74,20 +79,28 @@ export default function Ruta(): JSX.Element {
     }
   }
 
-  const items = ordenarItems(asignaturas).map((it, i) => ({
-    ...it,
-    posicion: i + 1,
-    estado: estadoDe(it.modulo.id, ultimaNotaPorModulo.get(it.modulo.id) ?? null, progreso),
-  }));
+  const items: ItemRuta[] = ordenarItems(asignaturas).map((it, i) => {
+    const nota = ultimaNotaPorModulo.get(it.modulo.id) ?? null;
+    return {
+      ...it,
+      posicion: i + 1,
+      nota,
+      estado: estadoDe(it.modulo.id, nota, progreso),
+    };
+  });
 
-  const filtro = nav.name === 'ruta' ? nav.asignaturaId : undefined;
-  const visibles = filtro ? items.filter((it) => it.asignatura.id === filtro) : items;
+  const filtroAsig = !soloRepasar && nav.name === 'ruta' ? nav.asignaturaId : undefined;
+  const visibles = soloRepasar
+    ? items.filter((it) => it.estado === 'reprobado')
+    : filtroAsig
+      ? items.filter((it) => it.asignatura.id === filtroAsig)
+      : items;
 
   const aprobados = items.filter((it) => it.estado === 'aprobado').length;
   const encurso = items.filter((it) => it.estado === 'encurso').length;
   const reprobados = items.filter((it) => it.estado === 'reprobado').length;
   const siguiente = items.find((it) => it.estado !== 'aprobado');
-  const ensayoAsig = filtro ? asignaturas.find((a) => a.id === filtro) : undefined;
+  const ensayoAsig = filtroAsig ? asignaturas.find((a) => a.id === filtroAsig) : undefined;
   const ensayoNota = ensayoAsig ? getEnsayoNota(ensayoAsig.id) : null;
 
   const pctAprobados = items.length ? (aprobados / items.length) * 100 : 0;
@@ -98,7 +111,7 @@ export default function Ruta(): JSX.Element {
         <h1>Mi ruta 🗺️</h1>
         <p className="cabecera-sub">
           Un camino sugerido que mezcla las materias para que no sea todo de una. Toca un módulo para
-          estudiar.
+          estudiar directamente con IA.
         </p>
       </header>
 
@@ -113,21 +126,39 @@ export default function Ruta(): JSX.Element {
       </section>
 
       <div className="tabs scroll">
-        <button className={`tab ${!filtro ? 'activo' : ''}`} onClick={() => go({ name: 'ruta' })}>
+        <button
+          className={`tab ${!soloRepasar && !filtroAsig ? 'activo' : ''}`}
+          onClick={() => {
+            setSoloRepasar(false);
+            go({ name: 'ruta' });
+          }}
+        >
           Todos
+        </button>
+        <button
+          className={`tab ${soloRepasar ? 'activo' : ''}`}
+          onClick={() => {
+            setSoloRepasar(true);
+            go({ name: 'ruta' });
+          }}
+        >
+          🔁 Por repasar {reprobados > 0 ? `(${reprobados})` : ''}
         </button>
         {asignaturas.map((a) => (
           <button
             key={a.id}
-            className={`tab ${filtro === a.id ? 'activo' : ''}`}
-            onClick={() => go({ name: 'ruta', asignaturaId: a.id })}
+            className={`tab ${!soloRepasar && filtroAsig === a.id ? 'activo' : ''}`}
+            onClick={() => {
+              setSoloRepasar(false);
+              go({ name: 'ruta', asignaturaId: a.id });
+            }}
           >
             {a.icono} {a.codigo}
           </button>
         ))}
       </div>
 
-      {ensayoAsig ? (
+      {ensayoAsig && !soloRepasar ? (
         <div className="tarjeta ensayo-cta">
           <div className="fila-cuerpo">
             <div className="fila-titulo">🎯 Ensayo general de {ensayoAsig.nombre}</div>
@@ -142,7 +173,7 @@ export default function Ruta(): JSX.Element {
         </div>
       ) : null}
 
-      {siguiente && !filtro ? (
+      {siguiente && !filtroAsig && !soloRepasar ? (
         <div className="siguiente-hero">
           <div className="siguiente-cuerpo">
             <span className="siguiente-etiqueta">👉 Te recomiendo estudiar ahora</span>
@@ -163,13 +194,17 @@ export default function Ruta(): JSX.Element {
       {visibles.length === 0 ? (
         <div className="empty">
           <div className="empty-icono">🎉</div>
-          <div className="empty-titulo">¡Todo listo!</div>
-          <div className="empty-texto">No hay módulos pendientes en esta vista.</div>
+          <div className="empty-titulo">¡Todo al día!</div>
+          <div className="empty-texto">
+            {soloRepasar
+              ? 'No tienes módulos reprobados ni temas pendientes de reforzar.'
+              : 'No hay módulos pendientes en esta vista.'}
+          </div>
         </div>
       ) : (
         <div className="roadmap">
           {visibles.map((it, i) => {
-            const esSiguiente = !filtro && it.modulo.id === siguiente?.modulo.id;
+            const esSiguiente = !filtroAsig && !soloRepasar && it.modulo.id === siguiente?.modulo.id;
             const dotBg =
               it.estado === 'aprobado'
                 ? 'var(--exito)'
@@ -198,10 +233,15 @@ export default function Ruta(): JSX.Element {
                       <span className="codigo">{it.modulo.codigo}</span> {it.modulo.titulo}
                       {it.modulo.eje ? <span className="eje">{it.modulo.eje}</span> : null}
                     </div>
-                    <div className="fila-sub">{it.asignatura.nombre}</div>
+                    <div className="fila-sub">
+                      {it.asignatura.nombre}
+                      {it.nota != null ? ` · nota ${it.nota.toFixed(1)}` : ''}
+                    </div>
                   </div>
-                  <span className={`roadmap-badge estado-${it.estado}`}>{ETIQUETA_ESTADO[it.estado]}</span>
-                  {esSiguiente ? <span className="roadmap-sig">👉</span> : null}
+                  <div className="roadmap-meta">
+                    <span className={`roadmap-badge estado-${it.estado}`}>{ETIQUETA_ESTADO[it.estado]}</span>
+                    {esSiguiente ? <span className="roadmap-sig">👉</span> : null}
+                  </div>
                 </button>
               </div>
             );

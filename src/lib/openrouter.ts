@@ -35,10 +35,37 @@ export async function listarModelos(): Promise<ModeloOR[]> {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+function toByteString(val: string): string {
+  // ISO-8859-1 ByteString solo admite códigos de caracter <= 255 (0x00 a 0xFF)
+  return (val || '').replace(/[^\x00-\xFF]/g, '');
+}
+
+export function sanitizeApiKey(k: string): string {
+  // Las claves de OpenRouter son estrictamente caracteres ASCII imprimibles sin espacios ni comillas
+  return (k || '')
+    .trim()
+    .replace(/^["'`]|["'`]$/g, '')
+    .replace(/^\s*Bearer\s+/i, '')
+    .replace(/[^\x21-\x7E]/g, '')
+    .trim();
+}
+
 export async function probarClave(key: string): Promise<{ ok: boolean; saldo?: number; error?: string }> {
   try {
-    const res = await fetch(`${BASE}/credits`, { headers: { Authorization: `Bearer ${key}` } });
-    if (res.status === 401) return { ok: false, error: 'Clave inválida (401)' };
+    const cleanKey = sanitizeApiKey(key);
+    if (!cleanKey) return { ok: false, error: 'Ingresa una clave para probar.' };
+    if (cleanKey.length < 25) {
+      return { ok: false, error: 'La clave parece incompleta. Debe comenzar con sk-or-v1- y tener el token completo.' };
+    }
+    const referer = toByteString(typeof location !== 'undefined' && location.origin ? location.origin : 'http://localhost');
+    const res = await fetch(`${BASE}/credits`, {
+      headers: {
+        Authorization: `Bearer ${cleanKey}`,
+        'HTTP-Referer': referer,
+        'X-Title': 'Rumbo Libre',
+      },
+    });
+    if (res.status === 401) return { ok: false, error: 'Clave no válida o revocada en OpenRouter (401)' };
     if (!res.ok) return { ok: false, error: `Error ${res.status}` };
     const j = (await res.json()) as { data?: { total_balance?: number; balance?: number } };
     return { ok: true, saldo: j.data?.total_balance ?? j.data?.balance };
@@ -92,12 +119,21 @@ export async function chatStream(opts: ChatOpts): Promise<string> {
   if (opts.responseFormat) body.response_format = opts.responseFormat;
   if (opts.tools?.length) body.tools = opts.tools;
 
+  const cleanKey = sanitizeApiKey(opts.key);
+  if (!cleanKey) {
+    throw new Error('No hay una clave de OpenRouter configurada. Agrégala en Ajustes.');
+  }
+  if (cleanKey.length < 25) {
+    throw new Error('La clave de OpenRouter parece incompleta o truncada (debe comenzar con sk-or-v1- y tener el token completo). Revisa tu clave en Ajustes.');
+  }
+  const referer = toByteString(typeof location !== 'undefined' && location.origin ? location.origin : 'http://localhost');
+
   const res = await fetch(`${BASE}/chat/completions`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${opts.key}`,
+      Authorization: `Bearer ${cleanKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': location.origin,
+      'HTTP-Referer': referer,
       'X-Title': 'Rumbo Libre',
     },
     body: JSON.stringify(body),
@@ -105,6 +141,9 @@ export async function chatStream(opts: ChatOpts): Promise<string> {
   });
 
   if (!res.ok || !res.body) {
+    if (res.status === 401) {
+      throw new Error('OpenRouter rechazó la clave (401: Clave no válida o revocada). Por favor ingresa una clave válida en Ajustes.');
+    }
     const txt = await res.text().catch(() => '');
     let msg = `OpenRouter ${res.status}`;
     try {
@@ -162,18 +201,30 @@ export async function chatComplete(opts: Omit<ChatOpts, 'onDelta' | 'onReason'>)
   if (opts.responseFormat) body.response_format = opts.responseFormat;
   if (opts.tools?.length) body.tools = opts.tools;
 
+  const cleanKey = sanitizeApiKey(opts.key);
+  if (!cleanKey) {
+    throw new Error('No hay una clave de OpenRouter configurada. Agrégala en Ajustes.');
+  }
+  if (cleanKey.length < 25) {
+    throw new Error('La clave de OpenRouter parece incompleta o truncada (debe comenzar con sk-or-v1- y tener el token completo). Revisa tu clave en Ajustes.');
+  }
+  const referer = toByteString(typeof location !== 'undefined' && location.origin ? location.origin : 'http://localhost');
+
   const res = await fetch(`${BASE}/chat/completions`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${opts.key}`,
+      Authorization: `Bearer ${cleanKey}`,
       'Content-Type': 'application/json',
-      'HTTP-Referer': location.origin,
+      'HTTP-Referer': referer,
       'X-Title': 'Rumbo Libre',
     },
     body: JSON.stringify(body),
     signal: opts.signal,
   });
   if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error('OpenRouter rechazó la clave (401: Clave no válida o revocada). Por favor ingresa una clave válida en Ajustes.');
+    }
     const txt = await res.text().catch(() => '');
     let msg = `OpenRouter ${res.status}`;
     try {

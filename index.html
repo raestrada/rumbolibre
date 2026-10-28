@@ -4,12 +4,125 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#7c3aed" />
-    <meta name="description" content="Rumbo Libre: guía y seguimiento para exámenes libres de 1° medio (MINEDUC)." />
-    <title>Rumbo Libre</title>
+
+    <!-- SEO Primario para Google -->
+    <title>Rumbo Libre — Exámenes Libres MINEDUC Chile (1° Medio) | 100% Gratis y Privado</title>
+    <meta
+      name="description"
+      content="Prepara gratis los Exámenes Libres de Validación de Estudios (1° Medio) del MINEDUC Chile. Tutor IA inteligente, 40 módulos curriculares oficiales, 100% Open Source y privacidad total: todos tus datos se guardan de forma local en tu navegador."
+    />
+    <meta
+      name="keywords"
+      content="examenes libres mineduc, validacion de estudios chile, examenes libres 1 medio, temario mineduc 1 medio, homeschooling chile, educacion en casa chile, tutor ia mineduc, educacion libre chile, software educativo open source"
+    />
+    <meta name="author" content="Comunidad Rumbo Libre (Open Source)" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://rumbolibre.cl/" />
+
+    <!-- Open Graph / Redes Sociales y WhatsApp -->
+    <meta property="og:site_name" content="Rumbo Libre" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:url" content="https://rumbolibre.cl/" />
+    <meta
+      property="og:title"
+      content="Rumbo Libre — Exámenes Libres MINEDUC Chile (1° Medio) | 100% Gratis y Privado"
+    />
+    <meta
+      property="og:description"
+      content="Estudia a tu ritmo para la Validación de Estudios de 1° Medio. 100% Código Abierto, sin registro en servidores y con tus datos seguros en tu propio computador."
+    />
+    <meta property="og:image" content="/icon.svg" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rumbo Libre — Exámenes Libres MINEDUC Chile" />
+    <meta
+      name="twitter:description"
+      content="La plataforma libre, abierta y local para preparar la Validación de Estudios de 1° Medio en Chile."
+    />
+    <meta name="twitter:image" content="/icon.svg" />
+
+    <!-- Favicon e iconos PWA -->
     <link rel="icon" href="icon.png" type="image/png" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon.png" />
     <link rel="manifest" href="manifest.webmanifest" />
+
+    <!-- Schema.org Datos Estructurados JSON-LD para Google Search Rich Results -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "@id": "https://rumbolibre.cl/#app",
+            "name": "Rumbo Libre",
+            "url": "https://rumbolibre.cl/",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "All modern browsers (Chrome, Firefox, Safari, Edge)",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "CLP"
+            },
+            "description": "Plataforma de código abierto y 100% privada para preparar los Exámenes Libres de 1° Medio del MINEDUC Chile con tutoría inteligente por IA y persistencia SQLite local en el navegador.",
+            "license": "https://opensource.org/licenses/MIT",
+            "inLanguage": "es-CL"
+          },
+          {
+            "@type": "Course",
+            "@id": "https://rumbolibre.cl/#curso",
+            "name": "Validación de Estudios 1° Medio (MINEDUC Chile)",
+            "description": "Plan curricular oficial de 1° Medio compuesto por 40 módulos en 6 asignaturas oficiales: Lengua y Literatura, Matemática, Ciencias Naturales, Historia y Geografía, Inglés y Educación Ciudadana.",
+            "provider": {
+              "@type": "Organization",
+              "name": "Rumbo Libre Open Source",
+              "url": "https://rumbolibre.cl/"
+            },
+            "educationalCredentialAwarded": "Preparación oficial para Exámenes Libres MINEDUC"
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://rumbolibre.cl/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "¿Qué es Rumbo Libre?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Rumbo Libre es una aplicación web gratuita y de código abierto (Open Source) para preparar los Exámenes Libres de Validación de Estudios (menores de 18 años) del Ministerio de Educación de Chile (MINEDUC) para 1° Medio."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿Por qué es 100% privado y seguro?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Toda la información, notas y progreso se guardan localmente en la base de datos SQLite interna de tu navegador (IndexedDB). No existen servidores centrales rastreando tu actividad ni recopilando tus datos personales."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿Tiene algún costo o suscripción?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Rumbo Libre es 100% gratuito, sin mensualidades, sin publicidad y bajo licencia libre MIT para beneficio de toda la comunidad educativa y de homeschooling en Chile."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿El temario coincide con el programa oficial del MINEDUC?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sí. Los 40 módulos, objetivos de aprendizaje (OA) e indicadores de evaluación provienen estrictamente de los temarios oficiales publicados por el MINEDUC para 1° Medio."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

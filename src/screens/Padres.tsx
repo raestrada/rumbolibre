@@ -77,7 +77,7 @@ export default function Padres(): JSX.Element {
   const pctGlobal = total ? (hechas / total) * 100 : 0;
 
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>Seguimiento 👨‍👩‍👧</h1>
         <p className="cabecera-sub">Resumen del avance de {config.nombre || 'la estudiante'}.</p>

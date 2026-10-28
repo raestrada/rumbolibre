@@ -9,8 +9,11 @@ import {
   getModulos,
   getProgreso,
   getRegistros,
+  type AsignaturaRow,
+  type ModuloFull,
 } from '../db/queries';
 import { NOTA_APROBACION } from '../data/tipos';
+import { ORDEN_MODULOS } from '../data/orden';
 import { ProgressBar, EmptyState } from '../components/ui';
 import { notaColor } from '../lib/parser';
 
@@ -31,6 +34,27 @@ export default function Dashboard(): JSX.Element {
   const progreso = getProgreso();
   const registros = getRegistros(cursoId);
   const hitos = getHitos(cursoId);
+
+  // Mapeo para nombres legibles de módulos
+  const modulosMap = new Map<string, { modulo: ModuloFull; asig: AsignaturaRow }>();
+  for (const a of asignaturas) {
+    for (const m of getModulos(a.id)) {
+      modulosMap.set(m.id, { modulo: m, asig: a });
+    }
+  }
+
+  function getNombreModulo(moduloId: string): string {
+    if (moduloId.endsWith(':ensayo')) {
+      const asigId = moduloId.slice(0, -':ensayo'.length);
+      const a = asignaturas.find((x) => x.id === asigId);
+      return `Ensayo general · ${a?.nombre ?? 'Asignatura'}`;
+    }
+    const info = modulosMap.get(moduloId);
+    if (info) {
+      return `${info.modulo.codigo} — ${info.modulo.titulo}`;
+    }
+    return moduloId;
+  }
 
   const ultima = new Map<string, number | null>();
   for (const r of registros) {
@@ -73,14 +97,73 @@ export default function Dashboard(): JSX.Element {
 
   const diasExamen = diasHasta(config.fecha_examen);
 
+  // Siguiente módulo recomendado para continuar estudiando
+  const listaOrdenada = ORDEN_MODULOS.map((id) => modulosMap.get(id)).filter(
+    (x): x is { modulo: ModuloFull; asig: AsignaturaRow } => Boolean(x),
+  );
+  const siguiente = listaOrdenada.find((item) => {
+    const n = ultima.get(item.modulo.id);
+    return n == null || n < NOTA_APROBACION;
+  });
+
+  // Módulos reprobados que toca repasar
+  const modulosRepasar = listaOrdenada.filter((item) => {
+    const n = ultima.get(item.modulo.id);
+    return n != null && n < NOTA_APROBACION;
+  });
+
   return (
     <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>
           {saludo}, {nombre}! 👋
         </h1>
-        <p className="cabecera-sub">Tu camino para aprobar los exámenes libres de 1° medio.</p>
+        <p className="cabecera-sub">Tu camino para preparar y aprobar los exámenes libres de 1° medio.</p>
       </header>
+
+      {/* Hero directo: Continuar con el siguiente módulo */}
+      {siguiente ? (
+        <section className="siguiente-hero" style={{ marginBottom: 20 }}>
+          <div className="siguiente-cuerpo">
+            <span className="siguiente-etiqueta">👉 Continuar con siguiente módulo</span>
+            <div className="siguiente-titulo">
+              {siguiente.asig.icono} {siguiente.modulo.codigo} — {siguiente.modulo.titulo}
+            </div>
+            <div className="siguiente-sub">
+              {siguiente.asig.nombre}
+              {siguiente.modulo.eje ? ` · ${siguiente.modulo.eje}` : ''}
+            </div>
+          </div>
+          <button
+            className="btn btn-primario"
+            onClick={() => go({ name: 'modulo', moduloId: siguiente.modulo.id })}
+          >
+            Estudiar ahora →
+          </button>
+        </section>
+      ) : null}
+
+      {/* Qué toca repasar si hay módulos reprobados */}
+      {modulosRepasar.length > 0 ? (
+        <section className="tarjeta banner-repasar-cta">
+          <div>
+            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>🔁</span>
+              <span>Toca repasar {modulosRepasar.length} {modulosRepasar.length === 1 ? 'módulo' : 'módulos'}</span>
+            </div>
+            <div className="fila-sub" style={{ marginTop: 2 }}>
+              {modulosRepasar
+                .slice(0, 3)
+                .map((m) => m.modulo.codigo)
+                .join(', ')}
+              {modulosRepasar.length > 3 ? ` y ${modulosRepasar.length - 3} más` : ''} · Refuerza los temas antes del examen
+            </div>
+          </div>
+          <button className="btn btn-secundario" onClick={() => go({ name: 'ruta', filtroRepasar: true })}>
+            Ver por repasar →
+          </button>
+        </section>
+      ) : null}
 
       <section className="tarjeta plazos">
         <div className="plazos-item">
@@ -128,7 +211,8 @@ export default function Dashboard(): JSX.Element {
       </section>
 
       <h2 className="seccion-titulo">Listo para el examen</h2>
-      <div className="lista">
+      {/* Grilla 2x3 para las 6 asignaturas */}
+      <div className="dashboard-grid-asig">
         {porAsignatura.map(({ asig, modulos, aprobados, reprobados, lista, ensayoNota }) => (
           <div key={asig.id} className="tarjeta fila lista-asig">
             <span className="asig-icono" style={{ background: asig.color }}>
@@ -136,18 +220,22 @@ export default function Dashboard(): JSX.Element {
             </span>
             <div className="fila-cuerpo">
               <div className="fila-titulo">
-                {asig.nombre}
+                <span className="asig-nombre-txt">{asig.nombre}</span>
                 <span className={`lista-chipo ${lista ? 'ok' : reprobados ? 'mal' : ''}`}>
                   {lista ? '✅ Lista' : reprobados ? `🔁 ${reprobados} por repasar` : '⏳ En progreso'}
                 </span>
               </div>
               <div className="fila-sub">
                 {aprobados}/{modulos.length} módulos aprobados
-                {ensayoNota != null ? ` · ensayo general: ${ensayoNota.toFixed(1)}` : ''}
+                {ensayoNota != null ? ` · ensayo: ${ensayoNota.toFixed(1)}` : ''}
               </div>
-              <ProgressBar pct={modulos.length ? (aprobados / modulos.length) * 100 : 0} color={asig.color} alto={6} />
+              <ProgressBar pct={modulos.length ? (aprobados / modulos.length) * 100 : 0} color={asig.color} alto={5} />
             </div>
-            <button className="btn btn-secundario btn-chico" onClick={() => go({ name: 'ensayo', asignaturaId: asig.id })}>
+            <button
+              className="btn btn-secundario btn-chico btn-ensayo-asig"
+              onClick={() => go({ name: 'ensayo', asignaturaId: asig.id })}
+              title={`Hacer ensayo de ${asig.nombre}`}
+            >
               🎯 Ensayo
             </button>
           </div>
@@ -159,7 +247,7 @@ export default function Dashboard(): JSX.Element {
         <EmptyState
           icono="⭐"
           titulo="Aún no hay evaluaciones"
-          texto="Cuando tu IA te evalúe, pega el resultado en tu ruta y aparecerá aquí."
+          texto="Completa tu primera sesión de estudio y evaluación con IA para ver tus notas aquí."
           accion={<button className="btn btn-primario" onClick={() => go({ name: 'ruta' })}>Ir a mi ruta →</button>}
         />
       ) : (
@@ -170,7 +258,7 @@ export default function Dashboard(): JSX.Element {
                 {r.nota != null ? r.nota.toFixed(1) : '–'}
               </span>
               <div className="fila-cuerpo">
-                <div className="fila-titulo">{r.modulo_id}</div>
+                <div className="fila-titulo">{getNombreModulo(r.modulo_id)}</div>
                 <div className="fila-sub">
                   {r.temas_a_reforzar.length
                     ? `A reforzar: ${r.temas_a_reforzar.slice(0, 2).join(', ')}`

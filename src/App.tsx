@@ -16,10 +16,12 @@ import Biblioteca from './screens/Biblioteca';
 import Padres from './screens/Padres';
 import Ajustes from './screens/Ajustes';
 import Onboarding from './screens/Onboarding';
+import Home from './screens/Home';
 
 export type Screen =
+  | { name: 'home' }
   | { name: 'dashboard' }
-  | { name: 'ruta'; asignaturaId?: string }
+  | { name: 'ruta'; asignaturaId?: string; filtroRepasar?: boolean }
   | { name: 'modulo'; moduloId: string }
   | { name: 'ensayo'; asignaturaId: string }
   | { name: 'sesionIA'; tipo: 'modulo' | 'ensayo'; id: string }
@@ -28,14 +30,14 @@ export type Screen =
   | { name: 'registro' }
   | { name: 'biblioteca' }
   | { name: 'padres' }
-  | { name: 'ajustes' };
+  | { name: 'ajustes'; tab?: 'general' | 'ia' | 'datos' | 'planes' | 'padres' | 'registro' };
 
 interface NavCtx {
   nav: Screen;
   go: (s: Screen) => void;
 }
 
-export const NavContext = createContext<NavCtx>({ nav: { name: 'dashboard' }, go: () => {} });
+export const NavContext = createContext<NavCtx>({ nav: { name: 'home' }, go: () => {} });
 
 export function useNav(): NavCtx {
   return useContext(NavContext);
@@ -50,12 +52,14 @@ function PantallaCarga(): JSX.Element {
   );
 }
 
-function renderScreen(nav: Screen): JSX.Element {
+function renderScreen(nav: Screen, onIrDashboard: () => void): JSX.Element {
   switch (nav.name) {
+    case 'home':
+      return <Home onIngresar={onIrDashboard} />;
     case 'dashboard':
       return <Dashboard />;
     case 'ruta':
-      return <Ruta />;
+      return <Ruta filtroInicial={nav.filtroRepasar ? 'repasar' : undefined} />;
     case 'modulo':
       return <Modulo moduloId={nav.moduloId} />;
     case 'ensayo':
@@ -63,17 +67,17 @@ function renderScreen(nav: Screen): JSX.Element {
     case 'sesionIA':
       return <SesionIA tipo={nav.tipo} id={nav.id} />;
     case 'repaso':
-      return <Repaso />;
+      return <Ruta filtroInicial="repasar" />;
     case 'examenes':
       return <Examenes />;
     case 'registro':
-      return <Registro />;
+      return <Ajustes initialTab="registro" />;
     case 'biblioteca':
       return <Biblioteca />;
     case 'padres':
-      return <Padres />;
+      return <Ajustes initialTab="padres" />;
     case 'ajustes':
-      return <Ajustes />;
+      return <Ajustes initialTab={nav.tab} />;
   }
 }
 
@@ -109,13 +113,22 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 
 export default function App(): JSX.Element {
   const { ready } = useDB();
-  const [nav, setNav] = useState<Screen>({ name: 'dashboard' });
+  const [nav, setNav] = useState<Screen>({ name: 'home' });
 
   useEffect(() => {
     void initDatabase();
   }, []);
 
   if (!ready) return <PantallaCarga />;
+
+  // Si está en la landing/portal público, se muestra a pantalla completa sin sidebar
+  if (nav.name === 'home') {
+    return (
+      <NavContext.Provider value={{ nav, go: setNav }}>
+        <Home onIngresar={() => setNav({ name: 'dashboard' })} />
+      </NavContext.Provider>
+    );
+  }
 
   const config = getConfig();
   if (!config.nombre) return <Onboarding />;
@@ -125,7 +138,7 @@ export default function App(): JSX.Element {
       <div className="app">
         <Sidebar />
         <main className="contenido">
-          <ErrorBoundary>{renderScreen(nav)}</ErrorBoundary>
+          <ErrorBoundary>{renderScreen(nav, () => setNav({ name: 'dashboard' }))}</ErrorBoundary>
         </main>
       </div>
     </NavContext.Provider>

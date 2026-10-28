@@ -5,11 +5,8 @@ import { getConfig, getCursos, setConfig } from '../db/queries';
 const items: { name: string; label: string; icon: string }[] = [
   { name: 'dashboard', label: 'Inicio', icon: '🏠' },
   { name: 'ruta', label: 'Mi ruta', icon: '🗺️' },
-  { name: 'repaso', label: 'Repasar', icon: '🔁' },
-  { name: 'examenes', label: 'Exámenes', icon: '📄' },
-  { name: 'registro', label: 'Registro', icon: '⭐' },
   { name: 'biblioteca', label: 'Biblioteca', icon: '📚' },
-  { name: 'padres', label: 'Para papás', icon: '👨‍👩‍👧' },
+  { name: 'examenes', label: 'Exámenes', icon: '📄' },
   { name: 'ajustes', label: 'Ajustes', icon: '⚙️' },
 ];
 
@@ -22,13 +19,18 @@ export default function Sidebar(): JSX.Element {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-marca">
+      <button
+        type="button"
+        className="sidebar-marca sidebar-marca-btn"
+        onClick={() => go({ name: 'home' })}
+        title="Ver portal web de Rumbo Libre"
+      >
         <Logo size={40} />
         <div>
           <div className="sidebar-titulo">Rumbo Libre</div>
-          <div className="sidebar-nombre">{nombre}</div>
+          <div className="sidebar-nombre">{nombre || '1° medio'}</div>
         </div>
-      </div>
+      </button>
       <nav className="sidebar-nav">
         {items.map((it) => (
           <button

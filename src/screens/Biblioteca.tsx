@@ -80,7 +80,7 @@ export default function Biblioteca(): JSX.Element {
   const estadoSel = sel ? progreso[sel.id] || 'sin_leer' : 'sin_leer';
 
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>Biblioteca 📚</h1>
         <p className="cabecera-sub">

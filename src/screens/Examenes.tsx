@@ -3,7 +3,7 @@ import { Chip } from '../components/ui';
 
 export default function Examenes(): JSX.Element {
   return (
-    <div className="pantalla">
+    <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>Exámenes reales 📄</h1>
         <p className="cabecera-sub">
