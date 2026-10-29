@@ -118,6 +118,18 @@ export const EXAMENES_PDF: ExamenPdf[] = [
       'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-NB2-D10-VE-2026.pdf',
   },
 
+  // --- 7° Básico ---
+  {
+    id: 'b7-temario',
+    cursoId: 'b7',
+    asignatura: 'ALL',
+    nombre: 'Temario Oficial 7° Básico (MINEDUC)',
+    archivo: 'examenes/b7-temario.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_basica_7deg_basico_uce.pdf',
+    esTemario: true,
+  },
+
   // --- 1° Medio ---
   {
     id: 'lengua',
@@ -247,6 +259,52 @@ export const EJEMPLOS_PREGUNTA: Record<string, Record<string, EjemploPregunta>> 
         'Inside the bank.',
         'Far from the city.',
         'Behind the hospital.',
+      ],
+    },
+  },
+  b7: {
+    LEN: {
+      contexto:
+        '“El autor sostiene en su columna que el acceso a internet debe ser considerado un servicio básico universal en el siglo XXI”.',
+      enunciado: '¿Cuál de las siguientes afirmaciones del texto corresponde a un HECHO comprobable y no a una opinión?',
+      alternativas: [
+        'En Chile más del 85% de los hogares cuenta con acceso a internet móvil o fijo.',
+        'Internet es el invento más maravilloso y perfecto de la humanidad.',
+        'Los jóvenes deberían pasar menos horas navegando en redes sociales.',
+        'Todo gobierno tiene la obligación moral ineludible de regalar computadores.',
+      ],
+    },
+    MAT: {
+      contexto: 'Un buzo desciende a -18 metros de profundidad y luego asciende 7 metros.',
+      enunciado: '¿A qué profundidad en metros se encuentra ahora el buzo?',
+      alternativas: ['-11 m', '-25 m', '11 m', '-7 m'],
+    },
+    CIE: {
+      enunciado: '¿Cuál es la principal causa que origina el movimiento de las placas tectónicas en la litósfera?',
+      alternativas: [
+        'Las corrientes de convección del magma en el manto terrestre.',
+        'La fuerza de atracción gravitacional de la Luna sobre los continentes.',
+        'El movimiento continuo de las olas en las fosas marinas.',
+        'El campo magnético originado en el núcleo externo de la Tierra.',
+      ],
+    },
+    HIS: {
+      enunciado: '¿Cuál fue la consecuencia fundamental de la Revolución Neolítica para las sociedades humanas?',
+      alternativas: [
+        'La consolidación del sedentarismo gracias a la agricultura y domesticación de animales.',
+        'El inicio inmediato de las primeras rutas marítimas hacia América.',
+        'El desarrollo de las armas de fuego y la metalurgia del acero.',
+        'El abandono total de toda forma de comercio o intercambio entre comunidades.',
+      ],
+    },
+    ING: {
+      contexto: 'I was doing my English homework when suddenly the telephone rang.',
+      enunciado: 'What action was in progress when the telephone rang?',
+      alternativas: [
+        'Doing English homework.',
+        'Sleeping in the bedroom.',
+        'Answering the telephone call.',
+        'Watching television with friends.',
       ],
     },
   },

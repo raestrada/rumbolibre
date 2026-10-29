@@ -135,6 +135,63 @@ export const ORDEN_MODULOS_B6: string[] = [
   'b6-his-oa18', // Historia: Deberes, responsabilidades y bien común
 ];
 
+export const ORDEN_MODULOS_B7: string[] = [
+  // Semana 1: Fundamentos y orígenes
+  'b7-len-oa3', // Lengua: Narraciones y conflicto
+  'b7-mat-oa1', // Matemática: Números enteros
+  'b7-cie-oa1', // Ciencias: Sexualidad humana
+  'b7-his-oa2', // Historia: Revolución neolítica y agricultura
+  'b7-ing-oa9', // Inglés: Comprensión general y explícita
+
+  // Semana 2: Poesía, fracciones y primeras civilizaciones
+  'b7-mat-oa3', // Matemática: Multiplicación y división de fracciones y decimales
+  'b7-len-oa4', // Lengua: Análisis de poemas y lenguaje figurado
+  'b7-cie-oa2', // Ciencias: Reproducción humana y ciclo menstrual
+  'b7-his-oa3', // Historia: Primeras civilizaciones y ciudades
+  'b7-ing-oa10', // Inglés: Textos no literarios y conectores
+
+  // Semana 3: Porcentajes, microorganismos y democracia ateniense
+  'b7-mat-oa4', // Matemática: Porcentajes e IVA
+  'b7-len-oa7', // Lengua: Interpretación y contexto histórico
+  'b7-cie-oa5', // Ciencias: Microorganismos: virus, bacterias y hongos
+  'b7-his-oa6', // Historia: Democracia en Atenas clásica
+  'b7-ing-oa13', // Inglés: Escritura multimodal
+
+  // Semana 4: Álgebra, fuerzas y Roma
+  'b7-mat-oa6', // Matemática: Lenguaje algebraico y ecuaciones
+  'b7-len-oa8', // Lengua: Textos argumentativos y hecho vs opinión
+  'b7-cie-oa7', // Ciencias: Fuerzas: gravedad, roce y elástica
+  'b7-his-oa7', // Historia: Civilización romana e imperio
+  'b7-ing-oa16', // Inglés: Obligaciones, rutinas y pasado continuo
+
+  // Semana 5: Proporciones, tectónica y época medieval
+  'b7-mat-oa8', // Matemática: Proporciones directas e inversas
+  'b7-len-oa9', // Lengua: Medios de comunicación y estereotipos
+  'b7-cie-oa9', // Ciencias: Tectónica de placas y sismos
+  'b7-his-oa9', // Historia: Civilización europea medieval e Iglesia
+  'b7-his-oa12', // Historia: Transformaciones desde siglo XII y universidades
+
+  // Semana 6: El círculo, gases ideales y Mesoamérica
+  'b7-mat-oa11', // Matemática: Perímetro y área del círculo
+  'b7-len-oa15', // Lengua: Proceso de escritura y corrección
+  'b7-cie-oa13', // Ciencias: Comportamiento de gases ideales
+  'b7-his-oa13', // Historia: Mayas y aztecas en Mesoamérica
+  'b7-his-oa16', // Historia: Legado de civilizaciones en Latinoamérica
+
+  // Semana 7: Plano cartesiano, materia y ciudadanía
+  'b7-mat-oa14', // Matemática: Plano cartesiano en 4 cuadrantes
+  'b7-cie-oa14', // Ciencias: Sustancias puras, mezclas y separación
+  'b7-his-oa18', // Historia: Ciudadanía, república y gremio
+  'b7-his-oa19', // Historia: Diversidad cultural en el mundo antiguo y medieval
+  'b7-his-oa20', // Historia: Convivencia y resolución pacífica de conflictos
+
+  // Semana 8: Estadística, probabilidades y medio ambiente
+  'b7-mat-oa16', // Matemática: Tablas de frecuencia y gráficos
+  'b7-mat-oa18', // Matemática: Probabilidades de eventos
+  'b7-his-oa21', // Historia: Relación ser humano y medio ambiente
+  'b7-his-oa22', // Historia: Impacto humano y medidas de mitigación
+];
+
 export const ORDEN_MODULOS_M1: string[] = [
   // Semana 1
   'm1-len-oa3',
@@ -189,11 +246,13 @@ export const ORDEN_MODULOS_M1: string[] = [
 export const ORDEN_MODULOS: string[] = [
   ...ORDEN_MODULOS_B5,
   ...ORDEN_MODULOS_B6,
+  ...ORDEN_MODULOS_B7,
   ...ORDEN_MODULOS_M1,
 ];
 
 export function getOrdenModulos(cursoId: string): string[] {
   if (cursoId === 'b5') return ORDEN_MODULOS_B5;
   if (cursoId === 'b6') return ORDEN_MODULOS_B6;
+  if (cursoId === 'b7') return ORDEN_MODULOS_B7;
   return ORDEN_MODULOS_M1;
 }

@@ -24,14 +24,13 @@ export default function Examenes(): JSX.Element {
       <div className="banner banner-info">
         {esBasica ? (
           <>
-            ℹ️ Para menores de 18 años el MINEDUC publica temarios oficiales por curso (incluido arriba en PDF).
-            Las pruebas de preguntas de ejemplo provienen de la modalidad adultos Nivel Básico 2 (equivalente a 5° y 6° básico):
-            mismo formato de 25 preguntas escritas por materia, permitiéndose calculadora en Matemática y diccionario en Inglés.
+            ℹ️ Para menores de 18 años el MINEDUC publica temarios oficiales por curso (incluido arriba en PDF oficial).
+            Las pruebas se estructuran en 25 preguntas escritas por asignatura con 90 minutos de duración, permitiéndose calculadora en Matemática y diccionario en Inglés.
           </>
         ) : (
           <>
-            ℹ️ Para menores de 18 el MINEDUC publica solo temarios. Estas son las preguntas de ejemplo oficiales
-            de la modalidad adultos (equivalente a 1° y 2° medio / Nivel Medio 1): mismo formato y temas.
+            ℹ️ Para menores de 18 el MINEDUC publica temarios oficiales por curso. Las preguntas de ejemplo oficiales
+            de la modalidad adultos (equivalente a 1° y 2° medio / Nivel Medio 1) ilustran el mismo formato real y temas de examen.
           </>
         )}
       </div>

@@ -22,6 +22,15 @@
 - Asignaturas: Lenguaje y Comunicación (6 OA), Matemática (11 OA), Ciencias Naturales (9 OA), Historia, Geografía y Ciencias Sociales (13 OA), Idioma Extranjero: Inglés (5 OA). Total: 44 OA.
 - Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
 
+## Temario oficial (menores de 18) — 7° básico
+- PDF Temario Séptimo Básico:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_basica_7deg_basico_uce.pdf`
+- Documento local del temario: `docs/12-temario-7basico.md`
+- PDF guardado en el sitio: `public/examenes/b7-temario.pdf`
+- Decretos: Decreto Bases Curriculares N°614/2013 (7° básico a 2° medio).
+- Asignaturas: Lengua y Literatura (6 OA), Matemática (9 OA), Ciencias Naturales (7 OA), Historia, Geografía y Ciencias Sociales (13 OA), Idioma Extranjero: Inglés (4 OA). Total: 39 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
 ## Temario oficial (menores de 18) — 1° medio
 - Ficha oficial: https://www.ayudamineduc.cl/ficha/examenes-libres-menores-de-18-anos-11
 - PDF Temario Primero Medio:

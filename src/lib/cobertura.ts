@@ -58,11 +58,28 @@ export function notaChilena(pct: number): number {
 
 function getNivelContexto(codigo: string): { curso: string; edad: string; esBasica: boolean } {
   const c = codigo.toUpperCase();
+  const esB7 = c.includes('B7') || codigo.toLowerCase().includes('b7');
   const esB6 = c.includes('B6') || codigo.toLowerCase().includes('b6');
   const esB5 = c.includes('B5') || codigo.toLowerCase().includes('b5');
-  const esBasica = esB5 || esB6 || c.startsWith('B') || codigo.startsWith('b');
-  const curso = esB6 ? '6° básico' : esB5 ? '5° básico' : esBasica ? 'educación básica' : '1° medio';
-  const edad = esB6 ? '11 a 12 años' : esB5 ? '10 a 11 años' : esBasica ? '10 a 12 años' : '14 años';
+  const esBasica = esB5 || esB6 || esB7 || c.startsWith('B') || codigo.startsWith('b');
+  const curso = esB7
+    ? '7° básico'
+    : esB6
+    ? '6° básico'
+    : esB5
+    ? '5° básico'
+    : esBasica
+    ? 'educación básica'
+    : '1° medio';
+  const edad = esB7
+    ? '12 a 13 años'
+    : esB6
+    ? '11 a 12 años'
+    : esB5
+    ? '10 a 11 años'
+    : esBasica
+    ? '10 a 13 años'
+    : '14 años';
   return {
     curso,
     edad,

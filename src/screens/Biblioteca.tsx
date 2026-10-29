@@ -68,9 +68,11 @@ export default function Biblioteca(): JSX.Element {
       return (
         l.cursosAplica.includes('B5') ||
         l.cursosAplica.includes('B6') ||
+        l.cursosAplica.includes('B7') ||
         l.cursosAplica.includes('b5') ||
         l.cursosAplica.includes('b6') ||
-        l.edadMinima <= 12
+        l.cursosAplica.includes('b7') ||
+        l.edadMinima <= 13
       );
     }
     return l.cursosAplica.includes('M1') || l.cursosAplica.includes('m1');
