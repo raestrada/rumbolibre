@@ -4,6 +4,15 @@
 > inventar** asignaturas, OA, ejes ni indicadores. Si una fuente oficial cambia, actualizar la
 > semilla y esta lista.
 
+## Temario oficial (menores de 18) — 5° básico
+- PDF Temario Quinto Básico:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/temario_basica_5deg_basico_-UCE.pdf`
+- Documento local del temario: `docs/10-temario-5basico.md`
+- PDF guardado en el sitio: `public/examenes/b5-temario.pdf`
+- Decretos: Decreto Supremo de Educación N°439/2012 (Bases Curriculares 1° a 6° básico).
+- Asignaturas: Lenguaje y Comunicación (6 OA), Matemática (17 OA), Ciencias Naturales (7 OA), Historia, Geografía y Ciencias Sociales (8 OA), Idioma Extranjero: Inglés (5 OA). Total: 43 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
 ## Temario oficial (menores de 18) — 1° medio
 - Ficha oficial: https://www.ayudamineduc.cl/ficha/examenes-libres-menores-de-18-anos-11
 - PDF Temario Primero Medio:
@@ -40,16 +49,36 @@ ni preguntas de ejemplo. Las siguientes son las **preguntas de ejemplo oficiales
 adultos** ("Nivel Medio 1", equivalente a 1° y 2° medio), útiles como **referencia de formato**
 (opción múltiple, etc.) y de estilo. Se listan por asignatura:
 
+### 5° básico (Nivel Básico 2, equivalente oficial de formato)
+- Lenguaje y Comunicación:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NB2-lenguaje-2026_DS10.pdf`
+  (guardado en `public/examenes/b5-lengua.pdf`)
+- Educación Matemática:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/ejemplos-de-preguntas-_NB2-matematica-2025_DS257-uv.pdf`
+  (guardado en `public/examenes/b5-matematica.pdf`)
+- Ciencias Naturales:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NB2-C-Naturales-2026_DS10.pdf`
+  (guardado en `public/examenes/b5-ciencias.pdf`)
+- Historia, Geografía y Ciencias Sociales:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-NB2-D10-VE-2026.pdf`
+  (guardado en `public/examenes/b5-historia.pdf`)
+
+### 1° medio (Nivel Medio 1, equivalente oficial de formato)
 - Lengua y Literatura:
   `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NM1-lenguaje-2026_DS10.pdf`
+  (guardado en `public/examenes/lengua.pdf`)
 - Matemática:
   `https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/ejemplos-de-preguntas-_NM1-matematica-2025_DS257-uv.pdf`
+  (guardado en `public/examenes/matematica.pdf`)
 - Historia, Geografía y Ciencias Sociales:
   `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-nivel-medio-1-D10-VE-2026.pdf`
+  (guardado en `public/examenes/historia.pdf`)
 - Ciencias Naturales:
   `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NM1-C-Naturales-2026_DS10.pdf`
+  (guardado en `public/examenes/ciencias.pdf`)
 - Inglés:
   `https://epja.mineduc.cl/wp-content/uploads/sites/43/2020/09/PREGUNTAS-PARA-LIBERAR-INGLES-VE257_NM1.pdf`
+  (guardado en `public/examenes/ingles.pdf`)
 
 También hay **"Sitios web para apoyar el estudio"** por asignatura (mismo sitio, tabla inferior).
 

@@ -9,8 +9,9 @@ interface HomeProps {
 export default function Home({ onIngresar }: HomeProps): JSX.Element {
   const config = getConfig();
   const nombreEstudiante = config.nombre || '';
-  const asignaturas = getAsignaturas('m1');
-  const modulos = getModulos('m1');
+  const cursoActivoId = config.curso_activo || 'b5';
+  const asignaturas = getAsignaturas(cursoActivoId);
+  const modulos = getModulos(cursoActivoId);
 
   // Estado para acordeón FAQ interactivo
   const [faqAbierta, setFaqAbierta] = useState<number | null>(0);
@@ -29,8 +30,8 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
       a: 'Sí, 100%. Rumbo Libre se distribuye con licencia libre MIT. No hay planes "Pro" con trampa, ni mensualidades ocultas, ni publicidad comercial. Todo el código fuente está disponible públicamente para que cualquier docente, familia o programador pueda auditarlo y colaborar.',
     },
     {
-      q: '¿El temario está alineado con el programa oficial del MINEDUC de 1° Medio?',
-      a: 'Totalmente. Incluye los 40 módulos oficiales de Lengua y Literatura, Matemática, Ciencias Naturales, Historia y Geografía, Inglés y Educación Ciudadana, cubriendo cada Objetivo de Aprendizaje (OA) y sus indicadores de evaluación oficiales sin alucinaciones.',
+      q: '¿El temario está alineado con los programas oficiales del MINEDUC?',
+      a: 'Totalmente. Incluye los temarios oficiales de 5° básico (43 módulos) y 1° medio (40 módulos) para Lenguaje, Matemática, Ciencias Naturales, Historia y Geografía e Inglés, cubriendo cada Objetivo de Aprendizaje (OA) y sus indicadores de evaluación oficiales sin alucinaciones.',
     },
     {
       q: '¿Cómo funciona el tutor con Inteligencia Artificial?',

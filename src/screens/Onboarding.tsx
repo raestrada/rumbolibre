@@ -40,7 +40,7 @@ export default function Onboarding(): JSX.Element {
         </div>
         <h1>¡Bienvenida a Rumbo Libre! 🧭</h1>
         <p className="onboarding-sub">
-          Tu guía para preparar los <strong>exámenes libres de 1° medio</strong> (MINEDUC) con ayuda de tu
+          Tu guía para preparar tus <strong>exámenes libres</strong> (MINEDUC) con ayuda de tu
           agente de IA. Todo se guarda directamente en este computador.
         </p>
         <div className="onboarding-pasos">
@@ -73,7 +73,7 @@ export default function Onboarding(): JSX.Element {
                 </option>
               ))}
             </select>
-            <small>Por ahora está disponible 1° medio.</small>
+            <small>Cursos disponibles: 5° básico y 1° medio (temarios oficiales MINEDUC).</small>
           </label>
           <label className="campo">
             <span>Clave de OpenRouter (opcional)</span>

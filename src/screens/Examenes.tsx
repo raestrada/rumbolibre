@@ -1,31 +1,54 @@
-import { EXAMENES_PDF, EJEMPLOS_PREGUNTA } from '../data/ejemplos';
+import { EXAMENES_PDF, ejemploDeAsignatura } from '../data/ejemplos';
 import { Chip } from '../components/ui';
+import { getCursoActivoId, getCursos } from '../db/queries';
 
 export default function Examenes(): JSX.Element {
+  const cursoId = getCursoActivoId();
+  const cursos = getCursos();
+  const cursoActual = cursos.find((c) => c.id === cursoId) ?? cursos[0];
+
+  const examenesDelCurso = EXAMENES_PDF.filter((ex) => ex.cursoId === cursoId);
+
+  const es5Basico = cursoId === 'b5';
+
   return (
     <div className="pantalla pantalla-ancha">
       <header className="cabecera">
-        <h1>Exámenes reales 📄</h1>
+        <h1>Exámenes reales · {cursoActual?.nombre ?? 'MINEDUC'} 📄</h1>
         <p className="cabecera-sub">
-          Preguntas de ejemplo <strong>oficiales del MINEDUC</strong> (Nivel Medio 1). Sirven para ver el
-          formato real: opción múltiple, verdadero/falso y respuesta corta.
+          Preguntas de ejemplo y temarios <strong>oficiales del MINEDUC</strong> para {cursoActual?.nombre}.
+          Sirven para ver el formato real: opción múltiple, verdadero/falso y respuesta corta.
         </p>
       </header>
 
       <div className="banner banner-info">
-        ℹ️ Para menores de 18 el MINEDUC publica solo temarios. Estas son las preguntas de ejemplo oficiales
-        de la modalidad adultos (equivalente a 1° y 2° medio): mismo formato y temas.
+        {es5Basico ? (
+          <>
+            ℹ️ Para menores de 18 años el MINEDUC publica temarios oficiales por curso (incluido arriba en PDF).
+            Las pruebas de preguntas de ejemplo provienen de la modalidad adultos Nivel Básico 2 (equivalente a 5° y 6° básico):
+            mismo formato de 25 preguntas escritas por materia, permitiéndose calculadora en Matemática y diccionario en Inglés.
+          </>
+        ) : (
+          <>
+            ℹ️ Para menores de 18 el MINEDUC publica solo temarios. Estas son las preguntas de ejemplo oficiales
+            de la modalidad adultos (equivalente a 1° y 2° medio / Nivel Medio 1): mismo formato y temas.
+          </>
+        )}
       </div>
 
       <div className="lista">
-        {EXAMENES_PDF.map((ex) => {
-          const ej = EJEMPLOS_PREGUNTA[ex.asignatura];
+        {examenesDelCurso.map((ex) => {
+          const ej = ejemploDeAsignatura(ex.asignatura, cursoId);
           return (
             <section key={ex.id} className="tarjeta">
               <div className="examen-cabecera">
                 <div className="examen-titulo">
                   <h3>{ex.nombre}</h3>
-                  <span className="fila-sub">Preguntas de ejemplo · formato real</span>
+                  <span className="fila-sub">
+                    {ex.esTemario
+                      ? 'Temario oficial UCE · Decreto N°439/2012'
+                      : 'Preguntas de ejemplo · formato real MINEDUC'}
+                  </span>
                 </div>
                 <div className="examen-acciones">
                   <a className="btn btn-primario" href={ex.archivo} target="_blank" rel="noopener">
@@ -40,7 +63,7 @@ export default function Examenes(): JSX.Element {
               {ej ? (
                 <div className="ejemplo-pregunta">
                   <div className="ejemplo-etiqueta">
-                    <Chip tono="suave">Ejemplo real</Chip>
+                    <Chip tono="suave">Ejemplo real oficial</Chip>
                   </div>
                   {ej.contexto ? <p className="ejemplo-contexto">{ej.contexto}</p> : null}
                   <p className="ejemplo-enunciado">{ej.enunciado}</p>
@@ -60,7 +83,7 @@ export default function Examenes(): JSX.Element {
 
       <p className="cabecera-sub" style={{ marginTop: 16 }}>
         Fuente: portal de Validación de Estudios del MINEDUC (epja.mineduc.cl → Material de apoyo para la
-        examinación → Preguntas de ejemplo, Nivel Medio 1).
+        examinación / Temarios de examinación).
       </p>
     </div>
   );

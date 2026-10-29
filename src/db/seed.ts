@@ -2,23 +2,35 @@ import type { Database } from 'sql.js';
 import { SCHEMA_SQL, SCHEMA_VERSION } from './schema';
 import { cursos, asignaturas } from '../data/cursos';
 import { ACTIVIDADES } from '../data/tipos';
-import { modulosLengua } from '../data/m1/lengua';
-import { modulosMatematica } from '../data/m1/matematica';
-import { modulosCiencias } from '../data/m1/ciencias';
-import { modulosHistoria } from '../data/m1/historia';
-import { modulosIngles } from '../data/m1/ingles';
+import { modulosLengua as modulosLenguaM1 } from '../data/m1/lengua';
+import { modulosMatematica as modulosMatematicaM1 } from '../data/m1/matematica';
+import { modulosCiencias as modulosCienciasM1 } from '../data/m1/ciencias';
+import { modulosHistoria as modulosHistoriaM1 } from '../data/m1/historia';
+import { modulosIngles as modulosInglesM1 } from '../data/m1/ingles';
+import { modulosLengua as modulosLenguaB5 } from '../data/b5/lengua';
+import { modulosMatematica as modulosMatematicaB5 } from '../data/b5/matematica';
+import { modulosCiencias as modulosCienciasB5 } from '../data/b5/ciencias';
+import { modulosHistoria as modulosHistoriaB5 } from '../data/b5/historia';
+import { modulosIngles as modulosInglesB5 } from '../data/b5/ingles';
 import { lecturas } from '../data/lecturas';
 
 // Se incrementa cuando cambia el CONTENIDO semilla (módulos, actividades, lecturas).
 // Al detectar una versión menor, la app re-sincroniza el contenido sin tocar el progreso del usuario.
-export const SEED_VERSION = 6;
+export const SEED_VERSION = 7;
 
 const TODOS_MODULOS = [
-  ...modulosLengua,
-  ...modulosMatematica,
-  ...modulosCiencias,
-  ...modulosHistoria,
-  ...modulosIngles,
+  // 5° Básico
+  ...modulosLenguaB5,
+  ...modulosMatematicaB5,
+  ...modulosCienciasB5,
+  ...modulosHistoriaB5,
+  ...modulosInglesB5,
+  // 1° Medio
+  ...modulosLenguaM1,
+  ...modulosMatematicaM1,
+  ...modulosCienciasM1,
+  ...modulosHistoriaM1,
+  ...modulosInglesM1,
 ];
 
 // Contenido curricular y biblioteca: idempotente (upsert). Se puede re-ejecutar sin duplicar.
@@ -109,6 +121,20 @@ function seedConfig(db: Database): void {
   const insHito = db.prepare(
     'INSERT OR IGNORE INTO hitos (id, curso_id, titulo, fecha, descripcion, completado) VALUES (?,?,?,?,?,0)',
   );
+  insHito.run([
+    'hito-inscripcion-b5',
+    'b5',
+    'Inscripción al examen',
+    '',
+    'La inscripción la realiza la madre, padre o tutor legal en ayudamineduc.cl',
+  ]);
+  insHito.run([
+    'hito-rendicion-b5',
+    'b5',
+    'Rendición de exámenes',
+    '',
+    '5 asignaturas · 25 preguntas · 90 min cada una (calculadora en Matemática, diccionario en Inglés)',
+  ]);
   insHito.run([
     'hito-inscripcion',
     'm1',

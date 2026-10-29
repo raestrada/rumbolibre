@@ -195,7 +195,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Lógica · Geometría',
     temas: ['lógica', 'geometría'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'B5'],
     edadMinima: 12,
     rating: 4.2,
     porQue:
@@ -247,7 +247,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Aventura',
     temas: ['literatura', 'aventura'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'B5'],
     edadMinima: 12,
     rating: 4.3,
     porQue:
@@ -273,7 +273,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Imaginación',
     temas: ['literatura', 'imaginación'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'B5'],
     edadMinima: 12,
     rating: 4.2,
     porQue:
@@ -286,7 +286,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Valores',
     temas: ['literatura', 'valores'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'B5'],
     edadMinima: 12,
     rating: 4.1,
     porQue:
@@ -352,7 +352,7 @@ export const lecturas: Lectura[] = [
     genero: 'Distopía',
     area: 'Sociedad · Ética · Memoria',
     temas: ['sociedad', 'ética', 'memoria'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'B5'],
     edadMinima: 12,
     rating: 4.1,
     porQue:
