@@ -16,7 +16,7 @@ import { lecturas } from '../data/lecturas';
 
 // Se incrementa cuando cambia el CONTENIDO semilla (módulos, actividades, lecturas).
 // Al detectar una versión menor, la app re-sincroniza el contenido sin tocar el progreso del usuario.
-export const SEED_VERSION = 7;
+export const SEED_VERSION = 8;
 
 const TODOS_MODULOS = [
   // 5° Básico

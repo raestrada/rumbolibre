@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { lecturas as CATALOGO } from '../data/lecturas';
 import type { Lectura } from '../data/tipos';
 import { descripcionDe } from '../data/descripciones';
-import { getProgresoLectura, setProgresoLectura } from '../db/queries';
+import { getCursoActivoId, getCursos, getProgresoLectura, setProgresoLectura } from '../db/queries';
 import { Chip, EmptyState, Modal } from '../components/ui';
 
 const ESTADOS: Record<string, { label: string; icono: string }> = {
@@ -44,6 +44,16 @@ function Portada({
 }
 
 export default function Biblioteca(): JSX.Element {
+  const cursoId = getCursoActivoId();
+  const cursos = getCursos();
+  const cursoActivo = cursos.find((c) => c.id === cursoId);
+
+  // Selección automática según el nivel del curso activo (Básica o Media)
+  const esNivelBasicaInicial = cursoId.startsWith('b') || cursoId === 'b5';
+  const [seccionNivel, setSeccionNivel] = useState<'basica' | 'media'>(
+    esNivelBasicaInicial ? 'basica' : 'media',
+  );
+
   const [busqueda, setBusqueda] = useState('');
   const [genero, setGenero] = useState('Todas');
   const [soloPorLeer, setSoloPorLeer] = useState(false);
@@ -51,25 +61,36 @@ export default function Biblioteca(): JSX.Element {
   const [sel, setSel] = useState<Lectura | null>(null);
 
   const progreso = getProgresoLectura();
-  const generos = ['Todas', ...Array.from(new Set(CATALOGO.map((l) => l.genero))).sort()];
+
+  // Filtrado según nivel (Básica o Media)
+  const catalogoNivel = CATALOGO.filter((l) => {
+    if (seccionNivel === 'basica') {
+      return l.cursosAplica.includes('B5') || l.cursosAplica.includes('b5') || l.edadMinima <= 12;
+    }
+    return l.cursosAplica.includes('M1') || l.cursosAplica.includes('m1');
+  });
+
+  const generos = ['Todas', ...Array.from(new Set(catalogoNivel.map((l) => l.genero))).sort()];
 
   const q = busqueda.trim().toLowerCase();
-  const filtradas = CATALOGO.filter((l) => {
-    if (genero !== 'Todas' && l.genero !== genero) return false;
-    const estado = progreso[l.id] || 'sin_leer';
-    if (soloPorLeer && estado === 'leida') return false;
-    if (q) {
-      const texto = [l.titulo, l.autor, l.genero, l.area, l.porQue, ...l.temas].join(' ').toLowerCase();
-      return texto.includes(q);
-    }
-    return true;
-  }).sort((a, b) =>
-    orden === 'rating'
-      ? (b.rating ?? 0) - (a.rating ?? 0) || a.titulo.localeCompare(b.titulo)
-      : a.titulo.localeCompare(b.titulo),
-  );
+  const filtradas = catalogoNivel
+    .filter((l) => {
+      if (genero !== 'Todas' && l.genero !== genero) return false;
+      const estado = progreso[l.id] || 'sin_leer';
+      if (soloPorLeer && estado === 'leida') return false;
+      if (q) {
+        const texto = [l.titulo, l.autor, l.genero, l.area, l.porQue, ...l.temas].join(' ').toLowerCase();
+        return texto.includes(q);
+      }
+      return true;
+    })
+    .sort((a, b) =>
+      orden === 'rating'
+        ? (b.rating ?? 0) - (a.rating ?? 0) || a.titulo.localeCompare(b.titulo)
+        : a.titulo.localeCompare(b.titulo),
+    );
 
-  const totalLeidas = CATALOGO.filter((l) => progreso[l.id] === 'leida').length;
+  const totalLeidas = catalogoNivel.filter((l) => progreso[l.id] === 'leida').length;
 
   function avanzar(id: string): void {
     const actual = progreso[id] || 'sin_leer';
@@ -82,19 +103,50 @@ export default function Biblioteca(): JSX.Element {
   return (
     <div className="pantalla pantalla-ancha">
       <header className="cabecera">
-        <h1>Biblioteca 📚</h1>
+        <h1>{seccionNivel === 'basica' ? 'Biblioteca Básica 🎒' : 'Biblioteca Media 🎓'}</h1>
         <p className="cabecera-sub">
-          Novelas y libros de divulgación que te enseñan mientras disfrutas. {CATALOGO.length} títulos ·{' '}
-          {totalLeidas} leídos.
+          {seccionNivel === 'basica'
+            ? 'Grandes lecturas, fantasía, humor, valores y ciencia adaptadas para educación básica. '
+            : 'Novelas y obras de divulgación científica para educación media. '}
+          {catalogoNivel.length} títulos · {totalLeidas} leídos en esta sección.
+          {cursoActivo && (
+            <span style={{ display: 'block', fontSize: '0.82rem', marginTop: 4, color: 'var(--texto-suave)' }}>
+              (Seleccionada automáticamente según tu curso: <strong>{cursoActivo.nombre}</strong>)
+            </span>
+          )}
         </p>
       </header>
+
+      {/* Switcher entre Biblioteca Básica y Media */}
+      <div className="tabs" style={{ marginBottom: 12 }}>
+        <button
+          className={`tab ${seccionNivel === 'basica' ? 'activo' : ''}`}
+          onClick={() => {
+            setSeccionNivel('basica');
+            setGenero('Todas');
+          }}
+          style={{ fontWeight: seccionNivel === 'basica' ? 700 : 500 }}
+        >
+          🎒 Biblioteca Básica (5° a 8°)
+        </button>
+        <button
+          className={`tab ${seccionNivel === 'media' ? 'activo' : ''}`}
+          onClick={() => {
+            setSeccionNivel('media');
+            setGenero('Todas');
+          }}
+          style={{ fontWeight: seccionNivel === 'media' ? 700 : 500 }}
+        >
+          🎓 Biblioteca Media (1° a 4°)
+        </button>
+      </div>
 
       <div className="biblioteca-toolbar">
         <input
           className="buscador"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          placeholder="Buscar por título, autor, tema…"
+          placeholder={`Buscar en biblioteca ${seccionNivel} por título, autor, tema…`}
           aria-label="Buscar libros"
         />
         <select value={orden} onChange={(e) => setOrden(e.target.value as 'rating' | 'titulo')} aria-label="Ordenar">
@@ -115,7 +167,7 @@ export default function Biblioteca(): JSX.Element {
       </div>
 
       {filtradas.length === 0 ? (
-        <EmptyState icono="📚" titulo="Sin resultados" texto="Prueba con otra búsqueda o filtro." />
+        <EmptyState icono="📚" titulo="Sin resultados" texto="Prueba con otra búsqueda o filtro en esta biblioteca." />
       ) : (
         <div className="lista-libros">
           {filtradas.map((l) => {
@@ -149,7 +201,7 @@ export default function Biblioteca(): JSX.Element {
       )}
 
       <p className="cabecera-sub" style={{ marginTop: 14 }}>
-        Las calificaciones (★) son promedios aproximados de Goodreads y pueden variar con el tiempo.
+        Las calificaciones (★) son promedios de Goodreads.
       </p>
 
       <Modal abierto={sel != null} titulo={sel?.titulo ?? ''} onCerrar={() => setSel(null)} ancho={660}>

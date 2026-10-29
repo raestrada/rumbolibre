@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Logo from '../components/Logo';
-import { getAsignaturas, getConfig, getModulos } from '../db/queries';
+import { getAsignaturas, getConfig, getCursos, getModulos } from '../db/queries';
 
 interface HomeProps {
   onIngresar: () => void;
@@ -9,9 +9,11 @@ interface HomeProps {
 export default function Home({ onIngresar }: HomeProps): JSX.Element {
   const config = getConfig();
   const nombreEstudiante = config.nombre || '';
-  const cursoActivoId = config.curso_activo || 'b5';
-  const asignaturas = getAsignaturas(cursoActivoId);
-  const modulos = getModulos(cursoActivoId);
+  const cursosDisponibles = getCursos();
+  const [cursoSeleccionadoId, setCursoSeleccionadoId] = useState<string>(() => config.curso_activo || 'b5');
+  const cursoActivo = cursosDisponibles.find((c) => c.id === cursoSeleccionadoId) ?? cursosDisponibles[0];
+  const asignaturas = getAsignaturas(cursoSeleccionadoId);
+  const modulos = getModulos(cursoSeleccionadoId);
 
   // Estado para acordeón FAQ interactivo
   const [faqAbierta, setFaqAbierta] = useState<number | null>(0);
@@ -45,14 +47,14 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
 
   return (
     <div className="home-pagina">
-      {/* Barra de navegación pública */}
-      <header className="home-nav-contenedor">
+      {/* Barra de Navegación Pública */}
+      <header className="home-header">
         <nav className="home-nav" aria-label="Navegación principal">
           <div className="home-nav-marca">
             <Logo size={40} />
             <div>
               <span className="home-marca-titulo">Rumbo Libre</span>
-              <span className="home-marca-sub">1° Medio MINEDUC</span>
+              <span className="home-marca-sub">Exámenes Libres MINEDUC</span>
             </div>
           </div>
 
@@ -87,7 +89,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
             </h1>
 
             <p className="home-hero-bajada">
-              La plataforma web libre y gratuita diseñada para rendir la <strong>Validación de Estudios de 1° Medio</strong> en Chile. Estudia los 40 módulos oficiales con un tutor IA paciente, evalúate con preguntas reales y mantén todos tus datos seguros en tu propio computador.
+              La plataforma web libre y gratuita diseñada para rendir la <strong>Validación de Estudios (Exámenes Libres)</strong> del MINEDUC en Chile (disponible para <strong>5° básico</strong> y <strong>1° medio</strong>). Estudia los módulos oficiales con un tutor IA paciente, evalúate con preguntas reales y mantén todos tus datos seguros en tu propio computador.
             </p>
 
             <div className="home-hero-acciones">
@@ -109,156 +111,135 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
                 <span><strong>Código Abierto</strong> (Licencia MIT)</span>
               </div>
               <div className="chip-confianza">
-                <span className="chip-confianza-icono">💰</span>
-                <span><strong>$0</strong> Siempre Gratuito</span>
-              </div>
-              <div className="chip-confianza">
                 <span className="chip-confianza-icono">📚</span>
-                <span><strong>40 Módulos</strong> Oficiales</span>
+                <span><strong>Básica & Media</strong> (Temarios UCE)</span>
               </div>
             </div>
           </div>
 
-          {/* Visual Mockup Interactivo del Espacio de Estudio */}
-          <div className="home-hero-visual">
+          <div className="home-hero-visual" aria-hidden="true">
             <div className="home-mockup-tarjeta">
               <div className="home-mockup-cabecera">
-                <div className="home-mockup-puntos">
-                  <span className="punto-rojo"></span>
-                  <span className="punto-amarillo"></span>
-                  <span className="punto-verde"></span>
+                <div className="home-mockup-circulos">
+                  <span className="circulo circulo-rojo" />
+                  <span className="circulo circulo-amarillo" />
+                  <span className="circulo circulo-verde" />
                 </div>
                 <div className="home-mockup-chip-asig">
-                  <span>📖 Lengua y Literatura · M1-LEN-OA3</span>
+                  <span>📖 Lenguaje y Comunicación · Módulos oficiales</span>
                 </div>
               </div>
-
-              <div className="home-mockup-chat">
-                <div className="mockup-burbuja profe">
-                  <div className="mockup-burbuja-autor">🤖 Profe IA Rumbo Libre</div>
-                  <p>
-                    ¡Hola! En este punto analizaremos <strong>cómo los conflictos narrativos</strong> hacen avanzar la historia. Imagina que dos personajes en Valparaíso quieren el mismo libro antiguo...
-                  </p>
-                  <div className="mockup-badge-mineduc">
-                    ✓ Criterio MINEDUC verificado: conflicto humano y motivación interna
+              <div className="home-mockup-cuerpo">
+                <div className="home-mockup-burbuja profe">
+                  <div className="burbuja-avatar">🤖</div>
+                  <div className="burbuja-texto">
+                    <strong>Tutor IA Rumbo Libre:</strong>
+                    <p>
+                      ¡Hola! Hoy revisaremos cómo extraer información explícita e implícita de textos. ¿Listo para resolver un caso con preguntas oficiales del MINEDUC?
+                    </p>
                   </div>
                 </div>
-
-                <div className="mockup-burbuja estudiante">
-                  <div className="mockup-burbuja-autor">👧 Estudiante (14 años)</div>
-                  <p>¿Y la motivación siempre tiene que ser egoísta o puede nacer de un deber ético?</p>
-                </div>
-
-                <div className="mockup-eval-preview">
-                  <div className="mockup-eval-titulo">🎯 Pregunta tipo examen MINEDUC</div>
-                  <p className="mockup-eval-enunciado">
-                    ¿Cuál de las siguientes alternativas describe el conflicto principal del fragmento anterior?
-                  </p>
-                  <div className="mockup-eval-opcion correcta">
-                    <span>A)</span> Una pugna ética entre la lealtad familiar y la vocación personal.
+                <div className="home-mockup-burbuja estudiante">
+                  <div className="burbuja-avatar">🎒</div>
+                  <div className="burbuja-texto">
+                    ¡Listo! Explícame la diferencia con un ejemplo cotidiano, por favor.
                   </div>
-                  <div className="mockup-eval-resultado">🎉 ¡Correcto! Explicación con retroalimentación inmediata.</div>
                 </div>
+                <div className="home-mockup-burbuja profe">
+                  <div className="burbuja-avatar">🤖</div>
+                  <div className="burbuja-texto">
+                    Imagina que ves a alguien entrar a tu casa empapado y con un paraguas goteando. Lo <em>explícito</em> es que está mojado. Lo <em>implícito</em> es que afuera llueve...
+                  </div>
+                </div>
+              </div>
+              <div className="home-mockup-footer">
+                <span className="badge-calidad">✓ Alineado al Decreto Supremo de Educación</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Sección: Comparativa (El Problema vs Rumbo Libre) */}
+        {/* Sección: Propuesta de Valor y Ventajas */}
         <section id="ventajas" className="home-seccion">
           <div className="home-seccion-cabecera">
             <span className="home-seccion-kicker">¿POR QUÉ RUMBO LIBRE?</span>
-            <h2 className="home-seccion-titulo">El camino tradicional está roto. Creamos una mejor alternativa.</h2>
+            <h2 className="home-seccion-titulo">Diseñado pensando en familias homeschoolers y autodidactas</h2>
             <p className="home-seccion-sub">
-              Preparar exámenes libres no debería costar cientos de miles de pesos ni significar estudiar aislado con guías aburridas en PDF.
+              Aprender por tu cuenta no significa estudiar a ciegas. Rumbo Libre te da estructura y rigor pedagógico sin quitarte la libertad.
             </p>
           </div>
 
-          <div className="home-comparativa-grid">
-            <div className="tarjeta-comparativa tradicional">
-              <div className="comparativa-etiqueta">❌ Preuniversitarios y colegios online</div>
-              <ul className="comparativa-lista">
-                <li>Mensualidades de $100.000 a $300.000 CLP.</li>
-                <li>Horarios rígidos y clases masivas con 40 alumnos por llamada.</li>
-                <li>Poca personalización: si te atrasas, te quedas fuera.</li>
-                <li>Tus datos son almacenados en plataformas comerciales.</li>
-              </ul>
-            </div>
-
-            <div className="tarjeta-comparativa pdfs">
-              <div className="comparativa-etiqueta">⚠️ Estudiar solo con PDFs o guías sueltas</div>
-              <ul className="comparativa-lista">
-                <li>Textos largos sin interactividad ni ejemplos cercanos.</li>
-                <li>Nadie responde tus dudas cuando no entiendes un teorema o un poema.</li>
-                <li>No sabes si tu respuesta es correcta hasta que ya es muy tarde.</li>
-                <li>Fácil perder la motivación y el ritmo de estudio.</li>
-              </ul>
-            </div>
-
-            <div className="tarjeta-comparativa rumbolibre destacada">
-              <div className="comparativa-etiqueta-destacada">✨ La Solución: Rumbo Libre</div>
-              <ul className="comparativa-lista">
-                <li><strong>$0 Siempre</strong>: 100% código abierto y de libre acceso.</li>
-                <li><strong>Tutor IA Personalizado 1-a-1</strong>: Pregunta las veces que quieras con paciencia infinita.</li>
-                <li><strong>Temario MINEDUC estricto</strong>: Sin inventar materia; cubre los 40 módulos oficiales.</li>
-                <li><strong>Privacidad Radical</strong>: Toda tu base de datos vive dentro de tu propio navegador.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Sección: Privacidad y Open Source (El valor diferencial) */}
-        <section id="privacidad" className="home-seccion home-seccion-os">
-          <div className="home-seccion-cabecera">
-            <span className="home-seccion-kicker">PRIVACIDAD RADICAL & OPEN SOURCE</span>
-            <h2 className="home-seccion-titulo">Tus datos nunca salen de tu computador. Garantizado.</h2>
-            <p className="home-seccion-sub">
-              Construido con tecnología moderna que respeta los derechos de estudiantes y familias.
-            </p>
-          </div>
-
-          <div className="home-features-grid">
-            <div className="feature-card">
-              <div className="feature-icono">💾</div>
-              <h3 className="feature-titulo">Base de datos SQLite local (WASM)</h3>
-              <p className="feature-desc">
-                Tu historial de notas, módulos aprobados, tiempos de lectura y bitácora se guardan en IndexedDB mediante SQLite compilado a WebAssembly. No hay un backend espiándote.
+          <div className="home-grid-tarjetas">
+            <div className="home-tarjeta-caracteristica">
+              <div className="tarjeta-icono">🧭</div>
+              <h3>Ruta Clara y Sin Relleno</h3>
+              <p>
+                No pierdas tiempo con contenidos que no entran en la prueba. Cada tema corresponde estrictamente a los Objetivos de Aprendizaje (OA) priorizados por el ministerio.
               </p>
             </div>
 
-            <div className="feature-card">
-              <div className="feature-icono">🔓</div>
-              <h3 className="feature-titulo">100% Código Abierto (Licencia MIT)</h3>
-              <p className="feature-desc">
-                Cualquier persona puede revisar el código fuente en GitHub, verificar que no contiene rastreadores, auditar la seguridad o adaptarlo para su propia comunidad escolar.
+            <div className="home-tarjeta-caracteristica">
+              <div className="tarjeta-icono">🤖</div>
+              <h3>Tutor IA Personalizado</h3>
+              <p>
+                Aprende dialogando. Tu asistente pedagógico te explica las veces que haga falta, se adapta a tu ritmo y no avanza hasta que realmente hayas comprendido.
               </p>
             </div>
 
-            <div className="feature-card">
-              <div className="feature-icono">🔑</div>
-              <h3 className="feature-titulo">Tú eres dueño de tu IA (OpenRouter)</h3>
-              <p className="feature-desc">
-                Tú decides qué modelo de IA usar (DeepSeek, Claude, GPT, etc.) usando tu propia clave API que se guarda cifrada en tu navegador. Cero intermediarios cobrándote comisiones.
+            <div className="home-tarjeta-caracteristica">
+              <div className="tarjeta-icono">📝</div>
+              <h3>Ensayos y Preguntas Reales</h3>
+              <p>
+                Preguntas calibradas según el formato oficial: opción múltiple, desarrollo breve y análisis crítico para que llegues al día del examen con total seguridad.
               </p>
             </div>
 
-            <div className="feature-card">
-              <div className="feature-icono">📦</div>
-              <h3 className="feature-titulo">Exportación e importación total</h3>
-              <p className="feature-desc">
-                Con un clic descargas tu archivo `.sqlite` completo para respaldarlo, imprimir tus reportes familiares o llevarte tu avance a otro computador sin depender de nadie.
+            <div className="home-tarjeta-caracteristica">
+              <div className="tarjeta-icono">🔒</div>
+              <h3>Tus Datos son 100% Tuyos</h3>
+              <p>
+                Sin servidores centrales ni almacenamiento en la nube de terceros. Tu progreso, notas y reflexiones viven en tu navegador mediante SQLite y persistencia IndexedDB.
+              </p>
+            </div>
+
+            <div className="home-tarjeta-caracteristica">
+              <div className="tarjeta-icono">📊</div>
+              <h3>Seguimiento para Familias</h3>
+              <p>
+                Panel protegido por PIN donde padres o tutores pueden revisar calificaciones históricas, bitácora de estudio, alertas de refuerzo y exportar informes.
+              </p>
+            </div>
+
+            <div className="home-tarjeta-caracteristica">
+              <div className="tarjeta-icono">📚</div>
+              <h3>Bibliotecas Curadas</h3>
+              <p>
+                Catálogo especializado con libros de literatura y divulgación científica clasificados para educación básica y media, con sinopsis y calificaciones de Goodreads.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Sección: Las 6 Asignaturas Oficiales de 1° Medio */}
+        {/* Sección: Temario Oficial Interactivo (Básica y Media) */}
         <section id="temario" className="home-seccion">
           <div className="home-seccion-cabecera">
-            <span className="home-seccion-kicker">CURRÍCULUM MINEDUC 1° MEDIO</span>
-            <h2 className="home-seccion-titulo">Las 6 asignaturas oficiales, módulo por módulo</h2>
-            <p className="home-seccion-sub">
-              {modulos.length} módulos estructurados según los Objetivos de Aprendizaje (OA) del Ministerio de Educación de Chile.
+            <span className="home-seccion-kicker">CURRÍCULUM MINEDUC OFICIAL</span>
+            <h2 className="home-seccion-titulo">Todas las asignaturas oficiales, módulo por módulo</h2>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+              {cursosDisponibles.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`btn ${c.id === cursoSeleccionadoId ? 'btn-primario' : 'btn-suave'}`}
+                  onClick={() => setCursoSeleccionadoId(c.id)}
+                  style={{ fontSize: '0.95rem', padding: '8px 18px' }}
+                >
+                  {c.nombre} {c.id === 'b5' ? '(43 OA)' : '(40 OA)'}
+                </button>
+              ))}
+            </div>
+            <p className="home-seccion-sub" style={{ marginTop: 10 }}>
+              {modulos.length} módulos estructurados según el temario oficial del MINEDUC para {cursoActivo?.nombre} ({cursoActivo?.decreto}).
             </p>
           </div>
 
@@ -303,7 +284,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
               <div className="home-paso-numero">2</div>
               <h3 className="home-paso-titulo">Profundiza sin límites</h3>
               <p className="home-paso-desc">
-                El sistema valida determinísticamente según las directrices oficiales del MINEDUC que el concepto fue completamente cubierto antes de evaluarte.
+                El sistema valida según las directrices oficiales del MINEDUC que el concepto fue completamente cubierto antes de evaluarte.
               </p>
             </div>
 
@@ -351,7 +332,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
         {/* CTA Banner Final */}
         <section className="home-cta-banner">
           <div className="home-cta-cuerpo">
-            <h2>Empieza hoy tu camino para aprobar 1° Medio</h2>
+            <h2>Empieza hoy tu camino para aprobar tus exámenes libres</h2>
             <p>
               Sin cuentas obligatorias, sin publicidad y con la libertad que tu educación merece.
             </p>
@@ -371,7 +352,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
               <strong style={{ fontSize: '1.1rem' }}>Rumbo Libre</strong>
             </div>
             <p style={{ color: 'var(--texto-suave)', fontSize: '0.86rem', maxWidth: 320, lineHeight: 1.5 }}>
-              Plataforma de código abierto para preparar los Exámenes Libres (Validación de Estudios) del MINEDUC en Chile.
+              Plataforma comunitaria de código abierto para preparar los Exámenes Libres (Validación de Estudios) del MINEDUC en Chile.
             </p>
           </div>
 

@@ -93,6 +93,36 @@ export const DESCRIPCIONES: Record<string, string> = {
     'Goleman argumenta que las habilidades emocionales —autoconocimiento, empatía, autocontrol— son tan importantes como el coeficiente intelectual. Explica cómo se desarrollan y por qué afectan el éxito y las relaciones. Es una obra formativa y práctica.',
   'lec-mindset':
     'Dweck distingue entre la mentalidad fija (creer que la inteligencia es fija) y la de crecimiento (creer que se puede desarrollar). Muestra cómo esa creencia afecta el aprendizaje y la perseverancia. Es psicología aplicada al estudio.',
+  'lec-guardianes-norte':
+    'Antes de ser el legendario guardián de la Navidad, Nicolás San Norte era un espadachín temerario y buscador de tesoros. Cuando el Rey de las Pesadillas, Sombra, amenaza con sumergir al mundo en el terror, Norte se une a magos y seres míticos en la aldea de Santoff Claussen, descubriendo el poder de la ilusión y su deber de proteger la infancia.',
+  'lec-el-ickabog':
+    'En el próspero reino de Cornucopia, todo parece perfecto salvo la antigua leyenda de un monstruo misterioso que habita las Marismas del norte: el Ickabog. Cuando gobernantes corruptos usan el mito para infundir temor y someter al pueblo, dos niños valientes emprenden una peligrosa travesía para averiguar la verdad.',
+  'lec-entrenar-dragon':
+    'En la tempestuosa isla de Mema, cada joven vikingo debe someter y entrenar a un dragón salvaje para ser admitido en la tribu. Hipo, un muchacho delgado y pensativo que desentona con los guerreros brutales, consigue un dragón pequeño y sin dientes, teniendo que inventar métodos de domesticación basados en la comprensión y el diálogo.',
+  'lec-cuaderno-monstruos':
+    'Billy tiene un secreto muy peculiar: colecciona pequeños monstruos reales y traviesos en su cuaderno y en sus bolsillos. Aunque sus travesuras le causan líos cotidianos en el colegio, cuando enfrenta miedos verdaderos descubre que cada monstruo representa una emoción y que juntos pueden superar cualquier desafío.',
+  'lec-cito-kesito':
+    'Cito Kesito es un ratón bondadoso pero tímido que sufre el acoso de los bravucones en Villa Ratón. Cuando el malvado científico doctor Estiércol crea un gigantesco robot mecánico para arrasar la ciudad, el robot se rehúsa a obedecer y encuentra en Cito a su mejor amigo, formando una dupla heroica que defiende el planeta.',
+  'lec-alcatraz-bibliotecarios':
+    'En su decimotercer cumpleaños, el huérfano Alcatraz Smedry recibe una humilde bolsa de arena como herencia de sus padres. Rápidamente descubre que pertenece a una dinastía con dones insólitos y que una secta de bibliotecarios malvados gobierna en secreto el mundo, ocultando tecnologías avanzadas y verdades científicas tras libros de texto aburridos.',
+  'lec-escuadron-skyward':
+    'Bajo la corteza del desértico planeta Detritus, los últimos supervivientes de la humanidad combaten oleadas constantes de cazas alienígenas Krell. Spensa, una joven que sueña con pilotar naves estelares a pesar del estigma de su familia, encuentra en una cueva un caza derribado con una inteligencia artificial sarcástica llamada M-Bot, a la que repara en secreto para cambiar el destino de la guerra.',
+  'lec-percy-jackson-1':
+    'Percy Jackson es un chico con dislexia y déficit atencional que descubre que sus dificultades son en realidad reflejo de su naturaleza divina: es un semidiós, hijo de Poseidón. Cuando el rayo maestro de Zeus es sustraído del Olimpo y Percy es acusado de la traición, deberá recorrer el país junto a un sátiro y una hija de Atenea para desenmascarar al verdadero culpable.',
+  'lec-harry-potter-1':
+    'Harry Potter vive maltratado en el hueco bajo la escalera de sus tíos Dursley hasta que en su undécimo cumpleaños recibe la carta de admisión al Colegio Hogwarts de Magia y Hechicería. En un mundo deslumbrante de pociones, hechizos y criaturas fantásticas, Harry y sus inseparables amigos Ron y Hermione descubrirán un oscuro secreto relacionado con la inmortalidad y su propio pasado.',
+  'lec-matilda':
+    'Matilda Wormwood es una niña excepcionalmente precoz y amante de los libros que crece en una familia que sólo valora las estafas y la televisión basura. Al llegar a la escuela, encuentra en la dulce señorita Miel una mentora comprensiva y decide utilizar su prodigiosa inteligencia —y un incipiente talento telequinético— para enfrentarse a la tiránica directora Tronchatoro.',
+  'lec-charlie-chocolate':
+    'El modesto y bondadoso Charlie Bucket vive en la extrema pobreza a las afueras de la misteriosa fábrica de chocolate del excéntrico Willy Wonka. Cuando encuentra el codiciado último billete dorado, visita las increíbles salas de dulces junto a otros cuatro niños egoístas y caprichosos, donde cada cual recibirá una inolvidable lección de vida.',
+  'lec-wonder':
+    'August Pullman nació con el síndrome de Treacher Collins y complejas cirugías craneofaciales, por lo que fue educado en casa hasta quinto básico. Su ingreso al colegio Beecher Prep pondrá a prueba la empatía de sus compañeros, profesores y familiares, demostrando que la verdadera valentía radica en mostrarse tal cual uno es y en elegir siempre la amabilidad.',
+  'lec-narnia-leon-bruja':
+    'Durante los bombardeos de Londres en la Segunda Guerra Mundial, cuatro hermanos son acogidos en una mansión de campo. Al esconderse en un viejo armario de roble, tropiezan con el reino mágico de Narnia, condenado por la malvada Bruja Blanca a cien años de invierno sin Navidad. Guiados por el imponente león Aslan, lucharán por restaurar la primavera y la justicia.',
+  'lec-hugo-cabret':
+    'Hugo Cabret vive oculto entre los gigantescos engranajes y péndulos de una concurrida estación de tren en el París de los años 30. Obsesionado con reparar un misterioso hombre mecánico dejado por su padre fallecido, su encuentro con una niña curiosa y un anciano juguetero amargado lo conectará con la mágica historia de los inicios del cine fantástico.',
+  'lec-jardin-secreto':
+    'Tras quedar huérfana en la India colonial, la arisca y enfermiza Mary Lennox llega a la solitaria mansión de su tío en Yorkshire. Atraída por el trino de un petirrojo, descubre una puerta oculta bajo la hiedra que conduce a un jardín clausurado hace diez años. Cuidar de las plantas y devolver la vida al jardín transformará radicalmente su salud, su carácter y la vida de su convaleciente primo Colin.',
 };
 
 export function descripcionDe(id: string): string {
