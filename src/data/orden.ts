@@ -192,6 +192,64 @@ export const ORDEN_MODULOS_B7: string[] = [
   'b7-his-oa22', // Historia: Impacto humano y medidas de mitigación
 ];
 
+export const ORDEN_MODULOS_B8: string[] = [
+  // Semana 1: Fundamentos y época moderna
+  'b8-len-oa3', // Lengua: Narraciones, personajes tipo y tópicos
+  'b8-mat-oa1', // Matemática: Multiplicación y división de enteros
+  'b8-cie-oa2', // Ciencias: Estructura y función celular eucarionte/procarionte
+  'b8-his-oa2', // Historia: Transición medieval a moderna, Reforma e imprenta
+  'b8-ing-oa9', // Inglés: Comprensión general y explícita
+
+  // Semana 2: Racionales, poemas y Estado moderno
+  'b8-mat-oa2', // Matemática: Operaciones con racionales en problemas
+  'b8-len-oa4', // Lengua: Poemas, lenguaje figurado y repeticiones
+  'b8-cie-oa4', // Ciencias: Plantas: ósmosis y estomas
+  'b8-his-oa3', // Historia: El Estado moderno y monarquías nacionales
+  'b8-ing-oa10', // Inglés: Textos no literarios, conectores y sufijos
+
+  // Semana 3: Potencias, dilemas humanos y mercantilismo
+  'b8-mat-oa3', // Matemática: Potencias de base y exponente natural
+  'b8-len-oa8', // Lengua: Interpretación de textos literarios y dilemas
+  'b8-cie-oa5', // Ciencias: Interacción sistemas vitales: digestivo, circulatorio, etc.
+  'b8-his-oa4', // Historia: Economía mercantilista del siglo XVI
+  'b8-ing-oa13', // Inglés: Escritura multimodal de historias e información
+
+  // Semana 4: Raíces cuadradas, argumentación y Conquista
+  'b8-mat-oa4', // Matemática: Raíces cuadradas de números naturales
+  'b8-len-oa9', // Lengua: Textos argumentativos y modos verbales
+  'b8-cie-oa7', // Ciencias: Factores para un cuerpo saludable y prevención
+  'b8-his-oa7', // Historia: Impacto de la conquista y debates de Valladolid
+  'b8-ing-oa16', // Inglés: Comparativos, futuro will/going to y condicional
+
+  // Semana 5: Ecuaciones, circuitos y sociedad colonial
+  'b8-mat-oa8', // Matemática: Ecuaciones e inecuaciones lineales
+  'b8-len-oa10', // Lengua: Medios de comunicación y estereotipos
+  'b8-cie-oa10', // Ciencias: Circuitos eléctricos: serie y paralelo, Ley de Ohm
+  'b8-his-oa11', // Historia: Sociedad colonial: castas, encomienda y mestizaje
+  'b8-his-oa12', // Historia: Sociedad de frontera y resistencia mapuche
+
+  // Semana 6: Función afín, calor e Ilustración
+  'b8-mat-oa10', // Matemática: Función afín, traslaciones y pendiente
+  'b8-len-oa16', // Lengua: Proceso de escritura y mecanismos de cohesión
+  'b8-cie-oa11', // Ciencias: Calor, energía térmica y escalas Celsius/Kelvin
+  'b8-his-oa14', // Historia: La Ilustración y crítica al absolutismo
+  'b8-his-oa16', // Historia: Independencia de Hispanoamérica y Chile
+
+  // Semana 7: Pitágoras, modelos atómicos y derechos humanos
+  'b8-mat-oa12', // Matemática: Teorema de Pitágoras
+  'b8-cie-oa12', // Ciencias: Evolución de modelos atómicos: Dalton a Bohr
+  'b8-his-oa18', // Historia: Derechos del Hombre (1789) y Derechos Humanos
+  'b8-his-oa20', // Historia: Criterios de delimitación regional
+  'b8-his-oa21', // Historia: Problemáticas regionales: aislamiento y conectividad
+
+  // Semana 8: Isometrías, tabla periódica, posición y desarrollo regional
+  'b8-mat-oa13', // Matemática: Transformaciones isométricas: vectores y rotación
+  'b8-cie-oa14', // Ciencias: Tabla periódica y enlaces químicos
+  'b8-mat-oa15', // Matemática: Percentiles, cuartiles y diagrama de cajón
+  'b8-mat-oa16', // Matemática: Evaluación crítica de gráficos estadísticos
+  'b8-his-oa22', // Historia: Desarrollo regional sustentable e IDH
+];
+
 export const ORDEN_MODULOS_M1: string[] = [
   // Semana 1
   'm1-len-oa3',
@@ -247,6 +305,7 @@ export const ORDEN_MODULOS: string[] = [
   ...ORDEN_MODULOS_B5,
   ...ORDEN_MODULOS_B6,
   ...ORDEN_MODULOS_B7,
+  ...ORDEN_MODULOS_B8,
   ...ORDEN_MODULOS_M1,
 ];
 
@@ -254,5 +313,6 @@ export function getOrdenModulos(cursoId: string): string[] {
   if (cursoId === 'b5') return ORDEN_MODULOS_B5;
   if (cursoId === 'b6') return ORDEN_MODULOS_B6;
   if (cursoId === 'b7') return ORDEN_MODULOS_B7;
+  if (cursoId === 'b8') return ORDEN_MODULOS_B8;
   return ORDEN_MODULOS_M1;
 }

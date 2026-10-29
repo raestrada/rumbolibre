@@ -33,7 +33,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
     },
     {
       q: '¿El temario está alineado con los programas oficiales del MINEDUC?',
-      a: 'Totalmente. Incluye los temarios oficiales de 5° básico (43 módulos), 6° básico (44 módulos), 7° básico (39 módulos) y 1° medio (40 módulos) para Lenguaje, Matemática, Ciencias Naturales, Historia y Geografía e Inglés, cubriendo cada Objetivo de Aprendizaje (OA) y sus indicadores de evaluación oficiales sin alucinaciones.',
+      a: 'Totalmente. Incluye los temarios oficiales de 5° básico (43 módulos), 6° básico (44 módulos), 7° básico (39 módulos), 8° básico (40 módulos) y 1° medio (40 módulos) para Lenguaje, Matemática, Ciencias Naturales, Historia y Geografía e Inglés, cubriendo cada Objetivo de Aprendizaje (OA) y sus indicadores de evaluación oficiales sin alucinaciones.',
     },
     {
       q: '¿Cómo funciona el tutor con Inteligencia Artificial?',
@@ -89,7 +89,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
             </h1>
 
             <p className="home-hero-bajada">
-              La plataforma web libre y gratuita diseñada para rendir la <strong>Validación de Estudios (Exámenes Libres)</strong> del MINEDUC en Chile (disponible para <strong>5° básico</strong> y <strong>1° medio</strong>). Estudia los módulos oficiales con un tutor IA paciente, evalúate con preguntas reales y mantén todos tus datos seguros en tu propio computador.
+              La plataforma web libre y gratuita diseñada para rendir la <strong>Validación de Estudios (Exámenes Libres)</strong> del MINEDUC en Chile (disponible para <strong>5°, 6°, 7°, 8° básico</strong> y <strong>1° medio</strong>). Estudia los módulos oficiales con un tutor IA paciente, evalúate con preguntas reales y mantén todos tus datos seguros en tu propio computador.
             </p>
 
             <div className="home-hero-acciones">
@@ -234,7 +234,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
                   onClick={() => setCursoSeleccionadoId(c.id)}
                   style={{ fontSize: '0.95rem', padding: '8px 18px' }}
                 >
-                  {c.nombre} {c.id === 'b5' ? '(43 OA)' : c.id === 'b6' ? '(44 OA)' : c.id === 'b7' ? '(39 OA)' : '(40 OA)'}
+                  {c.nombre} {c.id === 'b5' ? '(43 OA)' : c.id === 'b6' ? '(44 OA)' : c.id === 'b7' ? '(39 OA)' : c.id === 'b8' ? '(40 OA)' : '(40 OA)'}
                 </button>
               ))}
             </div>

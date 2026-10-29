@@ -130,6 +130,18 @@ export const EXAMENES_PDF: ExamenPdf[] = [
     esTemario: true,
   },
 
+  // --- 8° Básico ---
+  {
+    id: 'b8-temario',
+    cursoId: 'b8',
+    asignatura: 'ALL',
+    nombre: 'Temario Oficial 8° Básico (MINEDUC)',
+    archivo: 'examenes/b8-temario.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_basica_8deg_basico_uce.pdf',
+    esTemario: true,
+  },
+
   // --- 1° Medio ---
   {
     id: 'lengua',
@@ -305,6 +317,56 @@ export const EJEMPLOS_PREGUNTA: Record<string, Record<string, EjemploPregunta>> 
         'Sleeping in the bedroom.',
         'Answering the telephone call.',
         'Watching television with friends.',
+      ],
+    },
+  },
+  b8: {
+    LEN: {
+      contexto:
+        'En una columna de opinión sobre redes sociales, el autor escribe: "Si bien conectan a personas distantes, a menudo aíslan a quienes comparten la misma mesa".',
+      enunciado: '¿Cuál es la tesis o punto central del autor en este fragmento?',
+      alternativas: [
+        'Las redes sociales tienen un impacto ambivalente en las relaciones interpersonales.',
+        'Las tecnologías móviles deberían prohibirse durante las comidas familiares.',
+        'Las personas distantes se comunican mejor que los miembros de un hogar.',
+        'Las redes sociales no aportan ningún beneficio a la sociedad contemporánea.',
+      ],
+    },
+    MAT: {
+      contexto: 'Un submarino desciende a una razón constante de -15 metros por minuto.',
+      enunciado:
+        'Si el submarino desciende durante 4 minutos seguidos a partir de la superficie (0 m), ¿a qué profundidad se encuentra?',
+      alternativas: ['-60 m', '-19 m', '60 m', '-11 m'],
+    },
+    CIE: {
+      enunciado:
+        '¿Qué organelo celular es el responsable de la respiración celular y producción de energía (ATP) en las células eucariontes?',
+      alternativas: [
+        'Mitocondria',
+        'Cloroplasto',
+        'Ribosoma',
+        'Aparato de Golgi',
+      ],
+    },
+    HIS: {
+      contexto:
+        'Durante los siglos XV y XVI, la invención de la imprenta de tipos móviles por Johannes Gutenberg transformó a Europa.',
+      enunciado: '¿Cuál fue una de las principales consecuencias directas de la difusión de la imprenta?',
+      alternativas: [
+        'La rápida difusión de las ideas humanistas, científicas y de la Reforma protestante.',
+        'El monopolio exclusivo del conocimiento por parte de los monasterios católicos.',
+        'La desaparición inmediata de las lenguas romances y vernáculas en favor del latín.',
+        'El cese definitivo de los conflictos religiosos en el Sacro Imperio.',
+      ],
+    },
+    ING: {
+      contexto: 'If the weather is sunny this Saturday, our family will go camping in the national park.',
+      enunciado: 'According to the sentence, what will happen if it is sunny this Saturday?',
+      alternativas: [
+        'The family will go camping.',
+        'The family will stay at home.',
+        'The national park will close.',
+        'They went camping last Saturday.',
       ],
     },
   },

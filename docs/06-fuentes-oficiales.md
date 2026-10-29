@@ -31,6 +31,15 @@
 - Asignaturas: Lengua y Literatura (6 OA), Matemática (9 OA), Ciencias Naturales (7 OA), Historia, Geografía y Ciencias Sociales (13 OA), Idioma Extranjero: Inglés (4 OA). Total: 39 OA.
 - Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
 
+## Temario oficial (menores de 18) — 8° básico
+- PDF Temario Octavo Básico:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_basica_8deg_basico_uce.pdf`
+- Documento local del temario: `docs/13-temario-8basico.md`
+- PDF guardado en el sitio: `public/examenes/b8-temario.pdf`
+- Decretos: Decreto Bases Curriculares N°614/2013 (7° básico a 2° medio).
+- Asignaturas: Lengua y Literatura (6 OA), Matemática (10 OA), Ciencias Naturales (8 OA), Historia, Geografía y Ciencias Sociales (12 OA), Idioma Extranjero: Inglés (4 OA). Total: 40 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
 ## Temario oficial (menores de 18) — 1° medio
 - Ficha oficial: https://www.ayudamineduc.cl/ficha/examenes-libres-menores-de-18-anos-11
 - PDF Temario Primero Medio:
