@@ -13,6 +13,15 @@
 - Asignaturas: Lenguaje y Comunicación (6 OA), Matemática (17 OA), Ciencias Naturales (7 OA), Historia, Geografía y Ciencias Sociales (8 OA), Idioma Extranjero: Inglés (5 OA). Total: 43 OA.
 - Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
 
+## Temario oficial (menores de 18) — 6° básico
+- PDF Temario Sexto Básico:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/temario_basica_6deg_basico_UCE.pdf`
+- Documento local del temario: `docs/11-temario-6basico.md`
+- PDF guardado en el sitio: `public/examenes/b6-temario.pdf`
+- Decretos: Decreto Supremo de Educación N°439/2012 (Bases Curriculares 1° a 6° básico).
+- Asignaturas: Lenguaje y Comunicación (6 OA), Matemática (11 OA), Ciencias Naturales (9 OA), Historia, Geografía y Ciencias Sociales (13 OA), Idioma Extranjero: Inglés (5 OA). Total: 44 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
 ## Temario oficial (menores de 18) — 1° medio
 - Ficha oficial: https://www.ayudamineduc.cl/ficha/examenes-libres-menores-de-18-anos-11
 - PDF Temario Primero Medio:

@@ -70,6 +70,54 @@ export const EXAMENES_PDF: ExamenPdf[] = [
       'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-NB2-D10-VE-2026.pdf',
   },
 
+  // --- 6° Básico ---
+  {
+    id: 'b6-temario',
+    cursoId: 'b6',
+    asignatura: 'ALL',
+    nombre: 'Temario Oficial 6° Básico (MINEDUC)',
+    archivo: 'examenes/b6-temario.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/temario_basica_6deg_basico_UCE.pdf',
+    esTemario: true,
+  },
+  {
+    id: 'b6-lengua',
+    cursoId: 'b6',
+    asignatura: 'LEN',
+    nombre: 'Lenguaje y Comunicación (Nivel Básico 2)',
+    archivo: 'examenes/b5-lengua.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NB2-lenguaje-2026_DS10.pdf',
+  },
+  {
+    id: 'b6-matematica',
+    cursoId: 'b6',
+    asignatura: 'MAT',
+    nombre: 'Educación Matemática (Nivel Básico 2)',
+    archivo: 'examenes/b5-matematica.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/ejemplos-de-preguntas-_NB2-matematica-2025_DS257-uv.pdf',
+  },
+  {
+    id: 'b6-ciencias',
+    cursoId: 'b6',
+    asignatura: 'CIE',
+    nombre: 'Ciencias Naturales (Nivel Básico 2)',
+    archivo: 'examenes/b5-ciencias.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NB2-C-Naturales-2026_DS10.pdf',
+  },
+  {
+    id: 'b6-historia',
+    cursoId: 'b6',
+    asignatura: 'HIS',
+    nombre: 'Historia, Geografía y Ciencias Sociales (Nivel Básico 2)',
+    archivo: 'examenes/b5-historia.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-NB2-D10-VE-2026.pdf',
+  },
+
   // --- 1° Medio ---
   {
     id: 'lengua',
@@ -158,6 +206,47 @@ export const EJEMPLOS_PREGUNTA: Record<string, Record<string, EjemploPregunta>> 
         'It is cold and rainy.',
         'It is warm and dry.',
         'It is windy and bright.',
+      ],
+    },
+  },
+  b6: {
+    LEN: {
+      contexto:
+        '“El bosque respiraba en silencio mientras los árboles mecían sus copas al compás de la brisa marina”.',
+      enunciado: '¿Qué figura literaria predomina en la expresión “El bosque respiraba en silencio”?',
+      alternativas: ['Personificación.', 'Hipérbole.', 'Comparación.', 'Aliteración.'],
+    },
+    MAT: {
+      contexto: 'En un curso de 30 estudiantes, 12 son mujeres y 18 son hombres.',
+      enunciado: '¿Cuál es la razón simplificada entre la cantidad de mujeres y el total de estudiantes?',
+      alternativas: ['2 : 5', '3 : 5', '2 : 3', '1 : 2'],
+    },
+    CIE: {
+      enunciado: '¿Cuál de los siguientes elementos es un reactante indispensable para la fotosíntesis?',
+      alternativas: [
+        'Dióxido de carbono (CO2).',
+        'Glucosa.',
+        'Oxígeno libre.',
+        'Materia orgánica descompuesta.',
+      ],
+    },
+    HIS: {
+      enunciado: '¿Cuál fue el hecho inmediato que precipitó la formación de juntas de gobierno en América en 1810?',
+      alternativas: [
+        'El cautiverio del rey Fernando VII por Napoleón Bonaparte.',
+        'La firma de la Declaración de Independencia de EE.UU.',
+        'La promulgación de la Constitución liberal de 1833.',
+        'El triunfo del ejército patriota en la Batalla de Maipú.',
+      ],
+    },
+    ING: {
+      contexto: 'The library is next to the bank and in front of the supermarket.',
+      enunciado: 'Where is the library located?',
+      alternativas: [
+        'In front of the supermarket.',
+        'Inside the bank.',
+        'Far from the city.',
+        'Behind the hospital.',
       ],
     },
   },

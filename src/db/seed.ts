@@ -12,11 +12,16 @@ import { modulosMatematica as modulosMatematicaB5 } from '../data/b5/matematica'
 import { modulosCiencias as modulosCienciasB5 } from '../data/b5/ciencias';
 import { modulosHistoria as modulosHistoriaB5 } from '../data/b5/historia';
 import { modulosIngles as modulosInglesB5 } from '../data/b5/ingles';
+import { modulosLengua as modulosLenguaB6 } from '../data/b6/lengua';
+import { modulosMatematica as modulosMatematicaB6 } from '../data/b6/matematica';
+import { modulosCiencias as modulosCienciasB6 } from '../data/b6/ciencias';
+import { modulosHistoria as modulosHistoriaB6 } from '../data/b6/historia';
+import { modulosIngles as modulosInglesB6 } from '../data/b6/ingles';
 import { lecturas } from '../data/lecturas';
 
 // Se incrementa cuando cambia el CONTENIDO semilla (módulos, actividades, lecturas).
 // Al detectar una versión menor, la app re-sincroniza el contenido sin tocar el progreso del usuario.
-export const SEED_VERSION = 8;
+export const SEED_VERSION = 9;
 
 const TODOS_MODULOS = [
   // 5° Básico
@@ -25,6 +30,12 @@ const TODOS_MODULOS = [
   ...modulosCienciasB5,
   ...modulosHistoriaB5,
   ...modulosInglesB5,
+  // 6° Básico
+  ...modulosLenguaB6,
+  ...modulosMatematicaB6,
+  ...modulosCienciasB6,
+  ...modulosHistoriaB6,
+  ...modulosInglesB6,
   // 1° Medio
   ...modulosLenguaM1,
   ...modulosMatematicaM1,
@@ -131,6 +142,20 @@ function seedConfig(db: Database): void {
   insHito.run([
     'hito-rendicion-b5',
     'b5',
+    'Rendición de exámenes',
+    '',
+    '5 asignaturas · 25 preguntas · 90 min cada una (calculadora en Matemática, diccionario en Inglés)',
+  ]);
+  insHito.run([
+    'hito-inscripcion-b6',
+    'b6',
+    'Inscripción al examen',
+    '',
+    'La inscripción la realiza la madre, padre o tutor legal en ayudamineduc.cl',
+  ]);
+  insHito.run([
+    'hito-rendicion-b6',
+    'b6',
     'Rendición de exámenes',
     '',
     '5 asignaturas · 25 preguntas · 90 min cada una (calculadora en Matemática, diccionario en Inglés)',

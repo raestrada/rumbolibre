@@ -65,7 +65,13 @@ export default function Biblioteca(): JSX.Element {
   // Filtrado según nivel (Básica o Media)
   const catalogoNivel = CATALOGO.filter((l) => {
     if (seccionNivel === 'basica') {
-      return l.cursosAplica.includes('B5') || l.cursosAplica.includes('b5') || l.edadMinima <= 12;
+      return (
+        l.cursosAplica.includes('B5') ||
+        l.cursosAplica.includes('B6') ||
+        l.cursosAplica.includes('b5') ||
+        l.cursosAplica.includes('b6') ||
+        l.edadMinima <= 12
+      );
     }
     return l.cursosAplica.includes('M1') || l.cursosAplica.includes('m1');
   });

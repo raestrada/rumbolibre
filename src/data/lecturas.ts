@@ -615,7 +615,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Imaginación',
     temas: ['fantasía', 'valentía', 'mitología', 'aventura'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.2,
     porQue:
@@ -628,7 +628,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Ética · Convivencia',
     temas: ['verdad', 'sociedad', 'valentía', 'fantasía'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.0,
     porQue:
@@ -641,7 +641,7 @@ export const lecturas: Lectura[] = [
     genero: 'Aventura',
     area: 'Resolución de problemas · Empatía',
     temas: ['amistad', 'animales', 'ingenio', 'vikingos'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.3,
     porQue:
@@ -654,7 +654,7 @@ export const lecturas: Lectura[] = [
     genero: 'Humor',
     area: 'Superación · Emociones',
     temas: ['humor', 'miedos', 'amistad', 'colegio'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 8,
     rating: 4.2,
     porQue:
@@ -667,7 +667,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Ciencia · Compañerismo',
     temas: ['robótica', 'amistad', 'humor', 'ciencia'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 8,
     rating: 4.3,
     porQue:
@@ -680,7 +680,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Pensamiento crítico · Lógica',
     temas: ['lógica', 'humor', 'fantasía', 'ingenio'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 10,
     rating: 4.0,
     porQue:
@@ -693,7 +693,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Tecnología · Superación',
     temas: ['astronavegación', 'perseverancia', 'amistad', 'tecnología'],
-    cursosAplica: ['B5', 'M1'],
+    cursosAplica: ['B5', 'B6', 'M1'],
     edadMinima: 11,
     rating: 4.5,
     porQue:
@@ -706,7 +706,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Historia · Mitología',
     temas: ['mitología griega', 'aventura', 'amistad', 'identidad'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 10,
     rating: 4.3,
     porQue:
@@ -719,7 +719,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Valores',
     temas: ['magia', 'amistad', 'valentía', 'misterio'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.5,
     porQue:
@@ -732,7 +732,7 @@ export const lecturas: Lectura[] = [
     genero: 'Humor',
     area: 'Lenguaje · Amor por los libros',
     temas: ['lectura', 'justicia', 'ingenio', 'familia'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 8,
     rating: 4.3,
     porQue:
@@ -745,7 +745,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Ética · Creatividad',
     temas: ['humildad', 'creatividad', 'familia', 'humor'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 8,
     rating: 4.2,
     porQue:
@@ -758,7 +758,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ficción realista',
     area: 'Formación Ciudadana · Empatía',
     temas: ['empatía', 'respeto', 'convivencia', 'superación'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 10,
     rating: 4.4,
     porQue:
@@ -771,7 +771,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Valores',
     temas: ['fantasía', 'lealtad', 'justicia', 'aventura'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.2,
     porQue:
@@ -784,7 +784,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ficción histórica',
     area: 'Tecnología · Historia del Cine',
     temas: ['mecánica', 'cine', 'misterio', 'historia'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.2,
     porQue:
@@ -797,7 +797,7 @@ export const lecturas: Lectura[] = [
     genero: 'Clásico',
     area: 'Ciencias · Bienestar',
     temas: ['naturaleza', 'salud', 'amistad', 'resiliencia'],
-    cursosAplica: ['B5'],
+    cursosAplica: ['B5', 'B6'],
     edadMinima: 9,
     rating: 4.2,
     porQue:

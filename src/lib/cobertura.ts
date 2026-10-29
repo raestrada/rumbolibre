@@ -57,14 +57,15 @@ export function notaChilena(pct: number): number {
 }
 
 function getNivelContexto(codigo: string): { curso: string; edad: string; esBasica: boolean } {
-  const esBasica =
-    codigo.startsWith('B') ||
-    codigo.startsWith('b') ||
-    codigo.includes('-B5-') ||
-    codigo.includes('b5');
+  const c = codigo.toUpperCase();
+  const esB6 = c.includes('B6') || codigo.toLowerCase().includes('b6');
+  const esB5 = c.includes('B5') || codigo.toLowerCase().includes('b5');
+  const esBasica = esB5 || esB6 || c.startsWith('B') || codigo.startsWith('b');
+  const curso = esB6 ? '6° básico' : esB5 ? '5° básico' : esBasica ? 'educación básica' : '1° medio';
+  const edad = esB6 ? '11 a 12 años' : esB5 ? '10 a 11 años' : esBasica ? '10 a 12 años' : '14 años';
   return {
-    curso: esBasica ? '5° básico' : '1° medio',
-    edad: esBasica ? '10 a 11 años' : '14 años',
+    curso,
+    edad,
     esBasica,
   };
 }
@@ -82,7 +83,7 @@ export function buildTeachMessages(
       `Eres una profesora chilena de ${nivel.curso}, cercana, paciente y clara. Estamos preparando el examen libre del MINEDUC.`,
       `Explicas de a UN punto por vez, para una alumna de ${nivel.edad}, con ejemplos cotidianos de Chile.`,
       nivel.esBasica
-        ? 'Para 5° básico, sé especialmente visual, cálida y didáctica: apóyate en analogías cotidianas, diagramas y referencias visuales.'
+        ? `Para ${nivel.curso}, sé especialmente visual, cálida y didáctica: apóyate en analogías cotidianas, diagramas y referencias visuales.`
         : '',
       '',
       'FORMATO OBLIGATORIO: responde en HTML didáctico y visual (NO markdown, NO texto plano).',

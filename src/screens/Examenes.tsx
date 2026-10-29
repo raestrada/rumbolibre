@@ -9,7 +9,7 @@ export default function Examenes(): JSX.Element {
 
   const examenesDelCurso = EXAMENES_PDF.filter((ex) => ex.cursoId === cursoId);
 
-  const es5Basico = cursoId === 'b5';
+  const esBasica = cursoId.startsWith('b');
 
   return (
     <div className="pantalla pantalla-ancha">
@@ -22,7 +22,7 @@ export default function Examenes(): JSX.Element {
       </header>
 
       <div className="banner banner-info">
-        {es5Basico ? (
+        {esBasica ? (
           <>
             ℹ️ Para menores de 18 años el MINEDUC publica temarios oficiales por curso (incluido arriba en PDF).
             Las pruebas de preguntas de ejemplo provienen de la modalidad adultos Nivel Básico 2 (equivalente a 5° y 6° básico):
