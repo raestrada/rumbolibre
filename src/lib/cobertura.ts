@@ -56,17 +56,34 @@ export function notaChilena(pct: number): number {
   return Math.round(n * 10) / 10;
 }
 
+function getNivelContexto(codigo: string): { curso: string; edad: string; esBasica: boolean } {
+  const esBasica =
+    codigo.startsWith('B') ||
+    codigo.startsWith('b') ||
+    codigo.includes('-B5-') ||
+    codigo.includes('b5');
+  return {
+    curso: esBasica ? '5° básico' : '1° medio',
+    edad: esBasica ? '10 a 11 años' : '14 años',
+    esBasica,
+  };
+}
+
 export function buildTeachMessages(
   asignatura: string,
   modulo: ModuloIA,
   indicador: string,
   historial: MensajeIA[] = [],
 ): MensajeIA[] {
+  const nivel = getNivelContexto(modulo.codigo);
   const system: MensajeIA = {
     role: 'system',
     content: [
-      'Eres una profesora chilena de 1° medio, cercana, paciente y clara. Estamos preparando el examen libre del MINEDUC.',
-      'Explicas de a UN punto por vez, para una alumna de 14 años, con ejemplos de Chile.',
+      `Eres una profesora chilena de ${nivel.curso}, cercana, paciente y clara. Estamos preparando el examen libre del MINEDUC.`,
+      `Explicas de a UN punto por vez, para una alumna de ${nivel.edad}, con ejemplos cotidianos de Chile.`,
+      nivel.esBasica
+        ? 'Para 5° básico, sé especialmente visual, cálida y didáctica: apóyate en analogías cotidianas, diagramas y referencias visuales.'
+        : '',
       '',
       'FORMATO OBLIGATORIO: responde en HTML didáctico y visual (NO markdown, NO texto plano).',
       '- Estructura con <h3>, párrafos cortos, <ul>/<ol>, <strong>, <em> y <table> cuando ayude.',
@@ -84,7 +101,7 @@ export function buildTeachMessages(
       '- Las tablas deben tener como máximo 3 columnas y textos cortos (se adaptan al ancho de la pantalla).',
       '- Escribe párrafos de 2 a 3 líneas; evita bloques de texto largos.',
       '- Sé breve: 3 a 6 bloques.',
-    ].join('\n'),
+    ].filter(Boolean).join('\n'),
   };
   const user: MensajeIA = {
     role: 'user',
@@ -110,11 +127,12 @@ export function buildDeepenMessages(
   historial: MensajeIA[] = [],
 ): MensajeIA[] {
   const guia = getGuiaMineduc(codigoAsignatura);
+  const nivel = getNivelContexto(modulo.codigo);
   const system: MensajeIA = {
     role: 'system',
     content: [
-      'Eres una profesora chilena de 1° medio, paciente, didáctica y muy rigurosa en el temario del MINEDUC.',
-      'Tu objetivo en este turno es PROFUNDIZAR a fondo en este punto curricular para asegurar que la alumna domine todos los aspectos que pueden ser evaluados en el examen libre.',
+      `Eres una profesora chilena de ${nivel.curso}, paciente, didáctica y muy rigurosa en el temario del MINEDUC.`,
+      `Tu objetivo en este turno es PROFUNDIZAR a fondo en este punto curricular para asegurar que la alumna domine todos los aspectos que pueden ser evaluados en el examen libre (${nivel.curso}, ${nivel.edad}).`,
       '',
       'CRITERIOS DETERMINÍSTICOS DE PROFUNDIZACIÓN OFICIAL DEL MINEDUC:',
       `Meta pedagógica: ${guia.criterioProfundizacion.meta}`,
@@ -128,7 +146,7 @@ export function buildDeepenMessages(
       '  <div class="rl-callout"><strong>⚠️ Trampa típica de examen:</strong> [Error o confusión frecuente de los estudiantes y cómo evitarlo]</div>',
       '  <div class="rl-note"><strong>📌 Para el examen:</strong> [Resumen clave o procedimiento a recordar]</div>',
       '- Finaliza con un mini-desafío o pregunta aplicada breve para verificar que el punto quedó 100% claro.',
-      '- Sé exhaustiva pero accesible para 14 años: entre 4 y 7 bloques claros.',
+      `- Sé exhaustiva pero accesible para ${nivel.edad}: entre 4 y 7 bloques claros.`,
     ].join('\n'),
   };
   const user: MensajeIA = {
@@ -224,23 +242,25 @@ export function buildEvalMessages(opts: {
     2,
   );
 
+  const nivel = getNivelContexto(opts.titulo + ' ' + (opts.contexto || ''));
+
   return [
     {
       role: 'system',
       content: [
-        'Eres una examinadora oficial del MINEDUC (Chile) para Validación de Estudios / Exámenes Libres de 1° medio (14 años).',
+        `Eres una examinadora oficial del MINEDUC (Chile) para Validación de Estudios / Exámenes Libres de ${nivel.curso} (${nivel.edad}).`,
         'Generas preguntas con el más estricto apego al marco curricular chileno y al formato oficial de las pruebas del ministerio.',
         '',
         'REGLAS PEDAGÓGICAS ESTRICTAS:',
         '1. NO TRIVIALIDAD: Queda estrictamente prohibido formular preguntas obvias, de mero sentido común o que cualquiera pueda acertar sin saber el contenido curricular.',
-        '2. DISTRACTORES PLAUSIBLES: Los distractores incorrectos deben reflejar errores de cálculo, confusiones conceptuales o interpretaciones defectuosas típicas de alumnos de 1° medio.',
+        `2. DISTRACTORES PLAUSIBLES: Los distractores incorrectos deben reflejar errores de cálculo, confusiones conceptuales o interpretaciones defectuosas típicas de alumnos de ${nivel.curso}.`,
         '3. HOMOGENEIDAD: Todas las alternativas deben tener longitud y estilo gramatical semejante para que la respuesta correcta no se distinga a simple vista.',
         '4. TIPOLOGÍA ESPECÍFICA SEGÚN "tipo":',
         '   - Si el tipo es "desarrollo" (pregunta abierta en lenguaje natural oficial del MINEDUC):',
         '     * En "contexto" incluye un fragmento de texto, situación cotidiana chilena, gráfico o problema real.',
         '     * En "pregunta" plantea una consigna abierta clara (ej. "A partir de lo leído, explica por qué...", "Justifica con tus propias palabras...", "Interpreta el resultado y fundamenta...").',
         '     * En "pautaEvaluacion" detalla los criterios de logro que debe contener la respuesta del alumno (conceptos o argumentos que deben estar presentes para considerarla correcta).',
-        '     * En "respuestaModelo" redacta la respuesta modelo ideal, clara y comprensible para 1° medio.',
+        `     * En "respuestaModelo" redacta la respuesta modelo ideal, clara y comprensible para ${nivel.curso}.`,
         '     * En "alternativas" devuelve [] y en "correcta" devuelve 0.',
         '     * En "explicacion" resume el porqué de la respuesta modelo.',
         '   - Si el tipo es "verdadero_falso": plantea en "pregunta" una afirmación conceptual desafiante. Las alternativas deben ser exactamente ["Verdadero", "Falso"] (2 alternativas). "correcta" debe ser 0 si es Verdadero o 1 si es Falso.',
@@ -526,16 +546,18 @@ export async function evaluarRespuestaAbierta(opts: {
     },
   };
 
+  const nivel = getNivelContexto(materia + ' ' + (pregunta.contexto || ''));
+
   const messages: MensajeIA[] = [
     {
       role: 'system',
       content: [
-        'Eres una examinadora y docente oficial del MINEDUC de Chile para Validación de Estudios / Exámenes Libres de 1° medio (alumnos de 14 años).',
+        `Eres una examinadora y docente oficial del MINEDUC de Chile para Validación de Estudios / Exámenes Libres de ${nivel.curso} (alumnos de ${nivel.edad}).`,
         'Tu tarea es evaluar con rigor pedagógico y justicia curricular la respuesta escrita en lenguaje natural por un estudiante frente a una pregunta de desarrollo oficial.',
         '',
         'CRITERIOS DE CALIFICACIÓN:',
         '1. Compara la respuesta del estudiante con la pregunta planteada, el contexto y la pauta oficial de evaluación.',
-        '2. No exijas terminología académica avanzada ni redacción perfecta: si la alumna de 14 años expresa la idea central, causa o justificación con sus propias palabras de manera comprensible y acertada, dale el puntaje.',
+        `2. No exijas terminología académica avanzada ni redacción perfecta: si la alumna de ${nivel.edad} expresa la idea central, causa o justificación con sus propias palabras de manera comprensible y acertada, dale el puntaje.`,
         '3. Niveles:',
         '   - "logrado" (puntaje 0.85 a 1.0): Cumple los aspectos centrales exigidos en la pauta.',
         '   - "parcialmente_logrado" (puntaje 0.5 a 0.84): Muestra comprensión del tema pero omite un elemento clave o fundamentación solicitada.',
