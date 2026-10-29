@@ -18,7 +18,7 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
   // Estado para acordeón FAQ interactivo
   const [faqAbierta, setFaqAbierta] = useState<number | null>(0);
 
-  const faqs = [
+  const faqs: Array<{ q: string; a: React.ReactNode }> = [
     {
       q: '¿Qué son los Exámenes Libres de Validación de Estudios del MINEDUC?',
       a: 'Es el mecanismo oficial del Ministerio de Educación de Chile que permite a niñas, niños y jóvenes menores de 18 años (especialmente quienes realizan educación en casa o homeschooling) validar formalmente sus estudios y obtener sus certificados oficiales de notas reconocidos por el Estado.',
@@ -29,15 +29,41 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
     },
     {
       q: '¿Es realmente gratuito y de código abierto (Open Source)?',
-      a: 'Sí, 100%. Rumbo Libre se distribuye con licencia libre MIT. No hay planes "Pro" con trampa, ni mensualidades ocultas, ni publicidad comercial. Todo el código fuente está disponible públicamente para que cualquier docente, familia o programador pueda auditarlo y colaborar.',
+      a: (
+        <>
+          Sí, 100%. Rumbo Libre es un proyecto comunitario de código abierto publicado bajo licencia libre MIT en{' '}
+          <a
+            href="https://github.com/raestrada/rumbolibre"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--violeta)', fontWeight: 600, textDecoration: 'underline' }}
+          >
+            GitHub
+          </a>
+          . No hay suscripciones, ni planes "Pro" con trampa, ni mensualidades ocultas, ni publicidad comercial. Todo el código fuente es público y auditable.
+        </>
+      ),
     },
     {
       q: '¿El temario está alineado con los programas oficiales del MINEDUC?',
       a: 'Totalmente. Incluye los temarios oficiales de 5° básico (43 módulos), 6° básico (44 módulos), 7° básico (39 módulos), 8° básico (40 módulos) y 1° medio (40 módulos) para Lenguaje, Matemática, Ciencias Naturales, Historia y Geografía e Inglés, cubriendo cada Objetivo de Aprendizaje (OA) y sus indicadores de evaluación oficiales sin alucinaciones.',
     },
     {
-      q: '¿Cómo funciona el tutor con Inteligencia Artificial?',
-      a: 'Te conectas usando tu propia clave de OpenRouter (puedes usar modelos gratuitos o de costo ínfimo como DeepSeek). La IA actúa como un profesor particular paciente: te explica cada punto con ejemplos chilenos cotidianos, profundiza cuando lo necesitas y te evalúa con preguntas reales.',
+      q: '¿Cómo funciona el tutor con Inteligencia Artificial y qué proveedor necesito?',
+      a: (
+        <>
+          Rumbo Libre no cobra por el uso de IA ni revende servicios. Tú ingresas tu propio token o API Key de proveedor de IA directamente en la aplicación. Por el momento, el único proveedor soportado es{' '}
+          <a
+            href="https://openrouter.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--violeta)', fontWeight: 700, textDecoration: 'underline' }}
+          >
+            OpenRouter (openrouter.ai)
+          </a>
+          , que te da acceso a modelos de vanguardia (DeepSeek, Llama 3, Claude, GPT) con opciones totalmente gratuitas o de costo ínfimo (centavos de dólar por semana de estudio). Tu clave se guarda en tu propio dispositivo y no pasa por ningún servidor intermedio.
+        </>
+      ),
     },
     {
       q: '¿Puedo respaldar o mover mi avance a otro computador?',
@@ -89,7 +115,16 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
             </h1>
 
             <p className="home-hero-bajada">
-              La plataforma web libre y gratuita diseñada para rendir la <strong>Validación de Estudios (Exámenes Libres)</strong> del MINEDUC en Chile (disponible para <strong>5°, 6°, 7°, 8° básico</strong> y <strong>1° medio</strong>). Estudia los módulos oficiales con un tutor IA paciente, evalúate con preguntas reales y mantén todos tus datos seguros en tu propio computador.
+              La plataforma web de <strong>código abierto</strong> diseñada para rendir la <strong>Validación de Estudios (Exámenes Libres)</strong> del MINEDUC en Chile (disponible para <strong>5°, 6°, 7°, 8° básico</strong> y <strong>1° medio</strong>). Estudia los módulos oficiales con un tutor IA paciente: <strong>tú ingresas tu propio token de proveedor de IA</strong> (por el momento soportamos{' '}
+              <a
+                href="https://openrouter.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--violeta)', fontWeight: 700, textDecoration: 'underline' }}
+              >
+                OpenRouter
+              </a>
+              ) y mantén todos tus datos seguros en tu propio navegador sin intermediarios ni suscripciones.
             </p>
 
             <div className="home-hero-acciones">
@@ -109,6 +144,21 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
               <div className="chip-confianza">
                 <span className="chip-confianza-icono">🔓</span>
                 <span><strong>Código Abierto</strong> (Licencia MIT)</span>
+              </div>
+              <div className="chip-confianza">
+                <span className="chip-confianza-icono">🤖</span>
+                <span>
+                  <strong>Tu Token de IA</strong> (Vía{' '}
+                  <a
+                    href="https://openrouter.ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
+                    OpenRouter
+                  </a>
+                  )
+                </span>
               </div>
               <div className="chip-confianza">
                 <span className="chip-confianza-icono">📚</span>
@@ -182,10 +232,18 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
               <div className="tarjeta-icono">🤖</div>
               <h3>Tutor IA Personalizado</h3>
               <p>
-                Aprende dialogando. Tu asistente pedagógico te explica las veces que haga falta, se adapta a tu ritmo y no avanza hasta que realmente hayas comprendido.
+                Aprende dialogando con un asistente paciente. Tú ingresas tu propio token de IA (por el momento soportado{' '}
+                <a
+                  href="https://openrouter.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--violeta)', fontWeight: 600, textDecoration: 'underline' }}
+                >
+                  OpenRouter
+                </a>
+                ) para usar modelos gratuitos o de costo ultra bajo, sin intermediarios ni suscripciones.
               </p>
             </div>
-
             <div className="home-tarjeta-caracteristica">
               <div className="tarjeta-icono">📝</div>
               <h3>Ensayos y Preguntas Reales</h3>
@@ -215,6 +273,69 @@ export default function Home({ onIngresar }: HomeProps): JSX.Element {
               <h3>Bibliotecas Curadas</h3>
               <p>
                 Catálogo especializado con libros de literatura y divulgación científica clasificados para educación básica y media, con sinopsis y calificaciones de Goodreads.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección: Privacidad, Código Abierto e Inteligencia Artificial */}
+        <section id="privacidad" className="home-seccion home-seccion-alt">
+          <div className="home-seccion-cabecera">
+            <span className="home-seccion-kicker">TRANSPARENCIA & PRIVACIDAD TOTAL</span>
+            <h2 className="home-seccion-titulo">100% Código Abierto: Tú controlas tus datos y tu IA</h2>
+            <p className="home-seccion-sub">
+              Rumbo Libre es un proyecto libre y comunitario sin ánimo de lucro. La aplicación se ejecuta de forma íntegra en tu navegador y tú eres el dueño absoluto de tu aprendizaje y de tus datos.
+            </p>
+          </div>
+
+          <div className="home-features-grid">
+            <div className="feature-card">
+              <div className="feature-icono">🔓</div>
+              <h3 className="feature-titulo">100% Código Abierto (Open Source)</h3>
+              <p className="feature-desc">
+                Todo el código fuente está disponible públicamente bajo Licencia MIT en{' '}
+                <a
+                  href="https://github.com/raestrada/rumbolibre"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--violeta)', fontWeight: 600, textDecoration: 'underline' }}
+                >
+                  GitHub (raestrada/rumbolibre)
+                </a>
+                . Es auditable, libre de rastreadores comerciales y abierto a la colaboración de docentes y programadores.
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icono">🔑</div>
+              <h3 className="feature-titulo">Tú ingresas tu Token de Proveedor de IA</h3>
+              <p className="feature-desc">
+                No pagas intermediarios ni mensualidades por usar el tutor. Tú ingresas tu propia clave de API directamente en la app. Tu token se almacena de forma segura en tu navegador y sólo se usa para tus sesiones de estudio.
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icono">🌐</div>
+              <h3 className="feature-titulo">Por el momento soportado: OpenRouter</h3>
+              <p className="feature-desc">
+                Actualmente el único proveedor de IA soportado es{' '}
+                <a
+                  href="https://openrouter.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--violeta)', fontWeight: 700, textDecoration: 'underline' }}
+                >
+                  OpenRouter (openrouter.ai)
+                </a>
+                . A través de él puedes elegir entre cientos de modelos (como DeepSeek V3, Llama 3, Claude o GPT), con opciones gratuitas y modelos de costo ínfimo (centavos por semana).
+              </p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icono">🛡️</div>
+              <h3 className="feature-titulo">Sin Servidor Central (Zero Backend)</h3>
+              <p className="feature-desc">
+                Tu base de datos SQLite vive en tu propio navegador con IndexedDB. Ni tus notas, ni tus reflexiones, ni tus preguntas de ensayo se envían jamás a servidores nuestros, porque Rumbo Libre opera 100% en el cliente.
               </p>
             </div>
           </div>
