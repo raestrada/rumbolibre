@@ -25,9 +25,11 @@ import {
   buildEvalSchema,
   buildTeachMessages,
   calificar,
+  evaluarRespuestaAbierta,
   normalizarPreguntas,
   parseCobertura,
   type CoberturaEstado,
+  type EvaluacionRespuestaAbierta,
   type Pregunta,
   type TipoPregunta,
   type ResultadoEval,
@@ -40,12 +42,21 @@ import { notaColor } from '../lib/parser';
 
 type Fase = 'ensenar' | 'evaluar' | 'resultado';
 
+interface ItemHistorial {
+  pregunta: Pregunta;
+  respuesta: number | string;
+  evaluacionAbierta?: EvaluacionRespuestaAbierta;
+  esCorrecta?: boolean;
+}
+
 interface EvalGuardada {
   plan: number[];
   indice: number;
-  historial: { pregunta: Pregunta; respuesta: number }[];
+  historial: ItemHistorial[];
   preguntaData: Pregunta | null;
   elegida: number | null;
+  textoAbierta?: string;
+  evaluacionAbierta?: EvaluacionRespuestaAbierta | null;
 }
 
 function HtmlIA({ html }: { html: string }): JSX.Element {
@@ -351,8 +362,11 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   const [plan, setPlan] = useState<number[]>([]);
   const [indice, setIndice] = useState(0);
   const [preguntaData, setPreguntaData] = useState<Pregunta | null>(null);
-  const [historial, setHistorial] = useState<{ pregunta: Pregunta; respuesta: number }[]>([]);
+  const [historial, setHistorial] = useState<ItemHistorial[]>([]);
   const [elegida, setElegida] = useState<number | null>(null);
+  const [textoAbierta, setTextoAbierta] = useState('');
+  const [evaluandoAbierta, setEvaluandoAbierta] = useState(false);
+  const [evaluacionAbierta, setEvaluacionAbierta] = useState<EvaluacionRespuestaAbierta | null>(null);
   const [generandoPregunta, setGenerandoPregunta] = useState(false);
   const [resultado, setResultado] = useState<ResultadoEval | null>(null);
   const [error, setError] = useState('');
@@ -614,12 +628,22 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   function guardarAvanceEval(
     p: number[],
     ind: number,
-    hist: { pregunta: Pregunta; respuesta: number }[],
+    hist: ItemHistorial[],
     qData: Pregunta | null,
     eleg: number | null,
+    textoAb?: string,
+    evalAb?: EvaluacionRespuestaAbierta | null,
   ): void {
     try {
-      const g: EvalGuardada = { plan: p, indice: ind, historial: hist, preguntaData: qData, elegida: eleg };
+      const g: EvalGuardada = {
+        plan: p,
+        indice: ind,
+        historial: hist,
+        preguntaData: qData,
+        elegida: eleg,
+        textoAbierta: textoAb,
+        evaluacionAbierta: evalAb,
+      };
       localStorage.setItem(evalStorageKey, JSON.stringify(g));
     } catch {
       /* ignore */
@@ -655,12 +679,15 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
         unidadesListas = [paso + 1];
       }
 
-      // Proporcional a los puntos profundizados: 3 preguntas si es 1 solo punto, hasta 18 si son varios
+      // Cantidad de preguntas óptima y balanceada según directrices MINEDUC:
+      // Para 1 punto individual: 5 preguntas (permite evaluar caso, desarrollo en lenguaje natural, selección múltiple y V/F).
+      // Para varios puntos / módulo: entre 8 y 15 preguntas proporcionales.
+      // Para Ensayo general: 25 preguntas.
       const total = esEnsayo
         ? 25
         : unidadesListas.length === 1
-        ? 3
-        : Math.min(20, Math.max(unidadesListas.length * 2, 4));
+        ? 5
+        : Math.min(15, Math.max(unidadesListas.length * 2, 8));
 
       const p: number[] = [];
       for (let i = 0; i < total; i++) {
@@ -673,8 +700,10 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
       setResultado(null);
       setPreguntaData(null);
       setElegida(null);
+      setTextoAbierta('');
+      setEvaluacionAbierta(null);
       setFase('evaluar');
-      guardarAvanceEval(p, 0, [], null, null);
+      guardarAvanceEval(p, 0, [], null, null, '', null);
       persistir(chats, cobertura, 'evaluar');
       void generarPregunta(p[0], 0, []);
     })();
@@ -687,6 +716,8 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     setHistorial(evalPendienteGuardada.historial);
     setPreguntaData(evalPendienteGuardada.preguntaData);
     setElegida(evalPendienteGuardada.elegida);
+    setTextoAbierta(evalPendienteGuardada.textoAbierta || '');
+    setEvaluacionAbierta(evalPendienteGuardada.evaluacionAbierta || null);
     setFase('evaluar');
     setEvalPendienteGuardada(null);
     if (!evalPendienteGuardada.preguntaData) {
@@ -710,6 +741,9 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
     setError('');
     setPreguntaData(null);
     setElegida(null);
+    setTextoAbierta('');
+    setEvaluandoAbierta(false);
+    setEvaluacionAbierta(null);
     try {
       const titulo = esEnsayo
         ? `Ensayo general — ${asignatura?.nombre}`
@@ -717,7 +751,14 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
       const contexto = esEnsayo
         ? `Todas las OA de ${asignatura?.nombre}.`
         : `${asignatura?.nombre}. ${modulo?.descripcion}`;
-      const TIPOS_DETERMINISTICOS: TipoPregunta[] = ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'];
+      // Rotación balanceada de tipos oficiales MINEDUC incluyendo preguntas de desarrollo (lenguaje natural)
+      const TIPOS_DETERMINISTICOS: TipoPregunta[] = [
+        'analisis_caso',
+        'desarrollo',
+        'seleccion_multiple',
+        'verdadero_falso',
+        'seleccion_multiple',
+      ];
       const tipoSugerido = TIPOS_DETERMINISTICOS[indActual % TIPOS_DETERMINISTICOS.length];
 
       let q: Pregunta | null = null;
@@ -745,7 +786,7 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
       }
       if (!q) throw new Error('No se pudo generar la pregunta. Intenta de nuevo.');
       setPreguntaData(q);
-      guardarAvanceEval(plan, indActual, histActual, q, null);
+      guardarAvanceEval(plan, indActual, histActual, q, null, '', null);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -756,26 +797,81 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
   function responder(opcion: number): void {
     if (elegida != null) return;
     setElegida(opcion);
-    guardarAvanceEval(plan, indice, historial, preguntaData, opcion);
+    guardarAvanceEval(plan, indice, historial, preguntaData, opcion, '', null);
+  }
+
+  async function responderAbierta(): Promise<void> {
+    if (!preguntaData || evaluandoAbierta || evaluacionAbierta != null) return;
+    const texto = textoAbierta.trim();
+    if (!texto) return;
+    const k = clave || (await cargarClave());
+    if (k && !clave) setClave(k);
+    if (!k) return;
+    setEvaluandoAbierta(true);
+    setError('');
+    try {
+      const res = await evaluarRespuestaAbierta({
+        key: k,
+        model: modelo,
+        materia: asignatura?.nombre ?? 'Asignatura 1° medio',
+        pregunta: preguntaData,
+        respuestaEstudiante: texto,
+      });
+      setEvaluacionAbierta(res);
+      guardarAvanceEval(plan, indice, historial, preguntaData, null, texto, res);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setEvaluandoAbierta(false);
+    }
   }
 
   function siguientePregunta(): void {
-    if (!preguntaData || elegida == null) return;
-    const nuevoHist = [...historial, { pregunta: preguntaData, respuesta: elegida }];
+    if (!preguntaData) return;
+    const esDesarrollo = preguntaData.tipo === 'desarrollo';
+    if (esDesarrollo && evaluacionAbierta == null) return;
+    if (!esDesarrollo && elegida == null) return;
+
+    const respuestaItem: ItemHistorial = esDesarrollo
+      ? {
+          pregunta: preguntaData,
+          respuesta: textoAbierta,
+          evaluacionAbierta: evaluacionAbierta ?? undefined,
+          esCorrecta: evaluacionAbierta?.esCorrecta ?? false,
+        }
+      : {
+          pregunta: preguntaData,
+          respuesta: elegida as number,
+          esCorrecta: elegida === preguntaData.correcta,
+        };
+
+    const nuevoHist = [...historial, respuestaItem];
     setHistorial(nuevoHist);
+    setTextoAbierta('');
+    setEvaluacionAbierta(null);
+    setElegida(null);
+
     if (indice + 1 < plan.length) {
       const proxIndice = indice + 1;
       setIndice(proxIndice);
-      guardarAvanceEval(plan, proxIndice, nuevoHist, null, null);
+      guardarAvanceEval(plan, proxIndice, nuevoHist, null, null, '', null);
       void generarPregunta(plan[proxIndice], proxIndice, nuevoHist);
     } else {
       finalizar(nuevoHist);
     }
   }
 
-  function finalizar(hist: { pregunta: Pregunta; respuesta: number }[]): void {
+  function finalizar(hist: ItemHistorial[]): void {
     borrarAvanceEval();
-    const res = calificar(hist.map((h) => h.pregunta), hist.map((h) => h.respuesta));
+    const respuestasParaCalificar = hist.map((h) =>
+      h.pregunta.tipo === 'desarrollo'
+        ? { esCorrecta: Boolean(h.esCorrecta) }
+        : (h.respuesta as number),
+    );
+    const res = calificar(
+      hist.map((h) => h.pregunta),
+      respuestasParaCalificar,
+    );
     setResultado(res);
     setFase('resultado');
 
@@ -1141,11 +1237,13 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
                         Pregunta {indice + 1} de {plan.length}
                       </span>
                       <span className="chip chip-tipo">
-                        {preguntaData.tipo === 'verdadero_falso'
+                        {preguntaData.tipo === 'desarrollo'
+                          ? '✍️ Pregunta de desarrollo (lenguaje natural)'
+                          : preguntaData.tipo === 'verdadero_falso'
                           ? '⚖️ Verdadero o Falso'
                           : preguntaData.tipo === 'analisis_caso'
-                            ? '📋 Análisis de caso'
-                            : '🎯 Selección múltiple'}
+                          ? '📋 Análisis de caso'
+                          : '🎯 Selección múltiple'}
                       </span>
                     </div>
                     <Chip tono="suave">{(unidades[preguntaData.unidad - 1]?.etiqueta ?? '').slice(0, 46)}</Chip>
@@ -1154,51 +1252,153 @@ export default function SesionIA({ tipo, id }: { tipo: 'modulo' | 'ensayo'; id: 
 
                   {preguntaData.contexto ? (
                     <div className="ia-contexto-box">
-                      <span className="ia-contexto-tag">📖 Situación / Contexto oficial</span>
+                      <span className="ia-contexto-tag">📖 Situación / Contexto oficial MINEDUC</span>
                       <p>{preguntaData.contexto}</p>
                     </div>
                   ) : null}
 
                   <p className="ia-pregunta">{preguntaData.pregunta}</p>
 
-                  <div className={`ia-opciones ${preguntaData.alternativas.length === 2 ? 'ia-opciones-vf' : ''}`}>
-                    {preguntaData.alternativas.map((alt, i) => {
-                      let clase = 'ia-opcion';
-                      if (elegida != null) {
-                        if (i === preguntaData.correcta) clase += ' correcta';
-                        else if (i === elegida) clase += ' incorrecta';
-                      }
-                      return (
-                        <button key={i} className={clase} onClick={() => responder(i)} disabled={elegida != null}>
-                          <strong>{String.fromCharCode(65 + i)}.</strong> {alt}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {elegida != null ? (
-                    <>
-                      {elegida === preguntaData.correcta ? (
-                        <div className="msg-ok">
-                          <strong>🎉 ¡Correcto!</strong>
-                          {preguntaData.explicacion ? ` — ${preguntaData.explicacion}` : ''}
-                        </div>
+                  {/* Pregunta de desarrollo: respuesta en lenguaje natural evaluada por la IA */}
+                  {preguntaData.tipo === 'desarrollo' ? (
+                    <div className="ia-desarrollo-caja">
+                      {evaluacionAbierta == null ? (
+                        <>
+                          <label htmlFor="ia-respuesta-txt" className="ia-desarrollo-label">
+                            Escribe tu respuesta con tus propias palabras (fundamenta tu explicación):
+                          </label>
+                          <textarea
+                            id="ia-respuesta-txt"
+                            className="input ia-desarrollo-textarea"
+                            rows={4}
+                            placeholder="Redacta aquí tu explicación o justificación... (Ej. 'Esto se debe a que... y su consecuencia principal es...')"
+                            value={textoAbierta}
+                            onChange={(e) => setTextoAbierta(e.target.value)}
+                            disabled={evaluandoAbierta}
+                          />
+                          <div className="ia-desarrollo-pie">
+                            <span className="fila-sub" style={{ fontSize: '0.82rem' }}>
+                              💡 Fundamenta en 2 a 4 líneas usando los conceptos aprendidos.
+                            </span>
+                            <button
+                              className="btn btn-primario"
+                              onClick={() => void responderAbierta()}
+                              disabled={evaluandoAbierta || !textoAbierta.trim()}
+                            >
+                              {evaluandoAbierta
+                                ? 'Evaluando con pauta oficial MINEDUC… ✨'
+                                : 'Enviar respuesta para revisión ✨'}
+                            </button>
+                          </div>
+                        </>
                       ) : (
-                        <div className="msg-error">
-                          <strong>❌ Incorrecto.</strong> La alternativa correcta es la{' '}
-                          <strong>{String.fromCharCode(65 + preguntaData.correcta)}</strong> ({preguntaData.alternativas[preguntaData.correcta]}).
-                          {preguntaData.explicacion ? (
-                            <div style={{ marginTop: 6, opacity: 0.95 }}>
-                              💡 <strong>Explicación:</strong> {preguntaData.explicacion}
+                        <div className="ia-desarrollo-resultado">
+                          <div className="ia-respuesta-estudiante">
+                            <span className="ia-contexto-tag">✍️ Tu respuesta:</span>
+                            <p className="ia-respuesta-texto">{textoAbierta}</p>
+                          </div>
+
+                          <div
+                            className={`ia-eval-banner ${
+                              evaluacionAbierta.nivel === 'logrado'
+                                ? 'ia-eval-ok'
+                                : evaluacionAbierta.nivel === 'parcialmente_logrado'
+                                ? 'ia-eval-parcial'
+                                : 'ia-eval-mal'
+                            }`}
+                          >
+                            <div className="ia-eval-titulo">
+                              {evaluacionAbierta.nivel === 'logrado'
+                                ? '🎉 ¡Excelente fundamentación!'
+                                : evaluacionAbierta.nivel === 'parcialmente_logrado'
+                                ? '⚠️ Respuesta parcialmente correcta'
+                                : '❌ Respuesta por reforzar o incompleta'}
+                              <span className="ia-eval-puntaje">
+                                Puntaje: {Math.round(evaluacionAbierta.puntaje * 100)}%
+                              </span>
                             </div>
-                          ) : null}
+                            <p className="ia-eval-retro">{evaluacionAbierta.retroalimentacion}</p>
+
+                            {evaluacionAbierta.aspectosDestacados ? (
+                              <div className="ia-eval-detalle ok">
+                                <strong>🌟 Aspectos destacados:</strong> {evaluacionAbierta.aspectosDestacados}
+                              </div>
+                            ) : null}
+
+                            {evaluacionAbierta.queFalto ? (
+                              <div className="ia-eval-detalle alerta">
+                                <strong>🔍 Qué faltó según la pauta:</strong> {evaluacionAbierta.queFalto}
+                              </div>
+                            ) : null}
+
+                            <div className="ia-respuesta-modelo">
+                              <strong>💡 Respuesta modelo esperada (Criterio MINEDUC):</strong>
+                              <p>
+                                {evaluacionAbierta.respuestaModelo ||
+                                  preguntaData.respuestaModelo ||
+                                  preguntaData.explicacion}
+                              </p>
+                            </div>
+                          </div>
+
+                          <button
+                            className="btn btn-primario btn-ancho"
+                            onClick={siguientePregunta}
+                            style={{ marginTop: 14 }}
+                          >
+                            {indice + 1 < plan.length ? 'Siguiente pregunta →' : 'Ver resultado'}
+                          </button>
                         </div>
                       )}
-                      <button className="btn btn-primario btn-ancho" onClick={siguientePregunta} style={{ marginTop: 12 }}>
-                        {indice + 1 < plan.length ? 'Siguiente pregunta →' : 'Ver resultado'}
-                      </button>
+                    </div>
+                  ) : (
+                    /* Preguntas cerradas (Selección múltiple, Verdadero/Falso, Análisis de caso) */
+                    <>
+                      <div className={`ia-opciones ${preguntaData.alternativas.length === 2 ? 'ia-opciones-vf' : ''}`}>
+                        {preguntaData.alternativas.map((alt, i) => {
+                          let clase = 'ia-opcion';
+                          if (elegida != null) {
+                            if (i === preguntaData.correcta) clase += ' correcta';
+                            else if (i === elegida) clase += ' incorrecta';
+                          }
+                          return (
+                            <button key={i} className={clase} onClick={() => responder(i)} disabled={elegida != null}>
+                              <strong>{String.fromCharCode(65 + i)}.</strong> {alt}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {elegida != null ? (
+                        <>
+                          {elegida === preguntaData.correcta ? (
+                            <div className="msg-ok">
+                              <strong>🎉 ¡Correcto!</strong>
+                              {preguntaData.explicacion ? ` — ${preguntaData.explicacion}` : ''}
+                            </div>
+                          ) : (
+                            <div className="msg-error">
+                              <strong>❌ Incorrecto.</strong> La alternativa correcta es la{' '}
+                              <strong>{String.fromCharCode(65 + preguntaData.correcta)}</strong> (
+                              {preguntaData.alternativas[preguntaData.correcta]}).
+                              {preguntaData.explicacion ? (
+                                <div style={{ marginTop: 6, opacity: 0.95 }}>
+                                  💡 <strong>Explicación:</strong> {preguntaData.explicacion}
+                                </div>
+                              ) : null}
+                            </div>
+                          )}
+                          <button
+                            className="btn btn-primario btn-ancho"
+                            onClick={siguientePregunta}
+                            style={{ marginTop: 12 }}
+                          >
+                            {indice + 1 < plan.length ? 'Siguiente pregunta →' : 'Ver resultado'}
+                          </button>
+                        </>
+                      ) : null}
                     </>
-                  ) : null}
+                  )}
                 </>
               ) : (
                 <>

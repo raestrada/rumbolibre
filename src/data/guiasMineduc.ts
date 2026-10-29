@@ -2,7 +2,11 @@
 // (Validación de Estudios / Exámenes Libres, 1° medio, Decreto N°614/2013).
 // Basadas en los temarios y pruebas de ejemplo oficiales publicadas por el Ministerio de Educación de Chile.
 
-export type TipoPreguntaMineduc = 'seleccion_multiple' | 'verdadero_falso' | 'analisis_caso';
+export type TipoPreguntaMineduc =
+  | 'seleccion_multiple'
+  | 'verdadero_falso'
+  | 'analisis_caso'
+  | 'desarrollo';
 
 export interface CriterioProfundizacion {
   meta: string;
@@ -34,7 +38,7 @@ export const GUIAS_MINEDUC: Record<string, GuiaMineducAsignatura> = {
     nombre: 'Lengua y Literatura',
     enfoqueMineduc:
       'Comprensión lectora de textos narrativos (cuentos, novelas) y expositivos/argumentativos. Identificación de la idea principal, rasgos de personajes, vocabulario contextual deducido del fragmento, formas discursivas (definición, caracterización, narración) e inferencias locales y globales. No evaluar memorización abstracta de reglas gramaticales, sino lectura analítica.',
-    tiposPermitidos: ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'],
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
     contextosTipicos: [
       'Fragmento narrativo de 3 a 5 líneas con una situación cotidiana o personajes en acción.',
       'Párrafo expositivo breve sobre divulgación cultural, científica o social.',
@@ -72,7 +76,7 @@ export const GUIAS_MINEDUC: Record<string, GuiaMineducAsignatura> = {
     nombre: 'Matemática',
     enfoqueMineduc:
       'Resolución de problemas contextualizados en situaciones reales de Chile: compras por volumen (galón vs tineta, costo por m²), presupuestos domésticos, proporciones directas e inversas, cálculo de áreas y perímetros para pintar o construir, escalas de temperatura (°C a °F), interpretación de tablas y gráficos estadísticos (precipitaciones, censos). Distractores basados en errores de procedimiento típicos de 1° medio.',
-    tiposPermitidos: ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'],
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
     contextosTipicos: [
       'Caso cotidiano de compra o rendimiento: galones de 3,8 L a cierto precio para cubrir determinada superficie en m².',
       'Tabla de datos con mediciones reales (precipitaciones en ciudades de Chile, temperaturas, cuentas de servicios).',
@@ -111,7 +115,7 @@ export const GUIAS_MINEDUC: Record<string, GuiaMineducAsignatura> = {
     nombre: 'Ciencias Naturales',
     enfoqueMineduc:
       'Integración de Biología, Física y Química de 1° medio. Biología: niveles de organización ecológica (individuo, población, comunidad, ecosistema, biósfera), fotosíntesis, leyes de la genética mendeliana y función del ADN. Química: masa molar, ley de conservación de la materia en reacciones químicas, carbono y moléculas orgánicas. Física: ondas electromagnéticas vs mecánicas (luz y sonido), concepto de trabajo (W = F × d) y fuerza.',
-    tiposPermitidos: ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'],
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
     contextosTipicos: [
       'Tabla de datos experimentales con masa de reactantes y productos antes y después de una reacción.',
       'Situación ecológica concreta observada en un bosque o humedal chileno.',
@@ -151,7 +155,7 @@ export const GUIAS_MINEDUC: Record<string, GuiaMineducAsignatura> = {
     nombre: 'Historia, Geografía y Ciencias Sociales',
     enfoqueMineduc:
       'Comprensión de procesos históricos y formación ciudadana. La Ilustración y su crítica al absolutismo y al origen divino del poder; ideas republicanas y liberales del siglo XIX; la Revolución Industrial; el Imperialismo y la Primera Guerra Mundial; la Gran Depresión de 1929 y el surgimiento del Estado de Bienestar y los totalitarismos; institucionalidad democrática chilena, plebiscito de 1988 y derechos humanos.',
-    tiposPermitidos: ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'],
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
     contextosTipicos: [
       'Fragmento de fuente histórica primaria (texto de pensador ilustrado, proclama, discurso o ley).',
       'Breve descripción de un acontecimiento económico crucial como la crisis bursátil de 1929 y sus efectos en Chile.',
@@ -195,7 +199,7 @@ export const GUIAS_MINEDUC: Record<string, GuiaMineducAsignatura> = {
     nombre: 'Inglés',
     enfoqueMineduc:
       'Comprensión lectora funcional de textos breves en inglés para 1° medio: letreros, carteles públicos y avisos cotidianos, diálogos de presentación o profesiones, vocabulario deducido del contexto (evitando falsos amigos), tiempos verbales básicos (presente simple, pasado simple, verbos modales can/must/should).',
-    tiposPermitidos: ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'],
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
     contextosTipicos: [
       'Letrero o aviso en inglés en un lugar público: "Notice: You cannot take photographs in this area".',
       'Diálogo cotidiano breve: "What do you do? / I am a secondary school teacher".',
@@ -238,7 +242,7 @@ export function getGuiaMineduc(codigoAsignatura: string): GuiaMineducAsignatura 
     nombre: 'Asignatura 1° medio',
     enfoqueMineduc:
       'Evaluación oficial según el temario de Validación de Estudios del MINEDUC. Preguntas directas, de análisis y de verdadero/falso que midan habilidades de comprensión, aplicación y razonamiento, sin trivialidades.',
-    tiposPermitidos: ['analisis_caso', 'seleccion_multiple', 'verdadero_falso'],
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
     contextosTipicos: ['Situación práctica o de aplicación conceptual de la asignatura.'],
     criteriosDistractores: ['Distractores verosímiles que reflejen confusiones conceptuales típicas.'],
     criterioProfundizacion: {

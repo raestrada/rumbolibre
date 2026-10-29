@@ -2833,6 +2833,176 @@ button.fila:hover,
   cursor: default;
 }
 
+/* Preguntas de desarrollo y respuesta abierta en lenguaje natural */
+.chip-desarrollo {
+  background: #f3e8ff;
+  color: var(--violeta);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.ia-desarrollo-caja {
+  margin: 14px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ia-desarrollo-label {
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: var(--texto);
+}
+
+.ia-desarrollo-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--borde);
+  background: #fff;
+  resize: vertical;
+  min-height: 110px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ia-desarrollo-textarea:focus {
+  outline: none;
+  border-color: var(--violeta);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.ia-desarrollo-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ia-desarrollo-resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.ia-respuesta-estudiante {
+  background: #f8fafc;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.ia-respuesta-texto {
+  margin: 4px 0 0;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: var(--texto);
+  white-space: pre-wrap;
+}
+
+.ia-eval-banner {
+  border-radius: 14px;
+  padding: 16px 18px;
+  border: 1.5px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ia-eval-ok {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.ia-eval-parcial {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.ia-eval-mal {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.ia-eval-titulo {
+  font-size: 1.05rem;
+  font-weight: 750;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ia-eval-ok .ia-eval-titulo {
+  color: #166534;
+}
+
+.ia-eval-parcial .ia-eval-titulo {
+  color: #92400e;
+}
+
+.ia-eval-mal .ia-eval-titulo {
+  color: #991b1b;
+}
+
+.ia-eval-puntaje {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.ia-eval-retro {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--texto);
+}
+
+.ia-eval-detalle {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.ia-eval-detalle.ok {
+  background: rgba(34, 197, 94, 0.12);
+  color: #14532d;
+}
+
+.ia-eval-detalle.alerta {
+  background: rgba(245, 158, 11, 0.12);
+  color: #78350f;
+}
+
+.ia-respuesta-modelo {
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px dashed var(--borde);
+  border-radius: 10px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.ia-respuesta-modelo strong {
+  display: block;
+  color: var(--texto-oscuro);
+  margin-bottom: 4px;
+}
+
+.ia-respuesta-modelo p {
+  margin: 0;
+  color: var(--texto);
+}
+
 .ia-resultado-lista {
   list-style: none;
   margin: 12px 0;

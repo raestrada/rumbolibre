@@ -1,4 +1,4 @@
-import type { MensajeIA } from './openrouter';
+import { chatJSON, type MensajeIA } from './openrouter';
 import { getGuiaMineduc, type TipoPreguntaMineduc } from '../data/guiasMineduc';
 
 export interface ModuloIA {
@@ -19,6 +19,8 @@ export interface Pregunta {
   alternativas: string[];
   correcta: number; // 0..alternativas.length - 1
   explicacion: string;
+  pautaEvaluacion?: string; // Criterios de logro según el MINEDUC para preguntas de desarrollo
+  respuestaModelo?: string; // Respuesta modelo oficial
 }
 
 export interface Unidad {
@@ -157,15 +159,20 @@ export function buildEvalSchema(nUnidades: number, nPreguntas: number): Record<s
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['unidad', 'tipo', 'contexto', 'pregunta', 'alternativas', 'correcta', 'explicacion'],
+          required: ['unidad', 'tipo', 'contexto', 'pregunta', 'explicacion'],
           properties: {
             unidad: { type: 'integer', minimum: 1, maximum: nUnidades },
-            tipo: { type: 'string', enum: ['seleccion_multiple', 'verdadero_falso', 'analisis_caso'] },
+            tipo: {
+              type: 'string',
+              enum: ['seleccion_multiple', 'verdadero_falso', 'analisis_caso', 'desarrollo'],
+            },
             contexto: { type: 'string' },
             pregunta: { type: 'string' },
-            alternativas: { type: 'array', minItems: 2, maxItems: 4, items: { type: 'string' } },
+            alternativas: { type: 'array', maxItems: 4, items: { type: 'string' } },
             correcta: { type: 'integer', minimum: 0, maximum: 3 },
             explicacion: { type: 'string' },
+            pautaEvaluacion: { type: 'string' },
+            respuestaModelo: { type: 'string' },
           },
         },
       },
@@ -228,7 +235,14 @@ export function buildEvalMessages(opts: {
         '1. NO TRIVIALIDAD: Queda estrictamente prohibido formular preguntas obvias, de mero sentido común o que cualquiera pueda acertar sin saber el contenido curricular.',
         '2. DISTRACTORES PLAUSIBLES: Los distractores incorrectos deben reflejar errores de cálculo, confusiones conceptuales o interpretaciones defectuosas típicas de alumnos de 1° medio.',
         '3. HOMOGENEIDAD: Todas las alternativas deben tener longitud y estilo gramatical semejante para que la respuesta correcta no se distinga a simple vista.',
-        '4. TIPOLOGÍA ESPECÍFICA:',
+        '4. TIPOLOGÍA ESPECÍFICA SEGÚN "tipo":',
+        '   - Si el tipo es "desarrollo" (pregunta abierta en lenguaje natural oficial del MINEDUC):',
+        '     * En "contexto" incluye un fragmento de texto, situación cotidiana chilena, gráfico o problema real.',
+        '     * En "pregunta" plantea una consigna abierta clara (ej. "A partir de lo leído, explica por qué...", "Justifica con tus propias palabras...", "Interpreta el resultado y fundamenta...").',
+        '     * En "pautaEvaluacion" detalla los criterios de logro que debe contener la respuesta del alumno (conceptos o argumentos que deben estar presentes para considerarla correcta).',
+        '     * En "respuestaModelo" redacta la respuesta modelo ideal, clara y comprensible para 1° medio.',
+        '     * En "alternativas" devuelve [] y en "correcta" devuelve 0.',
+        '     * En "explicacion" resume el porqué de la respuesta modelo.',
         '   - Si el tipo es "verdadero_falso": plantea en "pregunta" una afirmación conceptual desafiante. Las alternativas deben ser exactamente ["Verdadero", "Falso"] (2 alternativas). "correcta" debe ser 0 si es Verdadero o 1 si es Falso.',
         '   - Si el tipo es "analisis_caso": en "contexto" incluye un texto, caso chileno cotidiano, tabla o situación práctica real. En "pregunta" pide un cálculo o inferencia sobre el caso, con 4 alternativas.',
         '   - Si el tipo es "seleccion_multiple": pregunta conceptual directa con 4 alternativas (A, B, C, D). "contexto" puede ser "".',
@@ -251,7 +265,7 @@ export function buildEvalMessages(opts: {
         `Genera ${opts.nPreguntas} pregunta(s).${foco}`,
         `Tipo de pregunta a generar para este turno: "${tipoObjetivo}".`,
         '',
-        'Asegura que cada objeto tenga: "unidad", "tipo", "contexto", "pregunta", "alternativas", "correcta" (índice entero 0-based) y "explicacion".',
+        'Asegura que cada objeto tenga: "unidad", "tipo", "contexto", "pregunta", "alternativas", "correcta" (índice entero 0-based), "explicacion", y si es desarrollo incluye "pautaEvaluacion" y "respuestaModelo".',
       ].join('\n'),
     },
   ];
@@ -321,7 +335,10 @@ export function normalizarPreguntas(raw: unknown, nUnidades: number): Pregunta[]
         : [];
 
     let tipo: TipoPregunta =
-      p.tipo === 'verdadero_falso' || p.tipo === 'analisis_caso' || p.tipo === 'seleccion_multiple'
+      p.tipo === 'verdadero_falso' ||
+      p.tipo === 'analisis_caso' ||
+      p.tipo === 'seleccion_multiple' ||
+      p.tipo === 'desarrollo'
         ? (p.tipo as TipoPregunta)
         : 'seleccion_multiple';
 
@@ -334,17 +351,66 @@ export function normalizarPreguntas(raw: unknown, nUnidades: number): Pregunta[]
       }
     }
 
+    const pregunta =
+      typeof p.pregunta === 'string'
+        ? p.pregunta.trim()
+        : typeof p.question === 'string'
+        ? p.question.trim()
+        : '';
+    const contexto =
+      typeof p.contexto === 'string'
+        ? p.contexto.trim()
+        : typeof p.context === 'string'
+        ? p.context.trim()
+        : '';
+    const unidad = Math.round(Number(p.unidad ?? p.unit ?? p.unidad_num));
+    const explicacion =
+      typeof p.explicacion === 'string'
+        ? p.explicacion.trim()
+        : typeof p.explanation === 'string'
+        ? p.explanation.trim()
+        : '';
+    const pautaEvaluacion =
+      typeof p.pautaEvaluacion === 'string'
+        ? p.pautaEvaluacion.trim()
+        : typeof p.pauta === 'string'
+        ? p.pauta.trim()
+        : typeof p.rubric === 'string'
+        ? p.rubric.trim()
+        : undefined;
+    const respuestaModelo =
+      typeof p.respuestaModelo === 'string'
+        ? p.respuestaModelo.trim()
+        : typeof p.model_answer === 'string'
+        ? p.model_answer.trim()
+        : typeof p.ejemploRespuesta === 'string'
+        ? p.ejemploRespuesta.trim()
+        : undefined;
+
+    if (!pregunta) continue;
+    if (!Number.isFinite(unidad) || unidad < 1 || unidad > nUnidades) continue;
+
+    // Manejo de preguntas de desarrollo (respuesta abierta en lenguaje natural)
+    if (tipo === 'desarrollo') {
+      out.push({
+        unidad,
+        tipo: 'desarrollo',
+        contexto,
+        pregunta,
+        alternativas: [],
+        correcta: 0,
+        explicacion: explicacion || respuestaModelo || 'Pregunta de desarrollo según directrices oficiales del MINEDUC.',
+        pautaEvaluacion,
+        respuestaModelo,
+      });
+      continue;
+    }
+
     if (tipo !== 'verdadero_falso' && alternativas.length < 3) {
       continue;
     }
 
-    const pregunta = typeof p.pregunta === 'string' ? p.pregunta.trim() : typeof p.question === 'string' ? p.question.trim() : '';
-    const contexto = typeof p.contexto === 'string' ? p.contexto.trim() : typeof p.context === 'string' ? p.context.trim() : '';
-    const unidad = Math.round(Number(p.unidad ?? p.unit ?? p.unidad_num));
-    const explicacion = typeof p.explicacion === 'string' ? p.explicacion.trim() : typeof p.explanation === 'string' ? p.explanation.trim() : '';
-
-    if (!pregunta || alternativas.length < 2) continue;
-    if (!Number.isFinite(unidad) || unidad < 1 || unidad > nUnidades) continue;
+    if (alternativas.length < 2) continue;
 
     let correcta = normalizarCorrecta(p.correcta ?? p.correct ?? p.answer, alternativas.length);
     if (!Number.isFinite(correcta) || correcta < 0 || correcta >= alternativas.length) continue;
@@ -366,6 +432,8 @@ export function normalizarPreguntas(raw: unknown, nUnidades: number): Pregunta[]
       alternativas: altsFinales,
       correcta: correctaFinal,
       explicacion,
+      pautaEvaluacion,
+      respuestaModelo,
     });
   }
   return out;
@@ -383,13 +451,29 @@ export interface ResultadoEval {
   porUnidad: { unidad: number; correctas: number; total: number }[];
 }
 
-export function calificar(preguntas: Pregunta[], respuestas: (number | null)[]): ResultadoEval {
+export type RespuestaCalificable =
+  | number
+  | { esCorrecta: boolean; puntaje?: number }
+  | boolean
+  | null;
+
+export function calificar(preguntas: Pregunta[], respuestas: RespuestaCalificable[]): ResultadoEval {
   const porUnidad = new Map<number, { correctas: number; total: number }>();
   let correctas = 0;
   preguntas.forEach((p, i) => {
     const u = porUnidad.get(p.unidad) || { correctas: 0, total: 0 };
     u.total += 1;
-    const ok = respuestas[i] === p.correcta;
+    const r = respuestas[i];
+    let ok = false;
+    if (p.tipo === 'desarrollo') {
+      if (typeof r === 'boolean') {
+        ok = r;
+      } else if (r && typeof r === 'object' && 'esCorrecta' in r) {
+        ok = Boolean(r.esCorrecta);
+      }
+    } else {
+      ok = typeof r === 'number' && r === p.correcta;
+    }
     if (ok) {
       correctas += 1;
       u.correctas += 1;
@@ -407,6 +491,137 @@ export function calificar(preguntas: Pregunta[], respuestas: (number | null)[]):
       .map(([unidad, v]) => ({ unidad, ...v }))
       .sort((a, b) => a.unidad - b.unidad),
   };
+}
+
+export interface EvaluacionRespuestaAbierta {
+  esCorrecta: boolean;
+  puntaje: number; // 0.0 a 1.0
+  nivel: 'logrado' | 'parcialmente_logrado' | 'por_mejorar';
+  retroalimentacion: string;
+  queFalto?: string;
+  aspectosDestacados?: string;
+  respuestaModelo?: string;
+}
+
+export async function evaluarRespuestaAbierta(opts: {
+  key: string;
+  model: string;
+  materia: string;
+  pregunta: Pregunta;
+  respuestaEstudiante: string;
+}): Promise<EvaluacionRespuestaAbierta> {
+  const { key, model, materia, pregunta, respuestaEstudiante } = opts;
+
+  const schema = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['esCorrecta', 'puntaje', 'nivel', 'retroalimentacion'],
+    properties: {
+      esCorrecta: { type: 'boolean' },
+      puntaje: { type: 'number', minimum: 0, maximum: 1 },
+      nivel: { type: 'string', enum: ['logrado', 'parcialmente_logrado', 'por_mejorar'] },
+      retroalimentacion: { type: 'string' },
+      queFalto: { type: 'string' },
+      aspectosDestacados: { type: 'string' },
+    },
+  };
+
+  const messages: MensajeIA[] = [
+    {
+      role: 'system',
+      content: [
+        'Eres una examinadora y docente oficial del MINEDUC de Chile para Validación de Estudios / Exámenes Libres de 1° medio (alumnos de 14 años).',
+        'Tu tarea es evaluar con rigor pedagógico y justicia curricular la respuesta escrita en lenguaje natural por un estudiante frente a una pregunta de desarrollo oficial.',
+        '',
+        'CRITERIOS DE CALIFICACIÓN:',
+        '1. Compara la respuesta del estudiante con la pregunta planteada, el contexto y la pauta oficial de evaluación.',
+        '2. No exijas terminología académica avanzada ni redacción perfecta: si la alumna de 14 años expresa la idea central, causa o justificación con sus propias palabras de manera comprensible y acertada, dale el puntaje.',
+        '3. Niveles:',
+        '   - "logrado" (puntaje 0.85 a 1.0): Cumple los aspectos centrales exigidos en la pauta.',
+        '   - "parcialmente_logrado" (puntaje 0.5 a 0.84): Muestra comprensión del tema pero omite un elemento clave o fundamentación solicitada.',
+        '   - "por_mejorar" (puntaje 0.0 a 0.49): Es errónea, confunde conceptos clave o no responde lo que se preguntaba.',
+        '4. "esCorrecta": true si puntaje >= 0.6; false si puntaje < 0.6.',
+        '5. "retroalimentacion": Breve (2 a 4 líneas), cálida, motivadora y formativa. Señala qué estuvo bien y cómo enriquecer la respuesta.',
+        '6. Devuelve ÚNICAMENTE el JSON pedido según el esquema.',
+      ].join('\n'),
+    },
+    {
+      role: 'user',
+      content: [
+        `Materia: ${materia}`,
+        pregunta.contexto ? `Contexto oficial: ${pregunta.contexto}` : '',
+        `Pregunta planteada: ${pregunta.pregunta}`,
+        pregunta.pautaEvaluacion ? `Pauta oficial de evaluación: ${pregunta.pautaEvaluacion}` : '',
+        pregunta.respuestaModelo ? `Respuesta modelo: ${pregunta.respuestaModelo}` : '',
+        '',
+        '--- RESPUESTA ESCRITA POR EL ESTUDIANTE ---',
+        respuestaEstudiante.trim(),
+        '-------------------------------------------',
+        '',
+        'Evalúa la respuesta del estudiante y devuelve el JSON.',
+      ]
+        .filter(Boolean)
+        .join('\n'),
+    },
+  ];
+
+  try {
+    const raw = await chatJSON({
+      key,
+      model,
+      messages,
+      schema,
+    });
+    const obj = raw as Record<string, unknown>;
+    const puntaje =
+      typeof obj.puntaje === 'number'
+        ? Math.max(0, Math.min(1, obj.puntaje))
+        : obj.esCorrecta
+        ? 1
+        : 0;
+    const esCorrecta = typeof obj.esCorrecta === 'boolean' ? obj.esCorrecta : puntaje >= 0.6;
+    const nivel: 'logrado' | 'parcialmente_logrado' | 'por_mejorar' =
+      obj.nivel === 'logrado' || obj.nivel === 'parcialmente_logrado' || obj.nivel === 'por_mejorar'
+        ? obj.nivel
+        : puntaje >= 0.85
+        ? 'logrado'
+        : puntaje >= 0.5
+        ? 'parcialmente_logrado'
+        : 'por_mejorar';
+    const retroalimentacion =
+      typeof obj.retroalimentacion === 'string' && obj.retroalimentacion.trim()
+        ? obj.retroalimentacion.trim()
+        : esCorrecta
+        ? '¡Muy bien fundamentada tu respuesta! Cumple con los criterios del temario oficial.'
+        : 'Tu respuesta no aborda los puntos principales exigidos en la pauta. Revisa la explicación y la respuesta modelo.';
+    const queFalto = typeof obj.queFalto === 'string' && obj.queFalto.trim() ? obj.queFalto.trim() : undefined;
+    const aspectosDestacados =
+      typeof obj.aspectosDestacados === 'string' && obj.aspectosDestacados.trim()
+        ? obj.aspectosDestacados.trim()
+        : undefined;
+
+    return {
+      esCorrecta,
+      puntaje,
+      nivel,
+      retroalimentacion,
+      queFalto,
+      aspectosDestacados,
+      respuestaModelo: pregunta.respuestaModelo,
+    };
+  } catch {
+    const l = respuestaEstudiante.trim().length;
+    const esCorrecta = l >= 30;
+    return {
+      esCorrecta,
+      puntaje: esCorrecta ? 0.7 : 0.3,
+      nivel: esCorrecta ? 'parcialmente_logrado' : 'por_mejorar',
+      retroalimentacion: esCorrecta
+        ? 'Tu respuesta fue recibida y contiene elementos válidos. Compara tu fundamentación con la respuesta modelo oficial.'
+        : 'Tu respuesta es muy breve. En el examen del MINEDUC se espera una fundamentación de 2 o más líneas.',
+      respuestaModelo: pregunta.respuestaModelo,
+    };
+  }
 }
 
 export function preguntasParaFaltantes(unidades: Set<number>, total: number): number[] {
