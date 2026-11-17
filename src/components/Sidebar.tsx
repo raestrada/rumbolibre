@@ -5,6 +5,7 @@ import { getConfig, getCursos, setConfig } from '../db/queries';
 const items: { name: string; label: string; icon: string }[] = [
   { name: 'dashboard', label: 'Inicio', icon: '🏠' },
   { name: 'ruta', label: 'Mi ruta', icon: '🗺️' },
+  { name: 'calendario', label: 'Calendario', icon: '📅' },
   { name: 'biblioteca', label: 'Biblioteca', icon: '📚' },
   { name: 'examenes', label: 'Exámenes', icon: '📄' },
   { name: 'ajustes', label: 'Ajustes', icon: '⚙️' },

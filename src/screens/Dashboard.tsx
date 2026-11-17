@@ -182,6 +182,13 @@ export default function Dashboard(): JSX.Element {
               <div className="plazos-sub">{new Date(config.fecha_examen + 'T00:00:00').toLocaleDateString('es-CL')}</div>
             ) : null}
           </div>
+          <button
+            className="btn btn-suave btn-chico"
+            style={{ marginLeft: 'auto' }}
+            onClick={() => go({ name: 'calendario' })}
+          >
+            Ver calendario →
+          </button>
         </div>
         {hitos.length ? (
           <div className="plazos-hitos">

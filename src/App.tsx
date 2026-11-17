@@ -17,11 +17,13 @@ import Padres from './screens/Padres';
 import Ajustes from './screens/Ajustes';
 import Onboarding from './screens/Onboarding';
 import Home from './screens/Home';
+import Calendario from './screens/Calendario';
 
 export type Screen =
   | { name: 'home' }
   | { name: 'dashboard' }
   | { name: 'ruta'; asignaturaId?: string; filtroRepasar?: boolean }
+  | { name: 'calendario' }
   | { name: 'modulo'; moduloId: string }
   | { name: 'ensayo'; asignaturaId: string }
   | { name: 'sesionIA'; tipo: 'modulo' | 'ensayo'; id: string }
@@ -60,6 +62,8 @@ function renderScreen(nav: Screen, onIrDashboard: () => void): JSX.Element {
       return <Dashboard />;
     case 'ruta':
       return <Ruta filtroInicial={nav.filtroRepasar ? 'repasar' : undefined} />;
+    case 'calendario':
+      return <Calendario />;
     case 'modulo':
       return <Modulo moduloId={nav.moduloId} />;
     case 'ensayo':
