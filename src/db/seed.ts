@@ -27,11 +27,28 @@ import { modulosMatematica as modulosMatematicaB8 } from '../data/b8/matematica'
 import { modulosCiencias as modulosCienciasB8 } from '../data/b8/ciencias';
 import { modulosHistoria as modulosHistoriaB8 } from '../data/b8/historia';
 import { modulosIngles as modulosInglesB8 } from '../data/b8/ingles';
+import { modulosLengua as modulosLenguaM2 } from '../data/m2/lengua';
+import { modulosMatematica as modulosMatematicaM2 } from '../data/m2/matematica';
+import { modulosCiencias as modulosCienciasM2 } from '../data/m2/ciencias';
+import { modulosHistoria as modulosHistoriaM2 } from '../data/m2/historia';
+import { modulosIngles as modulosInglesM2 } from '../data/m2/ingles';
+import { modulosLengua as modulosLenguaM3 } from '../data/m3/lengua';
+import { modulosMatematica as modulosMatematicaM3 } from '../data/m3/matematica';
+import { modulosCienciasCiudadania as modulosCienciasCiudadaniaM3 } from '../data/m3/cienciasCiudadania';
+import { modulosEducacionCiudadana as modulosEducacionCiudadanaM3 } from '../data/m3/educacionCiudadana';
+import { modulosFilosofia as modulosFilosofiaM3 } from '../data/m3/filosofia';
+import { modulosIngles as modulosInglesM3 } from '../data/m3/ingles';
+import { modulosLengua as modulosLenguaM4 } from '../data/m4/lengua';
+import { modulosMatematica as modulosMatematicaM4 } from '../data/m4/matematica';
+import { modulosCienciasCiudadania as modulosCienciasCiudadaniaM4 } from '../data/m4/cienciasCiudadania';
+import { modulosEducacionCiudadana as modulosEducacionCiudadanaM4 } from '../data/m4/educacionCiudadana';
+import { modulosFilosofia as modulosFilosofiaM4 } from '../data/m4/filosofia';
+import { modulosIngles as modulosInglesM4 } from '../data/m4/ingles';
 import { lecturas } from '../data/lecturas';
 
 // Se incrementa cuando cambia el CONTENIDO semilla (módulos, actividades, lecturas).
 // Al detectar una versión menor, la app re-sincroniza el contenido sin tocar el progreso del usuario.
-export const SEED_VERSION = 11;
+export const SEED_VERSION = 14;
 
 const TODOS_MODULOS = [
   // 5° Básico
@@ -64,6 +81,26 @@ const TODOS_MODULOS = [
   ...modulosCienciasM1,
   ...modulosHistoriaM1,
   ...modulosInglesM1,
+  // 2° Medio
+  ...modulosLenguaM2,
+  ...modulosMatematicaM2,
+  ...modulosCienciasM2,
+  ...modulosHistoriaM2,
+  ...modulosInglesM2,
+  // 3° Medio
+  ...modulosLenguaM3,
+  ...modulosMatematicaM3,
+  ...modulosCienciasCiudadaniaM3,
+  ...modulosEducacionCiudadanaM3,
+  ...modulosFilosofiaM3,
+  ...modulosInglesM3,
+  // 4° Medio
+  ...modulosLenguaM4,
+  ...modulosMatematicaM4,
+  ...modulosCienciasCiudadaniaM4,
+  ...modulosEducacionCiudadanaM4,
+  ...modulosFilosofiaM4,
+  ...modulosInglesM4,
 ];
 
 // Contenido curricular y biblioteca: idempotente (upsert). Se puede re-ejecutar sin duplicar.
@@ -223,6 +260,48 @@ function seedConfig(db: Database): void {
     'Rendición de exámenes',
     '',
     '5 asignaturas · 25 preguntas · 90 min cada una',
+  ]);
+  insHito.run([
+    'hito-inscripcion-m2',
+    'm2',
+    'Inscripción al examen',
+    '',
+    'La inscripción la realiza la madre, padre o tutor legal en ayudamineduc.cl',
+  ]);
+  insHito.run([
+    'hito-rendicion-m2',
+    'm2',
+    'Rendición de exámenes',
+    '',
+    '5 asignaturas · 25 preguntas · 90 min cada una (calculadora en Matemática, diccionario en Inglés)',
+  ]);
+  insHito.run([
+    'hito-inscripcion-m3',
+    'm3',
+    'Inscripción al examen',
+    '',
+    'La inscripción la realiza la madre, padre o tutor legal en ayudamineduc.cl',
+  ]);
+  insHito.run([
+    'hito-rendicion-m3',
+    'm3',
+    'Rendición de exámenes',
+    '',
+    '6 asignaturas · 25 preguntas · 90 min cada una (calculadora en Matemática, diccionario en Inglés)',
+  ]);
+  insHito.run([
+    'hito-inscripcion-m4',
+    'm4',
+    'Inscripción al examen',
+    '',
+    'La inscripción la realiza la madre, padre o tutor legal en ayudamineduc.cl',
+  ]);
+  insHito.run([
+    'hito-rendicion-m4',
+    'm4',
+    'Rendición de exámenes',
+    '',
+    '6 asignaturas · 25 preguntas · 90 min cada una (calculadora en Matemática, diccionario en Inglés)',
   ]);
   insHito.free();
 }

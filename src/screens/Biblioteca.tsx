@@ -77,7 +77,16 @@ export default function Biblioteca(): JSX.Element {
         l.edadMinima <= 13
       );
     }
-    return l.cursosAplica.includes('M1') || l.cursosAplica.includes('m1');
+    return (
+      l.cursosAplica.includes('M1') ||
+      l.cursosAplica.includes('m1') ||
+      l.cursosAplica.includes('M2') ||
+      l.cursosAplica.includes('m2') ||
+      l.cursosAplica.includes('M3') ||
+      l.cursosAplica.includes('m3') ||
+      l.cursosAplica.includes('M4') ||
+      l.cursosAplica.includes('m4')
+    );
   });
 
   const generos = ['Todas', ...Array.from(new Set(catalogoNivel.map((l) => l.genero))).sort()];

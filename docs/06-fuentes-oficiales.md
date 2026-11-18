@@ -49,6 +49,33 @@
 - Cómo se evalúa (asignaturas por curso y decretos):
   https://epja.mineduc.cl/validacion-de-estudios/examenes-libres-menores-de-18-anos/como-se-evalua/
 
+## Temario oficial (menores de 18) — 2° medio
+- PDF Temario Segundo Medio:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/temario_media_2deg_medio_UCE-1.pdf`
+- Documento local del temario: `docs/14-temario-2medio.md`
+- PDF guardado en el sitio: `public/examenes/m2-temario.pdf`
+- Decretos: Decreto Bases Curriculares N°614/2013 (7° básico a 2° medio).
+- Asignaturas: Lengua y Literatura (6 OA), Matemática (6 OA), Ciencias Naturales (9 OA), Historia, Geografía y Ciencias Sociales (14 OA), Idioma Extranjero: Inglés (4 OA). Total: 39 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
+## Temario oficial (menores de 18) — 3° medio
+- PDF Temario Tercero Medio:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_media_3deg_medio_uce.pdf`
+- Documento local del temario: `docs/15-temario-3medio.md`
+- PDF guardado en el sitio: `public/examenes/m3-temario.pdf`
+- Decretos: Decreto Bases Curriculares N°193/2019 (3° y 4° medio).
+- Asignaturas (6): Lengua y Literatura (4 OA), Matemática (3 OA), Ciencias para la Ciudadanía (4 OA), Educación Ciudadana (6 OA), Filosofía (4 OA), Idioma Extranjero: Inglés (3 OA). Total: 24 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
+## Temario oficial (menores de 18) — 4° medio
+- PDF Temario Cuarto Medio:
+  `https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_media_4deg_medio_uce.pdf`
+- Documento local del temario: `docs/16-temario-4medio.md`
+- PDF guardado en el sitio: `public/examenes/m4-temario.pdf`
+- Decretos: Decreto Bases Curriculares N°193/2019 (3° y 4° medio).
+- Asignaturas (6): Lengua y Literatura (3 OA), Matemática (3 OA), Ciencias para la Ciudadanía (2 OA), Educación Ciudadana (5 OA), Filosofía (4 OA), Idioma Extranjero: Inglés (3 OA). Total: 20 OA.
+- Particularidades: se permite calculadora en Matemática y diccionario en Inglés.
+
 ## Decretos que rigen la evaluación
 - 1° a 6° básico: Decreto Supremo de Educación N°439/2012.
 - 7° y 8° básico: Decreto Supremo de Educación N°614/2013.

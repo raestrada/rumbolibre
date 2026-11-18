@@ -45,7 +45,9 @@ export default function Examenes(): JSX.Element {
                   <h3>{ex.nombre}</h3>
                   <span className="fila-sub">
                     {ex.esTemario
-                      ? cursoId === 'b7' || cursoId === 'b8' || cursoId === 'm1'
+                      ? cursoId === 'm3' || cursoId === 'm4'
+                        ? 'Temario oficial UCE · Decreto N°193/2019'
+                        : cursoId === 'b7' || cursoId === 'b8' || cursoId === 'm1' || cursoId === 'm2'
                         ? 'Temario oficial UCE · Decreto N°614/2013'
                         : 'Temario oficial UCE · Decreto N°439/2012'
                       : 'Preguntas de ejemplo · formato real MINEDUC'}

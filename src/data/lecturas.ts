@@ -12,7 +12,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Química · Biología · Física',
     temas: ['química', 'biología', 'física', 'resolución de problemas'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.3,
     porQue:
@@ -25,7 +25,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Física · Biología · Astronomía',
     temas: ['física', 'biología', 'astronomía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.5,
     porQue:
@@ -38,7 +38,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Historia · Pensamiento sistémico',
     temas: ['historia', 'política', 'lógica', 'astronomía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -51,7 +51,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Lógica · Ética',
     temas: ['lógica', 'ética', 'tecnología'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -64,7 +64,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Astronomía · Método científico',
     temas: ['astronomía', 'ciencia', 'filosofía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.1,
     porQue:
@@ -77,7 +77,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Astronomía · Evolución · Tecnología',
     temas: ['astronomía', 'evolución', 'tecnología'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -90,7 +90,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Física · Filosofía de la ciencia',
     temas: ['física', 'filosofía', 'ciencia'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.2,
     porQue:
@@ -103,7 +103,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Lenguaje · Física · Filosofía',
     temas: ['lenguaje', 'física', 'filosofía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.3,
     porQue:
@@ -116,7 +116,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Física · Astronomía',
     temas: ['física', 'astronomía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.0,
     porQue:
@@ -129,7 +129,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Genética · Biología',
     temas: ['genética', 'biología', 'ética'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.1,
     porQue:
@@ -142,7 +142,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Sociedad · Diversidad · Empatía',
     temas: ['sociedad', 'diversidad', 'empatía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.4,
     porQue:
@@ -156,7 +156,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Lógica · Ética · Sociedad',
     temas: ['lógica', 'ética', 'sociedad'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.5,
     porQue:
@@ -169,7 +169,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Ética · Sociedad',
     temas: ['ética', 'sociedad'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -182,7 +182,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Ética · Liderazgo',
     temas: ['ética', 'sociedad', 'honor'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 15,
     rating: 4.6,
     porQue:
@@ -195,7 +195,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Lógica · Geometría',
     temas: ['lógica', 'geometría'],
-    cursosAplica: ['M1', 'B5', 'B6', 'B7', 'B8'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4', 'B5', 'B6', 'B7', 'B8'],
     edadMinima: 12,
     rating: 4.2,
     porQue:
@@ -208,7 +208,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Ética · Política · Religión',
     temas: ['ética', 'política', 'religión'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.3,
     porQue:
@@ -221,7 +221,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Música',
     temas: ['literatura', 'música'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.6,
     porQue:
@@ -234,7 +234,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Sátira social · Filosofía · Historia',
     temas: ['sociedad', 'filosofía', 'historia'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -247,7 +247,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Aventura',
     temas: ['literatura', 'aventura'],
-    cursosAplica: ['M1', 'B5', 'B6', 'B7', 'B8'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4', 'B5', 'B6', 'B7', 'B8'],
     edadMinima: 12,
     rating: 4.3,
     porQue:
@@ -260,7 +260,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Humor · Aventura',
     temas: ['literatura', 'humor', 'aventura'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -273,7 +273,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Imaginación',
     temas: ['literatura', 'imaginación'],
-    cursosAplica: ['M1', 'B5', 'B6', 'B7', 'B8'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4', 'B5', 'B6', 'B7', 'B8'],
     edadMinima: 12,
     rating: 4.2,
     porQue:
@@ -286,7 +286,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fantasía',
     area: 'Literatura · Valores',
     temas: ['literatura', 'valores'],
-    cursosAplica: ['M1', 'B5', 'B6', 'B7', 'B8'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4', 'B5', 'B6', 'B7', 'B8'],
     edadMinima: 12,
     rating: 4.1,
     porQue:
@@ -300,7 +300,7 @@ export const lecturas: Lectura[] = [
     genero: 'Distopía',
     area: 'Historia · Política',
     temas: ['totalitarismo', 'historia', 'política'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.2,
     porQue:
@@ -313,7 +313,7 @@ export const lecturas: Lectura[] = [
     genero: 'Fábula política',
     area: 'Historia · Política',
     temas: ['política', 'historia'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.0,
     porQue:
@@ -326,7 +326,7 @@ export const lecturas: Lectura[] = [
     genero: 'Distopía',
     area: 'Psicología · Sociedad',
     temas: ['psicología', 'sociedad'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.0,
     porQue:
@@ -339,7 +339,7 @@ export const lecturas: Lectura[] = [
     genero: 'Distopía',
     area: 'Lenguaje · Cultura',
     temas: ['censura', 'cultura', 'lectura'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.0,
     porQue:
@@ -352,7 +352,7 @@ export const lecturas: Lectura[] = [
     genero: 'Distopía',
     area: 'Sociedad · Ética · Memoria',
     temas: ['sociedad', 'ética', 'memoria'],
-    cursosAplica: ['M1', 'B5', 'B6', 'B7', 'B8'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4', 'B5', 'B6', 'B7', 'B8'],
     edadMinima: 12,
     rating: 4.1,
     porQue:
@@ -365,7 +365,7 @@ export const lecturas: Lectura[] = [
     genero: 'Novela',
     area: 'Psicología · Sociedad',
     temas: ['comportamiento humano', 'sociedad'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.0,
     porQue:
@@ -378,7 +378,7 @@ export const lecturas: Lectura[] = [
     genero: 'Novela',
     area: 'Psicología · Moral',
     temas: ['psicología', 'moral'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 15,
     rating: 4.3,
     porQue:
@@ -391,7 +391,7 @@ export const lecturas: Lectura[] = [
     genero: 'Novela histórica',
     area: 'Historia (Segunda Guerra Mundial)',
     temas: ['historia', 'segunda guerra mundial'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.4,
     porQue:
@@ -404,7 +404,7 @@ export const lecturas: Lectura[] = [
     genero: 'Realismo mágico',
     area: 'Historia de Chile · Sociedad',
     temas: ['historia de chile', 'sociedad'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.3,
     porQue:
@@ -417,7 +417,7 @@ export const lecturas: Lectura[] = [
     genero: 'Novela',
     area: 'Historia · Cultura',
     temas: ['colonialismo', 'cultura'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.0,
     porQue:
@@ -431,7 +431,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Física · Astronomía',
     temas: ['física', 'astronomía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.1,
     porQue:
@@ -444,7 +444,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Física · Astronomía',
     temas: ['física', 'astronomía'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.2,
     porQue:
@@ -457,7 +457,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Astronomía · Ciencia',
     temas: ['astronomía', 'ciencia'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.4,
     porQue:
@@ -470,7 +470,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación',
     area: 'Historia · Evolución',
     temas: ['historia', 'evolución'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.1,
     porQue:
@@ -483,7 +483,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Física · Pensamiento científico',
     temas: ['física', 'ciencia', 'humor'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -496,7 +496,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Ciencias Naturales',
     temas: ['ciencia', 'historia de la ciencia'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.2,
     porQue:
@@ -509,7 +509,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Biología · Evolución',
     temas: ['evolución', 'biología'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 15,
     rating: 4.1,
     porQue:
@@ -522,7 +522,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Biología · Evolución',
     temas: ['evolución', 'biología'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.0,
     porQue:
@@ -535,7 +535,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación',
     area: 'Neurociencia · Psicología',
     temas: ['neurociencia', 'psicología'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.2,
     porQue:
@@ -548,7 +548,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación',
     area: 'Psicología · Decisiones',
     temas: ['psicología', 'decisiones'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 15,
     rating: 4.2,
     porQue:
@@ -561,7 +561,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación científica',
     area: 'Física',
     temas: ['física'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.1,
     porQue:
@@ -574,7 +574,7 @@ export const lecturas: Lectura[] = [
     genero: 'No ficción',
     area: 'Psicología · Resiliencia',
     temas: ['psicología', 'resiliencia', 'historia'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 15,
     rating: 4.4,
     porQue:
@@ -587,7 +587,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación',
     area: 'Psicología · Emociones',
     temas: ['psicología', 'emociones'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 14,
     rating: 4.0,
     porQue:
@@ -600,7 +600,7 @@ export const lecturas: Lectura[] = [
     genero: 'Divulgación',
     area: 'Psicología · Aprendizaje',
     temas: ['psicología', 'aprendizaje'],
-    cursosAplica: ['M1'],
+    cursosAplica: ['M1', 'M2', 'M3', 'M4'],
     edadMinima: 13,
     rating: 4.2,
     porQue:
@@ -693,7 +693,7 @@ export const lecturas: Lectura[] = [
     genero: 'Ciencia ficción',
     area: 'Tecnología · Superación',
     temas: ['astronavegación', 'perseverancia', 'amistad', 'tecnología'],
-    cursosAplica: ['B5', 'B6', 'B7', 'B8', 'M1'],
+    cursosAplica: ['B5', 'B6', 'B7', 'B8', 'M1', 'M2', 'M3', 'M4'],
     edadMinima: 11,
     rating: 4.5,
     porQue:

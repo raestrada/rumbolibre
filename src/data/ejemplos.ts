@@ -188,6 +188,87 @@ export const EXAMENES_PDF: ExamenPdf[] = [
     fuente:
       'https://epja.mineduc.cl/wp-content/uploads/sites/43/2020/09/PREGUNTAS-PARA-LIBERAR-INGLES-VE257_NM1.pdf',
   },
+
+  // --- 2° Medio ---
+  {
+    id: 'm2-temario',
+    cursoId: 'm2',
+    asignatura: 'ALL',
+    nombre: 'Temario Oficial 2° Medio (MINEDUC)',
+    archivo: 'examenes/m2-temario.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/temario_media_2deg_medio_UCE-1.pdf',
+    esTemario: true,
+  },
+  {
+    id: 'm2-lengua',
+    cursoId: 'm2',
+    asignatura: 'LEN',
+    nombre: 'Lengua y Literatura (Nivel Medio 1)',
+    archivo: 'examenes/lengua.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NM1-lenguaje-2026_DS10.pdf',
+  },
+  {
+    id: 'm2-matematica',
+    cursoId: 'm2',
+    asignatura: 'MAT',
+    nombre: 'Matemática (Nivel Medio 1)',
+    archivo: 'examenes/matematica.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2025/03/ejemplos-de-preguntas-_NM1-matematica-2025_DS257-uv.pdf',
+  },
+  {
+    id: 'm2-ciencias',
+    cursoId: 'm2',
+    asignatura: 'CIE',
+    nombre: 'Ciencias Naturales (Nivel Medio 1)',
+    archivo: 'examenes/ciencias.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/ejemplos-de-preguntas-_NM1-C-Naturales-2026_DS10.pdf',
+  },
+  {
+    id: 'm2-historia',
+    cursoId: 'm2',
+    asignatura: 'HIS',
+    nombre: 'Historia, Geografía y Ciencias Sociales (Nivel Medio 1)',
+    archivo: 'examenes/historia.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/06/Preguntas-ejemplos-nivel-medio-1-D10-VE-2026.pdf',
+  },
+  {
+    id: 'm2-ingles',
+    cursoId: 'm2',
+    asignatura: 'ING',
+    nombre: 'Inglés (Nivel Medio 1)',
+    archivo: 'examenes/ingles.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2020/09/PREGUNTAS-PARA-LIBERAR-INGLES-VE257_NM1.pdf',
+  },
+
+  // --- 3° Medio ---
+  {
+    id: 'm3-temario',
+    cursoId: 'm3',
+    asignatura: 'ALL',
+    nombre: 'Temario Oficial 3° Medio (MINEDUC)',
+    archivo: 'examenes/m3-temario.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_media_3deg_medio_uce.pdf',
+    esTemario: true,
+  },
+
+  // --- 4° Medio ---
+  {
+    id: 'm4-temario',
+    cursoId: 'm4',
+    asignatura: 'ALL',
+    nombre: 'Temario Oficial 4° Medio (MINEDUC)',
+    archivo: 'examenes/m4-temario.pdf',
+    fuente:
+      'https://epja.mineduc.cl/wp-content/uploads/sites/43/2026/03/temario_media_4deg_medio_uce.pdf',
+    esTemario: true,
+  },
 ];
 
 // Ejemplos reales por asignatura según curso
@@ -404,6 +485,184 @@ export const EJEMPLOS_PREGUNTA: Record<string, Record<string, EjemploPregunta>> 
         '“In China there is only one course, this means Chinese put all the nutritive food together on a plate and they eat with chopsticks”.',
       enunciado: 'What is the meaning of “course”?',
       alternativas: ['Dish.', 'Meat.', 'Habit.', 'Breakfast.'],
+    },
+  },
+  m2: {
+    LEN: {
+      contexto:
+        'En un ensayo sobre el uso de algoritmos en redes sociales, el autor afirma: "Es indudable que estas plataformas personalizan el contenido, pero también reducen la exposición a ideas distintas".',
+      enunciado: '¿Qué función cumple la expresión "Es indudable que" en el argumento anterior?',
+      alternativas: [
+        'Funciona como modalizador discursivo que expresa un alto grado de certeza.',
+        'Introduce un contraargumento emotivo sin respaldo lógico.',
+        'Señala una duda abierta respecto de la existencia de los algoritmos.',
+        'Reemplaza la tesis central del texto por una anécdota personal.',
+      ],
+    },
+    MAT: {
+      contexto: 'Considere la función cuadrática f(x) = x² - 4x + 3.',
+      enunciado: '¿Cuáles son las coordenadas del vértice de la parábola que representa a f(x)?',
+      alternativas: ['(2, -1)', '(-2, 15)', '(4, 3)', '(1, 0)'],
+    },
+    CIE: {
+      enunciado:
+        '¿Qué diferencia fundamental existe entre la mitosis y la meiosis respecto de las células hijas producidas?',
+      alternativas: [
+        'La mitosis genera dos células diploides idénticas; la meiosis genera cuatro células haploides genéticamente distintas.',
+        'La mitosis ocurre solo en gametos sexuales y la meiosis en células musculares.',
+        'La mitosis reduce a la mitad el número de cromosomas y la meiosis lo duplica.',
+        'Ambas producen exactamente dos células idénticas sin variabilidad genética.',
+      ],
+    },
+    HIS: {
+      enunciado:
+        '¿Cuál fue una de las principales consecuencias de la crisis económica de 1929 (Gran Depresión) en Europa y América Latina?',
+      alternativas: [
+        'El cuestionamiento al modelo liberal decimonónico y el surgimiento de totalitarismos, populismos y el Estado de Bienestar.',
+        'La consolidación definitiva del patrón oro y la eliminación de los aranceles aduaneros.',
+        'El fin inmediato de todos los regímenes autoritarios en Europa occidental.',
+        'La creación automática de la Unión Europea como bloque económico único.',
+      ],
+    },
+    ING: {
+      contexto: 'If I were the principal of the school, I would create more green areas for students.',
+      enunciado: 'What does the sentence express?',
+      alternativas: [
+        'A hypothetical or imaginary situation in the present.',
+        'A routine action that happens every morning.',
+        'A past event that occurred before another past action.',
+        'A strict obligation imposed by the government.',
+      ],
+    },
+  },
+  m3: {
+    LEN: {
+      contexto:
+        'En un foro digital se viraliza un meme que atribuye declaraciones falsas a una autoridad sanitaria, acompañado de insultos hacia quienes opinan distinto.',
+      enunciado: 'Al analizar críticamente este género discursivo digital, ¿qué aspecto ético resulta prioritario evaluar?',
+      alternativas: [
+        'La veracidad de la evidencia compartida y la presencia de descalificaciones o acoso en la comunidad.',
+        'La cantidad de colores utilizados en la tipografía de la imagen.',
+        'La extensión mínima en párrafos propia de un ensayo académico impreso.',
+        'La rima consonante empleada en los comentarios de los usuarios.',
+      ],
+    },
+    MAT: {
+      contexto:
+        'Dos cursos obtuvieron el mismo promedio (5,5) en un ensayo, pero el Curso A tuvo una desviación estándar de 0,4 y el Curso B una desviación estándar de 1,8.',
+      enunciado: '¿Qué conclusión estadística se puede tomar a partir de estas medidas de dispersión?',
+      alternativas: [
+        'Las notas del Curso A son mucho más homogéneas y cercanas al promedio que las del Curso B.',
+        'El Curso B tiene un promedio necesariamente mayor que el Curso A.',
+        'Todos los estudiantes del Curso A obtuvieron exactamente la misma nota.',
+        'La desviación estándar no aporta información sobre la variabilidad de los datos.',
+      ],
+    },
+    CC: {
+      enunciado:
+        'Al almacenar productos químicos domésticos como cloro y limpiadores ácidos en el hogar, ¿por qué es fundamental revisar el etiquetado y evitar mezclarlos?',
+      alternativas: [
+        'Porque su reactividad química puede liberar gases tóxicos peligrosos para la salud respiratoria.',
+        'Porque al mezclarlos pierden su color original sin generar efectos en el ambiente.',
+        'Porque las etiquetas solo indican la fecha de fabricación comercial.',
+        'Porque todos los detergentes domésticos son inertes al entrar en contacto entre sí.',
+      ],
+    },
+    EC: {
+      enunciado:
+        'En el marco de la democracia chilena y el acceso a la justicia, ¿cuál es el rol principal de la Defensoría Penal Pública?',
+      alternativas: [
+        'Proporcionar defensa penal gratuita a las personas imputadas o acusadas de un delito que carezcan de abogado.',
+        'Dirigir la investigación criminal y formular acusaciones en representación del Estado.',
+        'Aprobar las leyes tributarias y el presupuesto anual de la nación.',
+        'Administrar los planes reguladores comunales junto a las juntas de vecinos.',
+      ],
+    },
+    FIL: {
+      enunciado:
+        '¿Qué diferencia fundamental distingue a la validez lógica de la verdad material en un argumento deductivo?',
+      alternativas: [
+        'La validez depende de que la conclusión se siga lógicamente de las premisas; la verdad depende de la correspondencia con los hechos.',
+        'Un argumento válido siempre tiene premisas verdaderas y una conclusión falsa.',
+        'La validez solo aplica a opiniones personales y la verdad solo a la ontología.',
+        'Son conceptos exactamente sinónimos dentro de la lógica formal.',
+      ],
+    },
+    ING: {
+      contexto:
+        'Even though remote work offers flexibility, many employees miss face-to-face collaboration; consequently, hybrid schedules have become popular.',
+      enunciado: 'According to the text, why have hybrid schedules become popular?',
+      alternativas: [
+        'Because they balance flexibility with the desire for in-person collaboration.',
+        'Because companies banned all forms of remote work.',
+        'Because employees prefer working longer hours without breaks.',
+        'Because face-to-face collaboration is impossible in modern offices.',
+      ],
+    },
+  },
+  m4: {
+    LEN: {
+      contexto:
+        'Dos novelas publicadas con cincuenta años de diferencia abordan la migración: la primera desde el optimismo del progreso industrial y la segunda desde el desarraigo y la precariedad digital.',
+      enunciado: 'Al comparar ambas obras literarias, ¿qué elemento explica principalmente la diferencia en el tratamiento del tema?',
+      alternativas: [
+        'La relación de cada obra con su respectivo contexto histórico y cultural de producción.',
+        'La cantidad de capítulos y páginas que posee cada edición impresa.',
+        'El uso obligatorio de versos alejandrinos en las novelas contemporáneas.',
+        'La prohibición de incorporar narradores en primera persona en el siglo XX.',
+      ],
+    },
+    MAT: {
+      contexto:
+        'Para financiar un proyecto comunitario, se evalúan dos créditos por el mismo monto y plazo: el Crédito A tiene una tasa de interés anual del 6% y el Crédito B del 9%, ambos con las mismas condiciones de cobro.',
+      enunciado: 'Si se busca minimizar el costo financiero total a pagar, ¿qué decisión resulta mejor fundamentada?',
+      alternativas: [
+        'Elegir el Crédito A porque, a igual monto y plazo, una menor tasa de interés genera un menor pago total de intereses.',
+        'Elegir el Crédito B porque una tasa mayor reduce el capital adeudado.',
+        'Elegir cualquiera de los dos, ya que la tasa de interés no afecta el monto final.',
+        'Dividir el crédito en partes iguales para duplicar los costos de mantención.',
+      ],
+    },
+    CC: {
+      enunciado:
+        '¿Cuál de las siguientes evidencias científicas respalda directamente los efectos del cambio climático sobre los ecosistemas marinos?',
+      alternativas: [
+        'La acidificación de los océanos por mayor absorción de CO₂ atmosférico, que afecta organismos calcáreos.',
+        'La congelación permanente de todas las corrientes ecuatoriales durante el verano.',
+        'La desaparición completa del ciclo hidrológico en las zonas costeras.',
+        'El aumento espontáneo de la salinidad debido exclusivamente a las mareas lunares.',
+      ],
+    },
+    EC: {
+      enunciado:
+        'Dentro de la institucionalidad democrática chilena, ¿qué función cumple principalmente el Servicio Electoral (Servel)?',
+      alternativas: [
+        'Administrar, supervigilar y fiscalizar los procesos electorales, plebiscitos y el registro electoral.',
+        'Dictar sentencias penales en causas de corrupción administrativa.',
+        'Redactar y aprobar los proyectos de ley enviados por el Poder Ejecutivo.',
+        'Fijar la tasa de política monetaria y controlar la inflación anual.',
+      ],
+    },
+    FIL: {
+      enunciado:
+        '¿Qué distingue principalmente a la ética de la moral dentro de la reflexión filosófica sobre la praxis?',
+      alternativas: [
+        'La moral remite a normas y costumbres vividas en una sociedad; la ética es la reflexión filosófica crítica sobre esas normas y su fundamento.',
+        'La ética es un conjunto de leyes penales obligatorias y la moral solo aplica al arte.',
+        'La moral pertenece exclusivamente a la ontología y la ética a la física.',
+        'No existe distinción alguna entre ética, moral y etiqueta social.',
+      ],
+    },
+    ING: {
+      contexto:
+        'Science fiction stories often explore how emerging technologies such as artificial intelligence might reshape human identity and ethical choices.',
+      enunciado: 'What is the main purpose of this statement?',
+      alternativas: [
+        'To explain how science fiction reflects on technology, identity, and ethics.',
+        'To instruct readers on how to program artificial intelligence software.',
+        'To argue that science fiction books should be removed from schools.',
+        'To describe the history of printing presses in Europe.',
+      ],
     },
   },
 };

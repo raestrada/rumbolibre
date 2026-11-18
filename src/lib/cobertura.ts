@@ -58,12 +58,21 @@ export function notaChilena(pct: number): number {
 
 function getNivelContexto(codigo: string): { curso: string; edad: string; esBasica: boolean } {
   const c = codigo.toUpperCase();
+  const esM4 = c.includes('M4') || codigo.toLowerCase().includes('m4');
+  const esM3 = c.includes('M3') || codigo.toLowerCase().includes('m3');
+  const esM2 = c.includes('M2') || codigo.toLowerCase().includes('m2');
   const esB8 = c.includes('B8') || codigo.toLowerCase().includes('b8');
   const esB7 = c.includes('B7') || codigo.toLowerCase().includes('b7');
   const esB6 = c.includes('B6') || codigo.toLowerCase().includes('b6');
   const esB5 = c.includes('B5') || codigo.toLowerCase().includes('b5');
   const esBasica = esB5 || esB6 || esB7 || esB8 || c.startsWith('B') || codigo.startsWith('b');
-  const curso = esB8
+  const curso = esM4
+    ? '4° medio'
+    : esM3
+    ? '3° medio'
+    : esM2
+    ? '2° medio'
+    : esB8
     ? '8° básico'
     : esB7
     ? '7° básico'
@@ -74,7 +83,13 @@ function getNivelContexto(codigo: string): { curso: string; edad: string; esBasi
     : esBasica
     ? 'educación básica'
     : '1° medio';
-  const edad = esB8
+  const edad = esM4
+    ? '17 a 18 años'
+    : esM3
+    ? '16 a 17 años'
+    : esM2
+    ? '15 a 16 años'
+    : esB8
     ? '13 a 14 años'
     : esB7
     ? '12 a 13 años'

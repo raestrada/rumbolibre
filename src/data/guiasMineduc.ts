@@ -231,6 +231,128 @@ export const GUIAS_MINEDUC: Record<string, GuiaMineducAsignatura> = {
         'En el contexto gastronómico de un banquete, "course" alude a un plato o tiempo de la comida, no a un curso de estudio.',
     },
   },
+  CC: {
+    codigo: 'CC',
+    nombre: 'Ciencias para la Ciudadanía',
+    enfoqueMineduc:
+      'Comprensión integrada de fenómenos cotidianos y problemas socioambientales o de salud pública combinando Biología, Química, Física y análisis de evidencia. Se evalúa la interpretación de casos de salud, prevención de infecciones, seguridad química en el hogar/trabajo y gestión de riesgos socionaturales.',
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
+    contextosTipicos: [
+      'Caso práctico sobre prevención de enfermedades infecciosas, vacunación o factores que influyen en la salud.',
+      'Etiquetado o manipulación de sustancias químicas de uso cotidiano en el hogar o trabajo.',
+      'Situación local de riesgo socionatural (sismos, incendios, inundaciones) con medidas de prevención y mitigación.',
+    ],
+    criteriosDistractores: [
+      'Confundir prevención, mitigación y adaptación ante riesgos.',
+      'Errores comunes respecto a vías de transmisión de patógenos o uso de vacunas.',
+    ],
+    criterioProfundizacion: {
+      meta: 'Integrar evidencia científica en la toma de decisiones responsables sobre salud, seguridad química y entorno.',
+      queIncluye: [
+        'Clasificación de factores biológicos, ambientales y sociales de salud.',
+        'Análisis de etiquetado, reactividad y manejo seguro de sustancias cotidianas.',
+        'Evaluación de medidas de prevención, mitigación y adaptación ante riesgos.',
+      ],
+      queFaltaSiNoSeProfundiza:
+        'Falta conectar los conceptos científicos con situaciones prácticas de autocuidado, seguridad o entorno local.',
+    },
+    ejemploOficial: {
+      tipo: 'analisis_caso',
+      contexto:
+        'En una comuna costera propensa a tsunamis y sismos de alta magnitud, el municipio instala señalética de vías de evacuación hacia zonas de seguridad en altura.',
+      enunciado: '¿A qué tipo de acción frente a riesgos socionaturales corresponde principalmente esta medida?',
+      alternativas: [
+        'Mitigación y preparación para reducir el impacto ante un evento.',
+        'Eliminación total de la amenaza tectónica del territorio.',
+        'Restauración ecológica posterior a la erupción volcánica.',
+        'Aislamiento químico de sustancias peligrosas domiciliarias.',
+      ],
+      correcta: 0,
+      explicacion:
+        'Señalizar vías de evacuación reduce la vulnerabilidad y prepara a la población para disminuir daños cuando ocurra el evento.',
+    },
+  },
+  EC: {
+    codigo: 'EC',
+    nombre: 'Educación Ciudadana',
+    enfoqueMineduc:
+      'Análisis crítico del sistema democrático, Estado de Derecho, acceso a la justicia, rol del Estado y el mercado, Derechos Humanos y participación ciudadana en distintas escalas territoriales (comunal, regional y nacional).',
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
+    contextosTipicos: [
+      'Caso de interés público sobre acceso a la justicia (Fiscalía, Defensoría Penal Pública, Corporación de Asistencia Judicial).',
+      'Dilema o debate sobre las funciones económicas del Estado (reguladora, fiscalizadora, redistribuidora) frente al mercado.',
+      'Situación comunitaria que involucra participación ciudadana, ordenamiento territorial o resguardo de Derechos Humanos.',
+    ],
+    criteriosDistractores: [
+      'Confundir las funciones de instituciones judiciales (Fiscalía vs. Defensoría vs. Tribunales).',
+      'Mezclar las corrientes políticas (republicanismo, liberalismo, comunitarismo) respecto del bien común.',
+    ],
+    criterioProfundizacion: {
+      meta: 'Comprender el funcionamiento institucional democrático chileno y argumentar sobre ciudadanía, justicia y bien común.',
+      queIncluye: [
+        'Atributos y fundamentos de la democracia y el Estado de Derecho.',
+        'Mecanismos concretos de acceso a la justicia y roles institucionales en Chile.',
+        'Principios de los Derechos Humanos y escalas de organización político-territorial.',
+      ],
+      queFaltaSiNoSeProfundiza:
+        'Falta ejemplificar con instituciones chilenas reales (como Ministerio Público o municipios) y distinguir fundamentos democráticos.',
+    },
+    ejemploOficial: {
+      tipo: 'seleccion_multiple',
+      enunciado:
+        'En el sistema procesal penal chileno, ¿qué institución tiene la función exclusiva de dirigir la investigación de los delitos y ejercer la acción penal pública?',
+      alternativas: [
+        'El Ministerio Público (Fiscalía).',
+        'La Defensoría Penal Pública.',
+        'La Corporación de Asistencia Judicial.',
+        'El Tribunal Constitucional.',
+      ],
+      correcta: 0,
+      explicacion:
+        'El Ministerio Público dirige en forma exclusiva la investigación de los hechos constitutivos de delito, mientras la Defensoría asiste al imputado.',
+    },
+  },
+  FIL: {
+    codigo: 'FIL',
+    nombre: 'Filosofía',
+    enfoqueMineduc:
+      'Reflexión crítica y metódica sobre preguntas filosóficas fundamentales (origen de la filosofía, ontología, epistemología) y aplicación de herramientas elementales de lógica y argumentación (validez vs. verdad, inferencias inductivas/deductivas y falacias).',
+    tiposPermitidos: ['analisis_caso', 'desarrollo', 'seleccion_multiple', 'verdadero_falso'],
+    contextosTipicos: [
+      'Fragmento filosófico breve o dilema cotidiano sobre el ser, la realidad o los límites del conocimiento.',
+      'Argumento escrito donde se deba identificar su estructura (premisas y conclusión), validez o presencia de falacias.',
+      'Comparación entre posturas epistemológicas como dogmatismo, escepticismo y criticismo.',
+    ],
+    criteriosDistractores: [
+      'Confundir la verdad material de las premisas con la validez lógica del razonamiento.',
+      'Confundir ontología (estudio del ser/realidad) con epistemología (estudio del conocimiento/verdad).',
+    ],
+    criterioProfundizacion: {
+      meta: 'Distinguir preguntas y problemas filosóficos fundamentales y evaluar la rigurosidad lógica de argumentos.',
+      queIncluye: [
+        'Origen del filosofar en el asombro y distinción entre preguntas filosóficas y no filosóficas.',
+        'Diferencia clara entre ontología y epistemología (dogmatismo, escepticismo, criticismo).',
+        'Análisis lógico: validez vs. verdad, deducción vs. inducción, identificación de falacias.',
+      ],
+      queFaltaSiNoSeProfundiza:
+        'Falta ejercitar con argumentos concretos la distinción entre validez y verdad o aplicar categorías ontológicas/epistemológicas a casos.',
+    },
+    ejemploOficial: {
+      tipo: 'analisis_caso',
+      contexto:
+        'Considere el argumento: "Todos los mamíferos tienen pulmones. Las ballenas son mamíferos. Por lo tanto, las ballenas tienen pulmones".',
+      enunciado: 'Desde el punto de vista lógico, ¿cómo se clasifica este razonamiento?',
+      alternativas: [
+        'Razonamiento deductivo válido y con conclusión verdadera.',
+        'Razonamiento inductivo inválido basado en una falacia.',
+        'Razonamiento válido pero con premisas contradictorias.',
+        'Opinión dogmática sin estructura lógica identificable.',
+      ],
+      correcta: 0,
+      explicacion:
+        'Es un silogismo deductivo válido porque la conclusión se sigue necesariamente de premisas generales verdaderas.',
+    },
+  },
 };
 
 export function getGuiaMineduc(codigoAsignatura: string): GuiaMineducAsignatura {

@@ -301,12 +301,136 @@ export const ORDEN_MODULOS_M1: string[] = [
   'm1-his-oa25',
 ];
 
+export const ORDEN_MODULOS_M2: string[] = [
+  // Semana 1: Raíces, narrativa, sistema nervioso y crisis liberal
+  'm2-mat-oa1', // Matemática: Números reales y raíces
+  'm2-len-oa3', // Lengua: Narraciones y visión de mundo
+  'm2-cie-bio-oa1', // Ciencias: Sistema nervioso y neuronas
+  'm2-his-oa2', // Historia: Crisis Estado liberal, Gran Depresión y totalitarismos
+  'm2-ing-oa9', // Inglés: Comprensión lectora general
+
+  // Semana 2: Logaritmos, dramática, sexualidad y II Guerra Mundial
+  'm2-mat-oa2', // Matemática: Potencias, raíces enésimas y logaritmos
+  'm2-len-oa5', // Lengua: Textos dramáticos
+  'm2-cie-bio-oa3', // Ciencias: Sexualidad humana y reproducción responsable
+  'm2-his-oa4', // Historia: Consecuencias II Guerra Mundial, ONU y DD.HH.
+  'm2-ing-oa10', // Inglés: Textos no literarios, conectores y prefijos
+
+  // Semana 3: Función cuadrática, interpretación, genética y democratización
+  'm2-mat-oa3', // Matemática: Función cuadrática
+  'm2-len-oa8', // Lengua: Interpretación de textos literarios
+  'm2-cie-bio-oa6', // Ciencias: Material genético, mitosis y meiosis
+  'm2-his-oa7', // Historia: Democratización y cultura de masas en Chile
+  'm2-ing-oa13', // Inglés: Expresión escrita multimodal
+
+  // Semana 4: Función inversa, argumentación, biotecnología y Guerra Fría
+  'm2-mat-oa5', // Matemática: Inversa de una función
+  'm2-len-oa9', // Lengua: Textos con finalidad argumentativa
+  'm2-cie-bio-oa8', // Ciencias: Manipulación genética y biotecnología
+  'm2-his-oa8', // Historia: Guerra Fría y orden bipolar
+  'm2-ing-oa16', // Inglés: Tiempos perfectos, reporte y 2° condicional
+
+  // Semana 5: Trigonometría, medios, cinemática y América Latina en Guerra Fría
+  'm2-mat-oa8', // Matemática: Razones trigonométricas
+  'm2-len-oa10', // Lengua: Medios de comunicación
+  'm2-cie-fis-oa9', // Ciencias: Movimiento rectilíneo uniforme y acelerado
+  'm2-his-oa10', // Historia: América Latina en la Guerra Fría
+  'm2-his-oa11', // Historia: Fin de la Guerra Fría, neoliberalismo y globalización
+
+  // Semana 6: Combinatoria, ensayos, leyes de Newton y Chile s. XX
+  'm2-mat-oa11', // Matemática: Permutaciones y combinatoria
+  'm2-len-oa14', // Lengua: Escribir textos persuasivos y ensayos
+  'm2-cie-fis-oa10', // Ciencias: Leyes de Newton y diagrama de cuerpo libre
+  'm2-his-oa12', // Historia: Pobreza y migración campo-ciudad en Chile
+  'm2-his-oa15', // Historia: Interpretaciones historiográficas del golpe de 1973
+
+  // Semana 7: Universo, soluciones, dictadura y modelo económico
+  'm2-cie-fis-oa13', // Ciencias: Modelos del Universo y Big-Bang
+  'm2-cie-qui-oa15', // Ciencias: Soluciones químicas y concentración
+  'm2-his-oa16', // Historia: Dictadura militar, Estado de Derecho y DD.HH.
+  'm2-his-oa17', // Historia: Modelo económico neoliberal en dictadura
+  'm2-his-oa19', // Historia: Recuperación de la democracia en los años 80
+
+  // Semana 8: Química del carbono, transición, DD.HH. y no discriminación
+  'm2-cie-qui-oa17', // Ciencias: Química del carbono e hidrocarburos
+  'm2-his-oa20', // Historia: Transición a la democracia y reparación
+  'm2-his-oa22', // Historia: Derechos Humanos e institucionalidad
+  'm2-his-oa25', // Historia: Diversidad, no discriminación y Ley Zamudio
+];
+
+export const ORDEN_MODULOS_M3: string[] = [
+  // Semana 1: Fundamentos y comprensión crítica
+  'm3-mat-oa2', // Matemática: Medidas de dispersión y probabilidades condicionales
+  'm3-len-oa1', // Lengua: Interpretaciones literarias e intertextualidad
+  'm3-cc-m1-oa1', // Ciencias para la Ciudadanía: Factores en la salud humana
+  'm3-ec-oa1', // Educación Ciudadana: Fundamentos de democracia y ciudadanía
+  'm3-fil-oa1', // Filosofía: Origen y sentido del quehacer filosófico
+  'm3-ing-oa1', // Inglés: Comprensión escrita e interculturalidad
+
+  // Semana 2: Modelos, justicia y ontología
+  'm3-mat-oa3', // Matemática: Funciones exponencial y logarítmica
+  'm3-len-oa3', // Lengua: Análisis crítico de géneros no literarios
+  'm3-cc-m1-oa3', // Ciencias para la Ciudadanía: Agentes infecciosos y prevención
+  'm3-ec-oa2', // Educación Ciudadana: Acceso a la justicia y sistema judicial
+  'm3-fil-oa3', // Filosofía: Ontología: el ser y la realidad
+  'm3-ing-oa3', // Inglés: Comprensión y producción crítica
+
+  // Semana 3: Circunferencia, comunidades digitales y epistemología
+  'm3-mat-oa4', // Matemática: Relaciones métricas en la circunferencia
+  'm3-len-oa4', // Lengua: Géneros discursivos en comunidades digitales
+  'm3-cc-m2-oa1', // Ciencias para la Ciudadanía: Sustancias químicas y seguridad
+  'm3-ec-oa4', // Educación Ciudadana: Relaciones entre Estado y mercado
+  'm3-fil-oa4', // Filosofía: Epistemología: conocimiento, ciencia y verdad
+  'm3-ing-oa4', // Inglés: Producción fluida e identidad cultural
+
+  // Semana 4: Escritura, riesgos, derechos, lógica y territorio
+  'm3-len-oa6', // Lengua: Producir textos coherentes y cohesionados
+  'm3-cc-m2-oa3', // Ciencias para la Ciudadanía: Riesgos socionaturales y adaptación
+  'm3-ec-oa5', // Educación Ciudadana: Defensa y exigibilidad de DD.HH.
+  'm3-ec-oa6', // Educación Ciudadana: Participación ciudadana y bien común
+  'm3-fil-oa6', // Filosofía: Lógica, validez y argumentación
+  'm3-ec-oa7', // Educación Ciudadana: Configuración política del territorio
+];
+
+export const ORDEN_MODULOS_M4: string[] = [
+  // Semana 1: Fundamentos financieros, interpretación, sostenibilidad y democracia
+  'm4-mat-oa1', // Matemática: Decisiones financieras e índices económicos
+  'm4-len-oa1', // Lengua: Interpretación comparada de obras
+  'm4-cc-m3-oa2', // Ciencias para la Ciudadanía: Proyectos de recursos naturales
+  'm4-ec-oa1', // Educación Ciudadana: Institucionalidad democrática
+  'm4-fil-oa1', // Filosofía: Alcances, límites y fines de la filosofía
+  'm4-ing-oa1', // Inglés: Comprensión de información relevante
+
+  // Semana 2: Incerteza, discursos, cambio climático y ética
+  'm4-mat-oa2', // Matemática: Modelos binomial y normal
+  'm4-len-oa3', // Lengua: Evaluación crítica de textos no literarios
+  'm4-cc-m3-oa3', // Ciencias para la Ciudadanía: Cambio climático y mitigación
+  'm4-ec-oa3', // Educación Ciudadana: Modelos de desarrollo y sustentabilidad
+  'm4-fil-oa2', // Filosofía: Ética, moral, justicia, libertad e igualdad
+  'm4-ing-oa3', // Inglés: Comprensión y producción con postura crítica
+
+  // Semana 3: Funciones periódicas, escritura, derechos laborales y argumentación
+  'm4-mat-oa3', // Matemática: Funciones potencia y trigonométricas
+  'm4-len-oa5', // Lengua: Producción coherente y cohesionada
+  'm4-ec-oa4', // Educación Ciudadana: Derechos laborales en Chile
+  'm4-fil-oa4', // Filosofía: Evaluación de argumentos y falacias
+  'm4-ing-oa4', // Inglés: Producción fluida, síntesis e identidad
+
+  // Semana 4: Igualdad, medios masivos e impacto filosófico
+  'm4-ec-oa5', // Educación Ciudadana: Libertad, igualdad y solidaridad
+  'm4-ec-oa6', // Educación Ciudadana: Medios masivos, tecnologías y democracia
+  'm4-fil-oa5', // Filosofía: Impacto de ideas filosóficas en la actualidad
+];
+
 export const ORDEN_MODULOS: string[] = [
   ...ORDEN_MODULOS_B5,
   ...ORDEN_MODULOS_B6,
   ...ORDEN_MODULOS_B7,
   ...ORDEN_MODULOS_B8,
   ...ORDEN_MODULOS_M1,
+  ...ORDEN_MODULOS_M2,
+  ...ORDEN_MODULOS_M3,
+  ...ORDEN_MODULOS_M4,
 ];
 
 export function getOrdenModulos(cursoId: string): string[] {
@@ -314,5 +438,8 @@ export function getOrdenModulos(cursoId: string): string[] {
   if (cursoId === 'b6') return ORDEN_MODULOS_B6;
   if (cursoId === 'b7') return ORDEN_MODULOS_B7;
   if (cursoId === 'b8') return ORDEN_MODULOS_B8;
+  if (cursoId === 'm2') return ORDEN_MODULOS_M2;
+  if (cursoId === 'm3') return ORDEN_MODULOS_M3;
+  if (cursoId === 'm4') return ORDEN_MODULOS_M4;
   return ORDEN_MODULOS_M1;
 }
