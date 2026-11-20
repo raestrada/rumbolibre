@@ -4,6 +4,7 @@ import {
   getAsignaturas,
   getConfig,
   getCursoActivoId,
+  getCursos,
   getEnsayoNota,
   getHitos,
   getModulos,
@@ -15,6 +16,14 @@ import {
 import { NOTA_APROBACION } from '../data/tipos';
 import { ORDEN_MODULOS } from '../data/orden';
 import { ProgressBar, EmptyState } from '../components/ui';
+import {
+  IconArrowRight,
+  IconAward,
+  IconCalendar,
+  IconCheckCircle,
+  IconRefresh,
+  IconTarget,
+} from '../components/Icons';
 import { notaColor } from '../lib/parser';
 
 function diasHasta(fechaISO: string): number | null {
@@ -30,6 +39,7 @@ export default function Dashboard(): JSX.Element {
   const { go } = useNav();
   const config = getConfig();
   const cursoId = getCursoActivoId();
+  const cursoActivo = getCursos().find((c) => c.id === cursoId);
   const asignaturas = getAsignaturas(cursoId);
   const progreso = getProgreso();
   const registros = getRegistros(cursoId);
@@ -98,9 +108,10 @@ export default function Dashboard(): JSX.Element {
   const diasExamen = diasHasta(config.fecha_examen);
 
   // Siguiente módulo recomendado para continuar estudiando
-  const listaOrdenada = ORDEN_MODULOS.map((id) => modulosMap.get(id)).filter(
+  const ordenadosPorLista = ORDEN_MODULOS.map((id) => modulosMap.get(id)).filter(
     (x): x is { modulo: ModuloFull; asig: AsignaturaRow } => Boolean(x),
   );
+  const listaOrdenada = ordenadosPorLista.length > 0 ? ordenadosPorLista : Array.from(modulosMap.values());
   const siguiente = listaOrdenada.find((item) => {
     const n = ultima.get(item.modulo.id);
     return n == null || n < NOTA_APROBACION;
@@ -116,18 +127,20 @@ export default function Dashboard(): JSX.Element {
     <div className="pantalla pantalla-ancha">
       <header className="cabecera">
         <h1>
-          {saludo}, {nombre}! 👋
+          {saludo}, {nombre}!
         </h1>
-        <p className="cabecera-sub">Tu camino para preparar y aprobar los exámenes libres de 1° medio.</p>
+        <p className="cabecera-sub">
+          Tu camino para preparar y aprobar los exámenes libres de {cursoActivo?.nombre ?? 'tu curso'}.
+        </p>
       </header>
 
       {/* Hero directo: Continuar con el siguiente módulo */}
       {siguiente ? (
         <section className="siguiente-hero" style={{ marginBottom: 20 }}>
           <div className="siguiente-cuerpo">
-            <span className="siguiente-etiqueta">👉 Continuar con siguiente módulo</span>
+            <span className="siguiente-etiqueta">Siguiente módulo recomendado</span>
             <div className="siguiente-titulo">
-              {siguiente.asig.icono} {siguiente.modulo.codigo} — {siguiente.modulo.titulo}
+              {siguiente.modulo.codigo} — {siguiente.modulo.titulo}
             </div>
             <div className="siguiente-sub">
               {siguiente.asig.nombre}
@@ -138,7 +151,8 @@ export default function Dashboard(): JSX.Element {
             className="btn btn-primario"
             onClick={() => go({ name: 'modulo', moduloId: siguiente.modulo.id })}
           >
-            Estudiar ahora →
+            <span>Estudiar ahora</span>
+            <IconArrowRight size={15} />
           </button>
         </section>
       ) : null}
@@ -147,8 +161,8 @@ export default function Dashboard(): JSX.Element {
       {modulosRepasar.length > 0 ? (
         <section className="tarjeta banner-repasar-cta">
           <div>
-            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span>🔁</span>
+            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <IconRefresh size={16} />
               <span>Toca repasar {modulosRepasar.length} {modulosRepasar.length === 1 ? 'módulo' : 'módulos'}</span>
             </div>
             <div className="fila-sub" style={{ marginTop: 2 }}>
@@ -160,14 +174,17 @@ export default function Dashboard(): JSX.Element {
             </div>
           </div>
           <button className="btn btn-secundario" onClick={() => go({ name: 'ruta', filtroRepasar: true })}>
-            Ver por repasar →
+            <span>Ver por repasar</span>
+            <IconArrowRight size={15} />
           </button>
         </section>
       ) : null}
 
       <section className="tarjeta plazos">
         <div className="plazos-item">
-          <span className="plazos-icono">📅</span>
+          <span className="plazos-icono">
+            <IconCalendar size={18} />
+          </span>
           <div>
             <div className="plazos-titulo">
               {diasExamen != null
@@ -187,7 +204,8 @@ export default function Dashboard(): JSX.Element {
             style={{ marginLeft: 'auto' }}
             onClick={() => go({ name: 'calendario' })}
           >
-            Ver calendario →
+            <span>Ver calendario</span>
+            <IconArrowRight size={14} />
           </button>
         </div>
         {hitos.length ? (
@@ -210,15 +228,19 @@ export default function Dashboard(): JSX.Element {
             de pasos completados · {hechas} de {totalAct}
           </div>
         </div>
-        <ProgressBar pct={pctAct} alto={12} />
+        <ProgressBar pct={pctAct} alto={10} />
         <div className="resumen-meta">
-          <span>⭐ {evaluaciones.length} evaluaciones</span>
-          <span>✅ {verificadas} verificadas</span>
+          <span className="resumen-meta-item">
+            <IconAward size={15} /> {evaluaciones.length} evaluaciones
+          </span>
+          <span className="resumen-meta-item">
+            <IconCheckCircle size={15} /> {verificadas} verificadas
+          </span>
         </div>
       </section>
 
       <h2 className="seccion-titulo">Listo para el examen</h2>
-      {/* Grilla 2x3 para las 6 asignaturas */}
+      {/* Grilla de asignaturas */}
       <div className="dashboard-grid-asig">
         {porAsignatura.map(({ asig, modulos, aprobados, reprobados, lista, ensayoNota }) => (
           <div key={asig.id} className="tarjeta fila lista-asig">
@@ -229,7 +251,7 @@ export default function Dashboard(): JSX.Element {
               <div className="fila-titulo">
                 <span className="asig-nombre-txt">{asig.nombre}</span>
                 <span className={`lista-chipo ${lista ? 'ok' : reprobados ? 'mal' : ''}`}>
-                  {lista ? '✅ Lista' : reprobados ? `🔁 ${reprobados} por repasar` : '⏳ En progreso'}
+                  {lista ? 'Lista' : reprobados ? `${reprobados} por repasar` : 'En progreso'}
                 </span>
               </div>
               <div className="fila-sub">
@@ -243,7 +265,8 @@ export default function Dashboard(): JSX.Element {
               onClick={() => go({ name: 'ensayo', asignaturaId: asig.id })}
               title={`Hacer ensayo de ${asig.nombre}`}
             >
-              🎯 Ensayo
+              <IconTarget size={14} />
+              <span>Ensayo</span>
             </button>
           </div>
         ))}

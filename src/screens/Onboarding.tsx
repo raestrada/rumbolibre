@@ -3,11 +3,16 @@ import { getCursos, setConfig } from '../db/queries';
 import { hashPin } from '../lib/auth';
 import { guardarClave } from '../lib/secureKey';
 import Logo from '../components/Logo';
+import { IconArrowLeft, IconArrowRight } from '../components/Icons';
 
-export default function Onboarding(): JSX.Element {
+interface OnboardingProps {
+  onVolver?: () => void;
+}
+
+export default function Onboarding({ onVolver }: OnboardingProps): JSX.Element {
   const cursos = getCursos();
   const [nombre, setNombre] = useState('');
-  const [curso, setCurso] = useState(() => cursos[0]?.id ?? 'm1');
+  const [curso, setCurso] = useState(() => cursos.find((c) => c.id === 'm1')?.id ?? cursos[0]?.id ?? 'm1');
   const [pin, setPin] = useState('');
   const [claveOR, setClaveOR] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +20,7 @@ export default function Onboarding(): JSX.Element {
   async function empezar(e: FormEvent): Promise<void> {
     e.preventDefault();
     if (!nombre.trim()) {
-      setError('Escribe tu nombre para empezar.');
+      setError('Escribe tu nombre para comenzar.');
       return;
     }
     setConfig('nombre', nombre.trim());
@@ -35,25 +40,37 @@ export default function Onboarding(): JSX.Element {
   return (
     <div className="onboarding">
       <div className="onboarding-tarjeta">
+        {onVolver ? (
+          <button type="button" className="onboarding-volver" onClick={onVolver}>
+            <IconArrowLeft size={15} />
+            <span>Volver al inicio</span>
+          </button>
+        ) : null}
+
         <div className="onboarding-logo">
-          <Logo size={72} />
+          <Logo size={56} />
         </div>
-        <h1>¡Bienvenida a Rumbo Libre! 🧭</h1>
+        <h1>Configura tu espacio de estudio</h1>
         <p className="onboarding-sub">
-          Tu guía para preparar tus <strong>exámenes libres</strong> (MINEDUC) con ayuda de tu
-          agente de IA. Todo se guarda directamente en este computador.
+          Prepara tus <strong>Exámenes Libres del MINEDUC</strong> con orden y tranquilidad.
+          Todo se guarda localmente en tu navegador, sin cuentas ni servidores.
         </p>
+
         <div className="onboarding-pasos">
           <div className="onboarding-paso">
-            <span>1</span> Tu profe IA te explica punto por punto
+            <span>01</span>
+            <div>Estudia cada objetivo oficial paso a paso</div>
           </div>
           <div className="onboarding-paso">
-            <span>2</span> Preguntas interactivas y calificación al instante
+            <span>02</span>
+            <div>Practica con evaluaciones y ensayos reales</div>
           </div>
           <div className="onboarding-paso">
-            <span>3</span> Tu avance y repasos se guardan solos
+            <span>03</span>
+            <div>Tu avance y respaldos viven en tu equipo</div>
           </div>
         </div>
+
         <form onSubmit={empezar} className="onboarding-form">
           <label className="campo">
             <span>¿Cómo te llamas?</span>
@@ -64,6 +81,7 @@ export default function Onboarding(): JSX.Element {
               autoFocus
             />
           </label>
+
           <label className="campo">
             <span>Curso</span>
             <select value={curso} onChange={(e) => setCurso(e.target.value)}>
@@ -73,8 +91,11 @@ export default function Onboarding(): JSX.Element {
                 </option>
               ))}
             </select>
-            <small>Cursos disponibles: 5° básico y 1° medio (temarios oficiales MINEDUC).</small>
+            <small>
+              {cursos.length} niveles oficiales disponibles (5° básico a 4° medio · temarios UCE MINEDUC).
+            </small>
           </label>
+
           <label className="campo">
             <span>Clave de OpenRouter (opcional)</span>
             <input
@@ -84,10 +105,11 @@ export default function Onboarding(): JSX.Element {
               placeholder="sk-or-v1-… (puedes agregarla después en Ajustes)"
               autoComplete="off"
             />
-            <small>Permite que tu profe IA te enseñe y evalúe directamente en la app.</small>
+            <small>Permite activar el tutor IA directamente desde tu navegador.</small>
           </label>
+
           <label className="campo">
-            <span>PIN para papás (opcional)</span>
+            <span>PIN para familias (opcional)</span>
             <input
               value={pin}
               onChange={(e) => setPin(e.target.value)}
@@ -95,11 +117,14 @@ export default function Onboarding(): JSX.Element {
               inputMode="numeric"
               maxLength={6}
             />
-            <small>Protege el seguimiento y las evaluaciones en la sección Ajustes.</small>
+            <small>Protege localmente el panel de seguimiento y evaluaciones en Ajustes.</small>
           </label>
+
           {error ? <div className="error">{error}</div> : null}
+
           <button className="btn btn-primario" type="submit">
-            ¡Empezar mi ruta! 🚀
+            <span>Empezar mi ruta</span>
+            <IconArrowRight size={16} />
           </button>
         </form>
       </div>

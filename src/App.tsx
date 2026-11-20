@@ -123,6 +123,10 @@ export default function App(): JSX.Element {
     void initDatabase();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [nav]);
+
   if (!ready) return <PantallaCarga />;
 
   // Si está en la landing/portal público, se muestra a pantalla completa sin sidebar
@@ -135,7 +139,7 @@ export default function App(): JSX.Element {
   }
 
   const config = getConfig();
-  if (!config.nombre) return <Onboarding />;
+  if (!config.nombre) return <Onboarding onVolver={() => setNav({ name: 'home' })} />;
 
   return (
     <NavContext.Provider value={{ nav, go: setNav }}>
